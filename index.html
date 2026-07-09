@@ -70,7 +70,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-dot{width:9px;height:9px;border-radius:50%;margin-top:7px;flex-shrink:0;background:var(--tc);}
 .tl-line{flex:1;width:1.5px;background:var(--line);margin-top:4px;min-height:8px;}
 
-.tl-ev{background:var(--white);border-radius:var(--rsm);padding:12px 14px;border:1px solid var(--line2);border-left:3px solid var(--tc);margin-bottom:7px;transition:box-shadow .14s;}
+.tl-ev{background:var(--white);border-radius:var(--rsm);padding:12px 14px;border:1px solid var(--line2);margin-bottom:7px;transition:box-shadow .14s;}
 .tl-row.expandable .tl-ev{cursor:pointer;}
 .tl-row.expandable:active .tl-ev{box-shadow:0 4px 16px rgba(0,0,0,.08);}
 .tl-ev-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
@@ -329,22 +329,17 @@ function toggleEvent(day,i){
   const inner=wrap.querySelector('.tl-detail-inner');
   const isOpen=row.classList.contains('open');
   const dayWrap=row.closest('.acc-body-wrap');
+  const detailHeight=inner.scrollHeight;
+  const dayCurrentHeight=dayWrap?parseFloat(dayWrap.style.maxHeight)||dayWrap.scrollHeight:0;
   if(isOpen){
     row.classList.remove('open');
     wrap.style.maxHeight='0px';
+    if(dayWrap)dayWrap.style.maxHeight=Math.max(0,dayCurrentHeight-detailHeight)+'px';
   }else{
     row.classList.add('open');
-    wrap.style.maxHeight=inner.scrollHeight+'px';
+    wrap.style.maxHeight=detailHeight+'px';
+    if(dayWrap)dayWrap.style.maxHeight=(dayCurrentHeight+detailHeight)+'px';
   }
-  if(dayWrap){
-    setTimeout(function(){
-      dayWrap.style.maxHeight=dayWrap.scrollHeight+'px';
-    },0);
-  }
-}
-function resyncAncestorHeight(el){
-  const wrap=el.closest('.acc-body-wrap');
-  if(!wrap||!wrap.style.maxHeight)return;
 }
 
 // Accordion (day list)
