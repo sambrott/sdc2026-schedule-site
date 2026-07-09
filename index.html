@@ -118,10 +118,6 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .lc-sub{font-family:var(--body);font-weight:300;font-size:16px;color:var(--ink3);margin-top:2px;}
 .lc-arrow{stroke:var(--ink3);width:17px;height:17px;fill:none;stroke-width:2;flex-shrink:0;}
 .map-frame{width:100%;height:240px;border:1.5px solid var(--line);border-radius:6px;margin-top:6px;}
-.map-toggle{display:flex;gap:8px;margin-top:10px;}
-.map-toggle-btn{flex:1;padding:8px 12px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:var(--body);font-weight:600;font-size:13px;color:var(--ink2);cursor:pointer;transition:background .15s,color .15s,border-color .15s;}
-.map-toggle-btn.active{background:var(--teal);border-color:var(--teal);color:var(--white);}
-.map-tinted{filter:hue-rotate(150deg) saturate(.85) brightness(.97) contrast(1.05);}
 .form-frame{width:100%;height:560px;border:1.5px solid var(--line);border-radius:6px;background:var(--white);margin-top:6px;}
 
 /* Footer */
@@ -230,50 +226,29 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <div class="lc-text"><div class="lc-title">Rocky Top Dining Hall</div><div class="lc-sub">Meals</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </a>
-  <div class="map-toggle">
-    <button type="button" class="map-toggle-btn active" id="satBtn" onclick="setMapView('k')">Satellite</button>
-    <button type="button" class="map-toggle-btn" id="roadBtn" onclick="setMapView('m')">Map</button>
-  </div>
   <iframe id="mapFrame" class="map-frame" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   <script>
     const locations = {
-      'Art + Architecture Building': '1715 Volunteer Blvd, Knoxville, TN 37996',
-      'Magnolia Hall': '2107 Andy Holt Ave, Knoxville, TN 37996',
-      'Tennessee Rec Center': '2111 Volunteer Blvd, Knoxville, TN 37996',
-      'Rocky Top Dining Hall': '1917 Andy Holt Ave, Knoxville, TN 37916'
+      'Art + Architecture Building': {lat:35.9524186, lng:-83.929707},
+      'Magnolia Hall': {lat:35.9501845, lng:-83.9363021},
+      'Tennessee Rec Center': {lat:35.948889, lng:-83.9343242},
+      'Rocky Top Dining Hall': {lat:35.9518149, lng:-83.9340743}
     };
 
-    let currentAddr = locations['Art + Architecture Building'];
-    let currentLabel = 'Art + Architecture Building';
-    let currentZoom = 16;
-    let currentView = 'k';
-
-    function embedUrl(address,label,zoom,view){
-      return 'https://www.google.com/maps?q='+encodeURIComponent(address+' ('+label+')')+'&z='+zoom+'&t='+view+'&output=embed';
+    function embedUrl(pos,label,zoom){
+      return 'https://www.google.com/maps?q='+pos.lat+','+pos.lng+'('+encodeURIComponent(label)+')&z='+zoom+'&t=k&output=embed';
     }
 
     const mapFrame = document.getElementById('mapFrame');
-    mapFrame.className = 'map-frame';
-    mapFrame.src = embedUrl(currentAddr,currentLabel,currentZoom,currentView);
-
-    function setMapView(view){
-      currentView = view;
-      mapFrame.src = embedUrl(currentAddr,currentLabel,currentZoom,view);
-      document.getElementById('satBtn').classList.toggle('active', view==='k');
-      document.getElementById('roadBtn').classList.toggle('active', view==='m');
-      mapFrame.classList.toggle('map-tinted', view==='m');
-    }
+    mapFrame.src = embedUrl(locations['Art + Architecture Building'],'Art + Architecture Building',16);
 
     document.querySelectorAll('[data-location]').forEach(btn => {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
         const locName = this.getAttribute('data-location');
-        const addr = locations[locName];
-        if (addr) {
-          currentAddr = addr;
-          currentLabel = locName;
-          currentZoom = 17;
-          mapFrame.src = embedUrl(currentAddr,currentLabel,currentZoom,currentView);
+        const pos = locations[locName];
+        if (pos) {
+          mapFrame.src = embedUrl(pos,locName,17);
         }
       });
     });
