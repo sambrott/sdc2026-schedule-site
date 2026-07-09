@@ -63,11 +63,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 /* Timeline (events within a day) */
 .timeline{display:flex;flex-direction:column;}
-.tl-row{display:grid;grid-template-columns:70px 1fr;gap:10px;align-items:stretch;}
+.tl-row{display:grid;grid-template-columns:70px 1fr;gap:10px;align-items:center;}
 .tl-tc{display:flex;flex-direction:column;align-items:center;padding-top:14px;}
 .tl-time{font-family:var(--din);font-weight:500;font-size:15px;color:var(--ink3);letter-spacing:.01em;text-align:center;line-height:1.3;}
 .tl-dot{width:9px;height:9px;border-radius:50%;margin-top:7px;flex-shrink:0;background:var(--tc);}
-.tl-line{flex:1;width:1.5px;background:var(--line);margin-top:4px;min-height:8px;}
+
 .tl-ev{background:var(--white);border-radius:var(--rsm);padding:12px 14px;border:1px solid var(--line2);border-left:3px solid var(--tc);margin-bottom:7px;transition:box-shadow .14s;}
 .tl-row.expandable .tl-ev{cursor:pointer;}
 .tl-row.expandable:active .tl-ev{box-shadow:0 4px 16px rgba(0,0,0,.08);}
@@ -105,7 +105,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 @media(max-width:520px){.people-grid{grid-template-columns:1fr;}}
 
 /* Links / maps / forms */
-.link-card{display:flex;align-items:center;gap:13px;background:var(--white);border:1.5px solid var(--line);border-radius:6px;padding:14px 15px;margin-bottom:9px;cursor:pointer;text-decoration:none;color:inherit;transition:border-color .15s,transform .1s;}
+.link-card{display:flex;align-items:center;gap:13px;background:var(--white);border:1.5px solid var(--line);border-radius:6px;padding:14px 15px;margin-bottom:9px;text-decoration:none;color:inherit;transition:border-color .15s,transform .1s;}
 .link-card:active{transform:scale(.99);}
 .link-card:hover{border-color:var(--teal);}
 .lc-icon{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--teal);}
@@ -174,16 +174,16 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   </div>
 
   <div class="section-head toggle-head" onclick="toggleCollapse('instrSection')">
-    Student Instructors + Assistants
+    Teaching Assistants + Assistants
     <svg class="section-chev" id="chev-instrSection" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
   </div>
   <div class="instr-section" id="instrSection">
     <div class="instr-collapse">
       <div class="instr-collapse-inner">
-        <div class="people-label" style="color:var(--teal);">Student Instructors</div>
+        <div class="people-label" style="color:var(--teal);">Teaching Assistants</div>
         <div class="people-grid" id="instructorsBlock"></div>
-        <div class="people-label" style="color:var(--teal);margin-top:18px;">Student Assistants</div>
-        <div class="people-grid" id="assistantsBlock"></div>
+        <div class="people-label" style="color:var(--teal);margin-top:18px;">Floaters</div>
+        <div class="people-grid" id="floatersBlock"></div>
       </div>
     </div>
   </div>
@@ -205,17 +205,17 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <!-- ===== LOCATIONS ===== -->
 <div class="section">
   <div class="section-head">Campus Locations</div>
-  <a class="link-card" href="https://www.google.com/maps/search/?api=1&query=Art+and+Architecture+Building+University+of+Tennessee+Knoxville" target="_blank">
+  <a class="link-card" style="cursor:pointer;" href="https://www.google.com/maps/search/?api=1&query=Art+and+Architecture+Building+University+of+Tennessee+Knoxville" target="_blank">
     <div class="lc-icon"><svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></div>
     <div class="lc-text"><div class="lc-title">Art + Architecture Building</div><div class="lc-sub">1715 Volunteer Blvd · Studios + Exhibit</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </a>
-  <a class="link-card" href="https://www.google.com/maps/search/?api=1&query=Magnolia+Hall+University+of+Tennessee+Knoxville" target="_blank">
+  <a class="link-card" style="cursor:pointer;" href="https://www.google.com/maps/search/?api=1&query=Magnolia+Hall+University+of+Tennessee+Knoxville" target="_blank">
     <div class="lc-icon purple"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
     <div class="lc-text"><div class="lc-title">Magnolia Hall</div><div class="lc-sub">Dorms · Check-in · Home base</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </a>
-  <a class="link-card" href="https://www.google.com/maps/search/?api=1&query=Tennessee+Recreational+Center+University+of+Tennessee+Knoxville" target="_blank">
+  <a class="link-card" style="cursor:pointer;" href="https://www.google.com/maps/search/?api=1&query=Tennessee+Recreational+Center+University+of+Tennessee+Knoxville" target="_blank">
     <div class="lc-icon orange"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
     <div class="lc-text"><div class="lc-title">Tennessee Rec Center (TREC)</div><div class="lc-sub">Pool · Evening activities</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
@@ -226,12 +226,12 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <!-- ===== FORMS ===== -->
 <div class="section alt">
   <div class="section-head">Forms</div>
-  <div class="link-card" id="eveningFormLink" style="pointer-events:none;">
+  <div class="link-card" id="eveningFormLink" style="cursor:pointer;">
     <div class="lc-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
     <div class="lc-text"><div class="lc-title">Evening Activity Sign-Up</div><div class="lc-sub">Pick what you're doing tonight</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-  </a>
-  <div class="link-card" id="photoFormLink" style="pointer-events:none;">
+  </div>
+  <div class="link-card" id="photoFormLink" style="cursor:pointer;">
     <div class="lc-icon orange"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
     <div class="lc-text"><div class="lc-title">Upload Your Work</div><div class="lc-sub">Share photos from the week</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
@@ -256,7 +256,7 @@ function tc(type){return (TYPE_COLORS[type]||["#007179","rgba(0,113,121,.1)"]);}
 // Timeline event row (expands in place to reveal detail + materials)
 function tlRow(ev,day,i,total){
   const c=tc(ev.type);const label=TYPE_LABELS[ev.type]||"";
-  const line = i<total-1 ? '<div class="tl-line"></div>' : '';
+  const line = '';
   const typeHtml = label ? '<div class="tl-type" style="color:'+c[0]+';background:'+c[1]+';">'+label+'</div>' : '';
   const locHtml = ev.loc ? '<div class="tl-loc">'+ev.loc+'</div>' : '';
   const hasExtra = !!ev.detail || (ev.mats && ev.mats.length>0);
@@ -317,8 +317,8 @@ function buildAccordion(){
     return '<div class="acc-day'+(isToday?' open':'')+'" id="acc-'+i+'">'+
       '<div class="acc-head" onclick="toggleAcc('+i+')">'+
         '<div class="acc-head-l">'+
-        '<span class="acc-day-name" style="color:'+t+';">'+d+' · '+dateStr+'</span></div>'+
-        '<svg class="acc-chev" viewBox="0 0 24 24" style="stroke:'+t+';"><polyline points="6 9 12 15 18 9"/></svg>'+
+        '<span class="acc-day-name">'+d+' · '+dateStr+'</span></div>'+
+        '<svg class="acc-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>'+
       '</div>'+
       '<div class="acc-body-wrap" id="acc-wrap-'+i+'"><div class="acc-body">'+rows+'</div></div>'+
     '</div>';
@@ -365,7 +365,7 @@ function personHTML(p,hasDetail){
 }
 document.getElementById('leadershipBlock').innerHTML=LEADERSHIP.map(function(p){return personHTML(p,true);}).join('');
 document.getElementById('instructorsBlock').innerHTML=INSTRUCTORS.map(function(p){return personHTML(p,false);}).join('');
-document.getElementById('assistantsBlock').innerHTML=ASSISTANTS.map(function(p){return personHTML(p,false);}).join('');
+document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){return personHTML(p,false);}).join('');
 document.getElementById('adminBlock').innerHTML=ADMIN.map(function(p){return personHTML(p,true);}).join('');
 
 // Forms
