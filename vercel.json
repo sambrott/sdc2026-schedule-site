@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "buildCommand": "echo 'static content'",
+  "public": ".",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
