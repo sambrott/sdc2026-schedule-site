@@ -300,7 +300,7 @@ function tc(type){return (TYPE_COLORS[type]||["#007179","rgba(0,113,121,.1)"]);}
 function tlRow(ev,day,i,total){
   const c=tc(ev.type);const label=TYPE_LABELS[ev.type]||"";
   const line = i<total-1 ? '<div class="tl-line"></div>' : '';
-  const typeHtml = label ? '<div class="tl-type" style="color:'+c[0]+';background:'+c[1]+';">'+label+'</div>' : '';
+  const typeHtml = '';
   const locHtml = ev.loc ? '<div class="tl-loc">'+ev.loc+'</div>' : '';
   const hasExtra = !!ev.detail || (ev.mats && ev.mats.length>0);
   const rid=day+'-'+i;
