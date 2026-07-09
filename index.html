@@ -299,7 +299,7 @@ function tc(type){return (TYPE_COLORS[type]||["#007179","rgba(0,113,121,.1)"]);}
 // Timeline event row (expands in place to reveal detail + materials)
 function tlRow(ev,day,i,total){
   const c=tc(ev.type);const label=TYPE_LABELS[ev.type]||"";
-  const line = i<total-1 ? '<div class="tl-line"></div>' : '';
+  const line = '';
   const typeHtml = '';
   const locHtml = ev.loc ? '<div class="tl-loc">'+ev.loc+'</div>' : '';
   const hasExtra = !!ev.detail || (ev.mats && ev.mats.length>0);
@@ -328,6 +328,7 @@ function toggleEvent(day,i){
   if(!row||!wrap)return;
   const inner=wrap.querySelector('.tl-detail-inner');
   const isOpen=row.classList.contains('open');
+  const dayWrap=row.closest('.acc-body-wrap');
   if(isOpen){
     row.classList.remove('open');
     wrap.style.maxHeight='0px';
@@ -335,8 +336,11 @@ function toggleEvent(day,i){
     row.classList.add('open');
     wrap.style.maxHeight=inner.scrollHeight+'px';
   }
-  const dayWrap=row.closest('.acc-body-wrap');
-  if(dayWrap){dayWrap.style.maxHeight=dayWrap.scrollHeight+'px';}
+  if(dayWrap){
+    setTimeout(function(){
+      dayWrap.style.maxHeight=dayWrap.scrollHeight+'px';
+    },0);
+  }
 }
 function resyncAncestorHeight(el){
   const wrap=el.closest('.acc-body-wrap');
