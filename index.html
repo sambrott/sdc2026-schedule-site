@@ -93,8 +93,15 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .section-head{font-family:var(--din);font-weight:600;font-size:16px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:3px;display:flex;align-items:center;gap:10px;}
 
 
-.section-head.toggle-head:not(:first-of-type){margin-top:20px;}
 .section-note{font-family:var(--body);font-size:16px;color:var(--ink3);margin-bottom:16px;letter-spacing:.02em;}
+
+/* People tabs */
+.tabs-row{display:flex;gap:8px;margin-top:12px;margin-bottom:16px;}
+.tab-btn{flex:1;padding:10px 8px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:var(--body);font-weight:600;font-size:13px;color:var(--ink2);cursor:pointer;text-align:center;transition:background .15s,color .15s,border-color .15s;}
+.tab-btn.active{background:var(--teal);border-color:var(--teal);color:var(--white);}
+.tab-panel-wrap{max-height:380px;overflow-y:auto;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
 
 /* People */
 .people-label{font-family:var(--din);font-weight:600;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:10px;margin-top:4px;}
@@ -132,11 +139,6 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .footer-url{font-family:var(--din);font-weight:600;font-size:clamp(19px,6vw,28px);color:var(--orange);letter-spacing:.01em;}
 .footer-tag{font-family:var(--body);font-weight:300;font-size:15px;color:rgba(255,255,255,.7);margin-top:8px;letter-spacing:.04em;}
 
-/* Instructors collapsible dropdown */
-.section-head.toggle-head{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;}
-.section-chev{width:22px;height:22px;stroke:var(--teal);fill:none;stroke-width:2.5;flex-shrink:0;transition:transform .3s cubic-bezier(.4,0,.2,1);}
-.instr-collapse{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
-.instr-collapse-inner{padding-top:14px;}
 </style>
 </head>
 <body>
@@ -169,43 +171,24 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 <!-- ===== INSTRUCTORS ===== -->
 <div class="section">
-  <div class="section-head toggle-head" onclick="toggleCollapse('leadershipSection')">
-    Instructors
-    <svg class="section-chev" id="chev-leadershipSection" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  <div class="section-head">People</div>
+  <div class="tabs-row">
+    <button type="button" class="tab-btn active" data-tab="leadership" onclick="switchTab('leadership')">Instructors</button>
+    <button type="button" class="tab-btn" data-tab="ta" onclick="switchTab('ta')">TAs + Floaters</button>
+    <button type="button" class="tab-btn" data-tab="admin" onclick="switchTab('admin')">Administration</button>
   </div>
-  <div class="instr-section" id="leadershipSection">
-    <div class="instr-collapse">
-      <div class="instr-collapse-inner">
-        <div id="leadershipBlock"></div>
-      </div>
+  <div class="tab-panel-wrap">
+    <div class="tab-panel active" id="panel-leadership">
+      <div id="leadershipBlock"></div>
     </div>
-  </div>
-
-  <div class="section-head toggle-head" onclick="toggleCollapse('instrSection')">
-    Teaching Assistants + Assistants
-    <svg class="section-chev" id="chev-instrSection" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-  </div>
-  <div class="instr-section" id="instrSection">
-    <div class="instr-collapse">
-      <div class="instr-collapse-inner">
-        <div class="people-label" style="color:var(--teal);">Teaching Assistants</div>
-        <div class="people-grid" id="instructorsBlock"></div>
-        <div class="people-label" style="color:var(--teal);margin-top:18px;">Floaters</div>
-        <div class="people-grid" id="floatersBlock"></div>
-      </div>
+    <div class="tab-panel" id="panel-ta">
+      <div class="people-label" style="color:var(--teal);">Teaching Assistants</div>
+      <div class="people-grid" id="instructorsBlock"></div>
+      <div class="people-label" style="color:var(--teal);margin-top:18px;">Floaters</div>
+      <div class="people-grid" id="floatersBlock"></div>
     </div>
-  </div>
-
-  <!-- ===== ADMIN ===== -->
-  <div class="section-head toggle-head" onclick="toggleCollapse('adminSection')">
-    College Administration
-    <svg class="section-chev" id="chev-adminSection" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-  </div>
-  <div class="instr-section" id="adminSection">
-    <div class="instr-collapse">
-      <div class="instr-collapse-inner">
-        <div id="adminBlock"></div>
-      </div>
+    <div class="tab-panel" id="panel-admin">
+      <div id="adminBlock"></div>
     </div>
   </div>
 </div>
@@ -398,20 +381,9 @@ function toggleAcc(i){
 
 // People
 const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of Student Development \u00b7 Adjunct Assistant Professor, School of Architecture"], ["Anja Cordell", "Faculty Coordinator and Instructor", ""], ["Jessica Bocangel", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["DeMauri Mumphrey", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["Anthony Gonzalez Martinez", "Assistant to Faculty Coordinator", "Architecture Graduate"]],INSTRUCTORS=[["Alondra Amaya-Cruz", "Interior Architecture Post-grad"], ["Sam Brott", "Third-year Graphic Design Student"], ["Ryan Chatman", "Third-year Architecture Student"], ["Kadyn Kilbourne", "Fourth-year Graphic Design Student"], ["Julia Lawyer", "Fourth-year Graphic Design Student"], ["Katie Morriss", "Landscape Architecture Post-grad"], ["Christian Nazario Quirindongo", "Architecture Graduate"], ["Kayden Newman", "Fifth-year Architecture Student"], ["Witt Norris", "Fifth-year Architecture Student"], ["Clara Smith", "Interior Architecture Graduate"], ["Isaiah Smith", "Fifth-year Architecture Student"], ["Macy Steingrube", "Fourth-year Graphic Design Student"]],ASSISTANTS=[["Janet Iniguez", "Third-year Architecture Student"], ["Melani Jimenez", "Fifth-year Architecture Student"], ["Hayden Moody", "Third-year Architecture Student"], ["Cora Williams", "Fourth-year Graphic Design Student"]],ADMIN=[["Jason Young", "Dean of the College of Architecture + Design", "Professor, School of Architecture"], ["Gale Fulton", "Director of the School of Landscape Architecture", "Associate Professor, School of Landscape Architecture"], ["Carl Lostritto", "Director of the School of Architecture", "Professor, School of Architecture"], ["Sarah Lowe", "Director of the School of Design", "Professor, School of Design"]];
-function toggleCollapse(id){
-  const section=document.getElementById(id);
-  const wrap=section.querySelector('.instr-collapse');
-  const chev=document.getElementById('chev-'+id);
-  const isOpen=section.classList.contains('open');
-  if(isOpen){
-    wrap.style.maxHeight='0px';
-    section.classList.remove('open');
-    if(chev)chev.style.transform='rotate(0deg)';
-  }else{
-    section.classList.add('open');
-    wrap.style.maxHeight=wrap.scrollHeight+'px';
-    if(chev)chev.style.transform='rotate(180deg)';
-  }
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active', b.getAttribute('data-tab')===name);});
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.toggle('active', p.id==='panel-'+name);});
 }
 function personHTML(p,hasDetail){
   const detail=(hasDetail&&p[2])?'<div class="person-detail">'+p[2]+'</div>':'';
