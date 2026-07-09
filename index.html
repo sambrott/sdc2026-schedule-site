@@ -335,14 +335,12 @@ function toggleEvent(day,i){
     row.classList.add('open');
     wrap.style.maxHeight=inner.scrollHeight+'px';
   }
-  resyncAncestorHeight(row);
+  const dayWrap=row.closest('.acc-body-wrap');
+  if(dayWrap){dayWrap.style.maxHeight=dayWrap.scrollHeight+'px';}
 }
 function resyncAncestorHeight(el){
   const wrap=el.closest('.acc-body-wrap');
   if(!wrap||!wrap.style.maxHeight)return;
-  const resync=function(){wrap.style.maxHeight=wrap.scrollHeight+'px';};
-  requestAnimationFrame(resync);
-  setTimeout(resync,350);
 }
 
 // Accordion (day list)
