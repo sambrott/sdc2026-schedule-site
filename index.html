@@ -80,7 +80,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-loc{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
 .tl-chev{width:22px;height:22px;stroke:var(--ink3);fill:none;stroke-width:2.5;flex-shrink:0;margin-top:3px;transition:transform .3s cubic-bezier(.4,0,.2,1);}
 .tl-row.open .tl-chev{transform:rotate(180deg);}
-.tl-detail-wrap{overflow:hidden;max-height:0;transition:max-height .3s cubic-bezier(.4,0,.2,1);}
+.tl-detail-wrap{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
 .tl-detail-inner{padding-top:10px;}
 .tl-detail-body{font-family:var(--body);font-weight:300;font-size:17px;color:var(--ink2);line-height:1.6;}
 .tl-slabel{font-family:var(--din);font-weight:600;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:10px 0 6px;}
@@ -342,7 +342,7 @@ function resyncAncestorHeight(el){
   if(!wrap||!wrap.style.maxHeight)return;
   const resync=function(){wrap.style.maxHeight=wrap.scrollHeight+'px';};
   requestAnimationFrame(resync);
-  setTimeout(resync,320);
+  setTimeout(resync,350);
 }
 
 // Accordion (day list)
