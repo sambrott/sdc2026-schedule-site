@@ -221,28 +221,34 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <div class="lc-text"><div class="lc-title">Tennessee Rec Center (TREC)</div><div class="lc-sub">Pool · Evening activities</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </a>
+  <a class="link-card" style="cursor:pointer;" href="#" data-location="Rocky Top Dining Hall">
+    <div class="lc-icon"><svg viewBox="0 0 24 24"><path d="M3 2v20"/><path d="M3 2c0 5 4 5 4 10s-4 5-4 10"/><path d="M17 2v20"/><path d="M21 2v7a4 4 0 0 1-4 4"/></svg></div>
+    <div class="lc-text"><div class="lc-title">Rocky Top Dining Hall</div><div class="lc-sub">Meals</div></div>
+    <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+  </a>
   <iframe id="mapFrame" class="map-frame" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   <script>
     const locations = {
-      'Art + Architecture Building': {lat: 35.9450, lng: -83.9283},
-      'Magnolia Hall': {lat: 35.9432, lng: -83.9289},
-      'Tennessee Rec Center': {lat: 35.9418, lng: -83.9312}
+      'Art + Architecture Building': '1715 Volunteer Blvd, Knoxville, TN 37996',
+      'Magnolia Hall': '2107 Andy Holt Ave, Knoxville, TN 37996',
+      'Tennessee Rec Center': '2111 Volunteer Blvd, Knoxville, TN 37996',
+      'Rocky Top Dining Hall': '1917 Andy Holt Ave, Knoxville, TN 37916'
     };
 
-    function embedUrl(lat,lng,zoom){
-      return 'https://www.google.com/maps?q='+lat+','+lng+'&z='+zoom+'&output=embed';
+    function embedUrl(address,zoom){
+      return 'https://www.google.com/maps?q='+encodeURIComponent(address)+'&z='+zoom+'&output=embed';
     }
 
     const mapFrame = document.getElementById('mapFrame');
-    mapFrame.src = embedUrl(35.9433,-83.9295,16);
+    mapFrame.src = embedUrl(locations['Art + Architecture Building'],16);
 
     document.querySelectorAll('[data-location]').forEach(btn => {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
         const locName = this.getAttribute('data-location');
-        const pos = locations[locName];
-        if (pos) {
-          mapFrame.src = embedUrl(pos.lat,pos.lng,17);
+        const addr = locations[locName];
+        if (addr) {
+          mapFrame.src = embedUrl(addr,17);
         }
       });
     });
