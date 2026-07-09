@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SDC! 2026 · Summer Design Camp</title>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDummy&libraries=marker"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Archivo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -222,47 +221,31 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <div class="lc-text"><div class="lc-title">Tennessee Rec Center (TREC)</div><div class="lc-sub">Pool · Evening activities</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </a>
-  <div id="mapContainer" class="map-frame"></div>
+  <iframe id="mapFrame" class="map-frame" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   <script>
     const locations = {
       'Art + Architecture Building': {lat: 35.9450, lng: -83.9283},
       'Magnolia Hall': {lat: 35.9432, lng: -83.9289},
       'Tennessee Rec Center': {lat: 35.9418, lng: -83.9312}
     };
-    
-    let map;
-    const markers = {};
-    
-    function initMap() {
-      map = new google.maps.Map(document.getElementById('mapContainer'), {
-        zoom: 16,
-        center: {lat: 35.9433, lng: -83.9295}
-      });
-      
-      Object.keys(locations).forEach(name => {
-        const pos = locations[name];
-        markers[name] = new google.maps.Marker({
-          position: pos,
-          map: map,
-          title: name
-        });
-      });
-      
-      // Add click handlers to location buttons
-      document.querySelectorAll('[data-location]').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          const locName = this.getAttribute('data-location');
-          if (locations[locName]) {
-            map.panTo(locations[locName]);
-            map.setZoom(17);
-            markers[locName].setAnimation(google.maps.Animation.DROP);
-          }
-        });
-      });
+
+    function embedUrl(lat,lng,zoom){
+      return 'https://www.google.com/maps?q='+lat+','+lng+'&z='+zoom+'&output=embed';
     }
-    
-    window.addEventListener('load', initMap);
+
+    const mapFrame = document.getElementById('mapFrame');
+    mapFrame.src = embedUrl(35.9433,-83.9295,16);
+
+    document.querySelectorAll('[data-location]').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const locName = this.getAttribute('data-location');
+        const pos = locations[locName];
+        if (pos) {
+          mapFrame.src = embedUrl(pos.lat,pos.lng,17);
+        }
+      });
+    });
   </script>
 </div>
 
