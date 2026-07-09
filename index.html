@@ -69,7 +69,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-time{font-family:var(--din);font-weight:500;font-size:15px;color:var(--ink3);letter-spacing:.01em;text-align:center;line-height:1.3;}
 .tl-dot{width:9px;height:9px;border-radius:50%;margin-top:7px;flex-shrink:0;background:var(--tc);}
 
-.tl-ev{background:var(--white);border-radius:var(--rsm);padding:12px 14px;border:1px solid var(--line2);border-left:3px solid var(--tc);margin-bottom:7px;transition:box-shadow .14s;}
+.tl-ev{background:var(--white);border-radius:var(--rsm);padding:12px 14px;border:1px solid var(--line2);border-left:3px solid var(--tc);margin-bottom:7px;transition:box-shadow .14s;}.tl-type{display:none;}
 .tl-row.expandable .tl-ev{cursor:pointer;}
 .tl-row.expandable:active .tl-ev{box-shadow:0 4px 16px rgba(0,0,0,.08);}
 .tl-ev-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
@@ -359,8 +359,8 @@ function buildAccordion(){
     return '<div class="acc-day'+(isToday?' open':'')+'" id="acc-'+i+'">'+
       '<div class="acc-head" onclick="toggleAcc('+i+')">'+
         '<div class="acc-head-l">'+
-        '<span class="acc-day-name">'+d+' · '+dateStr+'</span></div>'+
-        '<svg class="acc-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>'+
+        '<span class="acc-day-name" style="color:'+t+';">'+d+' · '+dateStr+'</span></div>'+
+        '<svg class="acc-chev" viewBox="0 0 24 24" style="stroke:'+t+';"><polyline points="6 9 12 15 18 9"/></svg>'+
       '</div>'+
       '<div class="acc-body-wrap" id="acc-wrap-'+i+'"><div class="acc-body">'+rows+'</div></div>'+
     '</div>';
