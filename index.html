@@ -92,6 +92,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .section-head{font-family:var(--din);font-weight:600;font-size:13.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:3px;display:flex;align-items:center;gap:10px;}
 .section-head::after{content:'';flex:1;height:2px;background:var(--teal);opacity:.22;order:1;}
 .section-chev{order:2;}
+.section-head.toggle-head:not(:first-of-type){margin-top:20px;}
 .section-note{font-family:var(--body);font-size:13px;color:var(--ink3);margin-bottom:16px;letter-spacing:.02em;}
 
 /* People */
@@ -172,7 +173,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     </div>
   </div>
 
-  <div class="section-head toggle-head" style="margin-top:20px;" onclick="toggleCollapse('instrSection')">
+  <div class="section-head toggle-head" onclick="toggleCollapse('instrSection')">
     Student Instructors + Assistants
     <svg class="section-chev" id="chev-instrSection" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
   </div>
@@ -306,20 +307,29 @@ function resyncAncestorHeight(el){
 
 // Accordion (day list)
 function buildAccordion(){
+  const today=new Date();
+  const todayMonth=today.getMonth()===6?'Jul':today.getMonth()===7?'Aug':'';
+  const todayDate=todayMonth+(today.getDate()<10?'0':'')+today.getDate();
+  let todayIdx=-1;
   document.getElementById('accordionContent').innerHTML = DAYS.map(function(d,i){
     const evs=SCHEDULE[d].events;const t=DAY_TRACK[d];
+    const dateStr=SCHEDULE[d].date;
     const rows=evs.map(function(e,j){return tlRow(e,d,j,evs.length);}).join('');
-    return '<div class="acc-day'+(i===0?' open':'')+'" id="acc-'+i+'">'+
+    const isToday=dateStr.toLowerCase().replace(/\s/g,'')==todayDate.toLowerCase();
+    if(isToday)todayIdx=i;
+    return '<div class="acc-day'+(isToday?' open':'')+'" id="acc-'+i+'">'+
       '<div class="acc-head" onclick="toggleAcc('+i+')">'+
         '<div class="acc-head-l"><span class="acc-dot" style="background:'+t+';"></span>'+
-        '<span class="acc-day-name" style="color:'+t+';">'+d+'</span></div>'+
+        '<span class="acc-day-name" style="color:'+t+';">'+d+' · '+dateStr+'</span></div>'+
         '<svg class="acc-chev" viewBox="0 0 24 24" style="stroke:'+t+';"><polyline points="6 9 12 15 18 9"/></svg>'+
       '</div>'+
       '<div class="acc-body-wrap" id="acc-wrap-'+i+'"><div class="acc-body">'+rows+'</div></div>'+
     '</div>';
   }).join('');
-  const firstWrap=document.getElementById('acc-wrap-0');
-  firstWrap.style.maxHeight=firstWrap.scrollHeight+'px';
+  if(todayIdx>=0){
+    const wrap=document.getElementById('acc-wrap-'+todayIdx);
+    wrap.style.maxHeight=wrap.scrollHeight+'px';
+  }
 }
 function toggleAcc(i){
   const day=document.getElementById('acc-'+i);
