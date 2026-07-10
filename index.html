@@ -26,7 +26,11 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
-body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;max-width:640px;margin:0 auto;overflow-x:hidden;scroll-snap-type:y mandatory;}@media(max-width:768px){.section{scroll-snap-align:start;scroll-snap-stop:always;}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;max-width:640px;margin:0 auto;overflow-x:hidden;}
+@media(max-width:768px){
+  body{scroll-snap-type:y mandatory;}
+  .snap-section{min-height:100dvh;box-sizing:border-box;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;justify-content:center;}
+}
 
 /* ===== COMPACT HERO ===== */
 .hero{background:var(--teal);color:var(--white);padding:16px 20px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;}
@@ -45,7 +49,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .break-band .desc .lead{color:var(--orange);font-weight:700;font-family:var(--din);letter-spacing:.02em;text-transform:uppercase;font-size:18px;}
 
 /* ===== SCHEDULE (accordion) ===== */
-.sched{background:var(--paper);padding:20px 0 22px;}
+.sched{background:var(--paper);padding:32px 0 34px;}
 .sched-head{padding:0 20px;margin-bottom:14px;}
 .sched-title{font-family:var(--din);font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);margin-bottom:14px;}
 
@@ -143,6 +147,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </head>
 <body>
 
+<div class="snap-section">
 <div class="hero">
   <div class="hero-l">
     <div class="hero-eyebrow">UT · College of Architecture + Design</div>
@@ -159,42 +164,19 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <div class="break-band">
   <div class="desc"><span class="lead">Summer Design Camp</span> provides the opportunity to experience life as a design student on a university campus, offering motivated high school students a week long, immersive introduction to design thinking, design education and careers in design. Participants live in university housing and work directly in the studios of the award-winning Art + Architecture building in the heart of the University of Tennessee, Knoxville campus and visit significant architectural sites in downtown Knoxville and the surrounding areas.</div>
 </div>
+</div>
 
 
 <!-- ===== SCHEDULE ===== -->
-<div class="sched">
+<div class="sched snap-section">
   <div class="sched-head">
     <div class="sched-title">Schedule</div>
   </div>
   <div class="acc-list" id="accordionContent"></div>
 </div>
 
-<!-- ===== INSTRUCTORS ===== -->
-<div class="section">
-  <div class="sched-title">Faculty</div>
-  <div class="tabs-row">
-    <button type="button" class="tab-btn active" data-tab="leadership" onclick="switchTab('leadership')">Instructors</button>
-    <button type="button" class="tab-btn" data-tab="ta" onclick="switchTab('ta')">TAs + Floaters</button>
-    <button type="button" class="tab-btn" data-tab="admin" onclick="switchTab('admin')">Administration</button>
-  </div>
-  <div class="tab-panel-wrap">
-    <div class="tab-panel active" id="panel-leadership">
-      <div id="leadershipBlock"></div>
-    </div>
-    <div class="tab-panel" id="panel-ta">
-      <div class="people-label" style="color:var(--teal);">Teaching Assistants</div>
-      <div class="people-grid" id="instructorsBlock"></div>
-      <div class="people-label" style="color:var(--teal);margin-top:18px;">Floaters</div>
-      <div class="people-grid" id="floatersBlock"></div>
-    </div>
-    <div class="tab-panel" id="panel-admin">
-      <div id="adminBlock"></div>
-    </div>
-  </div>
-</div>
-
 <!-- ===== LOCATIONS ===== -->
-<div class="section">
+<div class="section snap-section">
   <div class="sched-title">Campus Locations</div>
   <div class="link-card" style="cursor:pointer;" data-location="Art + Architecture Building">
     <div class="lc-icon"><svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></div>
@@ -265,7 +247,30 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   </script>
 </div>
 
-<!-- ===== FORMS ===== -->
+<!-- ===== FACULTY + FORMS ===== -->
+<div class="snap-section">
+<div class="section">
+  <div class="sched-title">Faculty</div>
+  <div class="tabs-row">
+    <button type="button" class="tab-btn active" data-tab="leadership" onclick="switchTab('leadership')">Instructors</button>
+    <button type="button" class="tab-btn" data-tab="ta" onclick="switchTab('ta')">TAs + Floaters</button>
+    <button type="button" class="tab-btn" data-tab="admin" onclick="switchTab('admin')">Administration</button>
+  </div>
+  <div class="tab-panel-wrap">
+    <div class="tab-panel active" id="panel-leadership">
+      <div id="leadershipBlock"></div>
+    </div>
+    <div class="tab-panel" id="panel-ta">
+      <div class="people-label" style="color:var(--teal);">Teaching Assistants</div>
+      <div class="people-grid" id="instructorsBlock"></div>
+      <div class="people-label" style="color:var(--teal);margin-top:18px;">Floaters</div>
+      <div class="people-grid" id="floatersBlock"></div>
+    </div>
+    <div class="tab-panel" id="panel-admin">
+      <div id="adminBlock"></div>
+    </div>
+  </div>
+</div>
 <div class="section alt">
   <div class="section-head">Forms</div>
   <div class="link-card" id="eveningFormLink" style="cursor:pointer;">
@@ -279,6 +284,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </div>
   <iframe class="form-frame" id="formEmbed" src="about:blank"></iframe>
+</div>
 </div>
 
 <div class="footer">
