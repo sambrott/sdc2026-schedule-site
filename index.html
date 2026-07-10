@@ -47,7 +47,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 /* ===== SCHEDULE (accordion) ===== */
 .sched{background:var(--paper);padding:20px 0 22px;}
 .sched-head{padding:0 20px;margin-bottom:14px;}
-.sched-title{font-family:var(--din);font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);}
+.sched-title{font-family:var(--din);font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);margin-bottom:14px;}
 
 /* Accordion */
 .acc-list{padding:0 20px;}
@@ -171,7 +171,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 <!-- ===== INSTRUCTORS ===== -->
 <div class="section">
-  <div class="section-head">People</div>
+  <div class="sched-title">Faculty</div>
   <div class="tabs-row">
     <button type="button" class="tab-btn active" data-tab="leadership" onclick="switchTab('leadership')">Instructors</button>
     <button type="button" class="tab-btn" data-tab="ta" onclick="switchTab('ta')">TAs + Floaters</button>
@@ -195,7 +195,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 <!-- ===== LOCATIONS ===== -->
 <div class="section">
-  <div class="section-head">Campus Locations</div>
+  <div class="sched-title">Campus Locations</div>
   <div class="link-card" style="cursor:pointer;" data-location="Art + Architecture Building">
     <div class="lc-icon"><svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></div>
     <div class="lc-text"><div class="lc-title">Art + Architecture Building</div><div class="lc-sub">Studios</div></div>
