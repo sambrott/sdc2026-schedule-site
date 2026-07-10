@@ -121,9 +121,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .section-note{font-family:var(--body);font-size:16px;color:var(--ink3);margin-bottom:16px;letter-spacing:.02em;}
 
 /* People tabs */
-.tabs-row{display:flex;gap:8px;margin-top:12px;margin-bottom:16px;}
-.tab-btn{flex:1;padding:10px 8px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:var(--body);font-weight:600;font-size:13px;color:var(--ink2);cursor:pointer;text-align:center;transition:background .15s,color .15s,border-color .15s;}
-.tab-btn.active{background:var(--teal);border-color:var(--teal);color:var(--white);}
+.tabs-row{display:flex;margin-top:12px;margin-bottom:16px;border:1.5px solid var(--line);}
+.tab-btn{flex:1;padding:10px 8px;border:none;border-right:1.5px solid var(--line);border-radius:0;background:var(--white);font-family:var(--body);font-weight:600;font-size:13px;color:var(--ink2);cursor:pointer;text-align:center;transition:background .15s,color .15s;}
+.tab-btn:last-child{border-right:none;}
+.tab-btn.active{background:var(--teal);color:var(--white);}
 .tab-panel-wrap-outer{position:relative;flex:1;min-height:0;display:flex;}
 .tab-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;padding-right:14px;}
 .tab-panel-wrap::-webkit-scrollbar{display:none;width:0;height:0;}
