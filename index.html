@@ -107,10 +107,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tab-btn{flex:1;padding:10px 8px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:var(--body);font-weight:600;font-size:13px;color:var(--ink2);cursor:pointer;text-align:center;transition:background .15s,color .15s,border-color .15s;}
 .tab-btn.active{background:var(--teal);border-color:var(--teal);color:var(--white);}
 .tab-panel-wrap-outer{position:relative;flex:1;min-height:0;display:flex;}
-.tab-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;padding-right:20px;}
+.tab-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;padding-right:14px;}
 .tab-panel-wrap::-webkit-scrollbar{display:none;width:0;height:0;}
-.fac-scrollbar-track{position:absolute;top:0;right:0;bottom:0;width:12px;background:var(--paper2);border-radius:6px;}
-.fac-scrollbar-thumb{position:absolute;top:0;left:0;width:100%;min-height:30px;background:var(--teal);border-radius:6px;}
+.fac-scrollbar-track{position:absolute;top:0;right:0;bottom:0;width:6px;background:var(--paper2);border-radius:3px;}
+.fac-scrollbar-thumb{position:absolute;top:0;left:0;width:100%;min-height:30px;background:var(--teal);border-radius:3px;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
 
@@ -295,22 +295,19 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   <div class="sched-title">Faculty</div>
   <div class="tabs-row">
     <button type="button" class="tab-btn active" data-tab="leadership" onclick="switchTab('leadership')">Instructors</button>
-    <button type="button" class="tab-btn" data-tab="ta" onclick="switchTab('ta')">TAs + Floaters</button>
-    <button type="button" class="tab-btn" data-tab="admin" onclick="switchTab('admin')">Administration</button>
+    <button type="button" class="tab-btn" data-tab="tas" onclick="switchTab('tas')">TAs</button>
+    <button type="button" class="tab-btn" data-tab="floaters" onclick="switchTab('floaters')">Floaters</button>
   </div>
   <div class="tab-panel-wrap-outer">
     <div class="tab-panel-wrap" id="facPanelWrap">
       <div class="tab-panel active" id="panel-leadership">
         <div id="leadershipBlock"></div>
       </div>
-      <div class="tab-panel" id="panel-ta">
-        <div class="people-label" style="color:var(--teal);">Teaching Assistants</div>
+      <div class="tab-panel" id="panel-tas">
         <div class="people-grid" id="instructorsBlock"></div>
-        <div class="people-label" style="color:var(--teal);margin-top:18px;">Floaters</div>
-        <div class="people-grid" id="floatersBlock"></div>
       </div>
-      <div class="tab-panel" id="panel-admin">
-        <div id="adminBlock"></div>
+      <div class="tab-panel" id="panel-floaters">
+        <div class="people-grid" id="floatersBlock"></div>
       </div>
     </div>
     <div class="fac-scrollbar-track" id="facScrollTrack">
@@ -436,7 +433,7 @@ function toggleAcc(i){
 }
 
 // People
-const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of Student Development \u00b7 Adjunct Assistant Professor, School of Architecture"], ["Anja Cordell", "Faculty Coordinator and Instructor", ""], ["Jessica Bocangel", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["DeMauri Mumphrey", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["Anthony Gonzalez Martinez", "Assistant to Faculty Coordinator", "Architecture Graduate"]],INSTRUCTORS=[["Alondra Amaya-Cruz", "Interior Architecture Post-grad"], ["Sam Brott", "Third-year Graphic Design Student"], ["Ryan Chatman", "Third-year Architecture Student"], ["Kadyn Kilbourne", "Fourth-year Graphic Design Student"], ["Julia Lawyer", "Fourth-year Graphic Design Student"], ["Katie Morriss", "Landscape Architecture Post-grad"], ["Christian Nazario Quirindongo", "Architecture Graduate"], ["Kayden Newman", "Fifth-year Architecture Student"], ["Witt Norris", "Fifth-year Architecture Student"], ["Clara Smith", "Interior Architecture Graduate"], ["Isaiah Smith", "Fifth-year Architecture Student"], ["Macy Steingrube", "Fourth-year Graphic Design Student"]],ASSISTANTS=[["Janet Iniguez", "Third-year Architecture Student"], ["Melani Jimenez", "Fifth-year Architecture Student"], ["Hayden Moody", "Third-year Architecture Student"], ["Cora Williams", "Fourth-year Graphic Design Student"]],ADMIN=[["Jason Young", "Dean of the College of Architecture + Design", "Professor, School of Architecture"], ["Gale Fulton", "Director of the School of Landscape Architecture", "Associate Professor, School of Landscape Architecture"], ["Carl Lostritto", "Director of the School of Architecture", "Professor, School of Architecture"], ["Sarah Lowe", "Director of the School of Design", "Professor, School of Design"]];
+const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of Student Development \u00b7 Adjunct Assistant Professor, School of Architecture"], ["Anja Cordell", "Faculty Coordinator and Instructor", ""], ["Jessica Bocangel", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["DeMauri Mumphrey", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["Anthony Gonzalez Martinez", "Assistant to Faculty Coordinator", "Architecture Graduate"]],INSTRUCTORS=[["Alondra Amaya-Cruz", "Interior Architecture Post-grad"], ["Sam Brott", "Third-year Graphic Design Student"], ["Ryan Chatman", "Third-year Architecture Student"], ["Kadyn Kilbourne", "Fourth-year Graphic Design Student"], ["Julia Lawyer", "Fourth-year Graphic Design Student"], ["Katie Morriss", "Landscape Architecture Post-grad"], ["Christian Nazario Quirindongo", "Architecture Graduate"], ["Kayden Newman", "Fifth-year Architecture Student"], ["Witt Norris", "Fifth-year Architecture Student"], ["Clara Smith", "Interior Architecture Graduate"], ["Isaiah Smith", "Fifth-year Architecture Student"], ["Macy Steingrube", "Fourth-year Graphic Design Student"]],ASSISTANTS=[["Janet Iniguez", "Third-year Architecture Student"], ["Melani Jimenez", "Fifth-year Architecture Student"], ["Hayden Moody", "Third-year Architecture Student"], ["Cora Williams", "Fourth-year Graphic Design Student"]];
 function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active', b.getAttribute('data-tab')===name);});
   document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.toggle('active', p.id==='panel-'+name);});
@@ -447,6 +444,11 @@ function updateFacScrollbar(){
   const track=document.getElementById('facScrollTrack');
   const thumb=document.getElementById('facScrollThumb');
   if(!wrap||!track||!thumb)return;
+  const tasPanel=document.getElementById('panel-tas');
+  if(!tasPanel||!tasPanel.classList.contains('active')){
+    thumb.style.opacity='0';
+    return;
+  }
   const trackH=track.clientHeight;
   const viewH=wrap.clientHeight;
   const contentH=wrap.scrollHeight;
@@ -470,7 +472,6 @@ function personHTML(p,hasDetail){
 document.getElementById('leadershipBlock').innerHTML=LEADERSHIP.map(function(p){return personHTML(p,true);}).join('');
 document.getElementById('instructorsBlock').innerHTML=INSTRUCTORS.map(function(p){return personHTML(p,false);}).join('');
 document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){return personHTML(p,false);}).join('');
-document.getElementById('adminBlock').innerHTML=ADMIN.map(function(p){return personHTML(p,true);}).join('');
 
 (function(){
   const facWrap=document.getElementById('facPanelWrap');
