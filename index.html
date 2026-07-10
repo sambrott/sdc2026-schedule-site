@@ -453,6 +453,32 @@ function toggleAcc(i){
 
 // People
 const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of Student Development \u00b7 Adjunct Assistant Professor, School of Architecture"], ["Anja Cordell", "Faculty Coordinator and Instructor", ""], ["Jessica Bocangel", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["DeMauri Mumphrey", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["Anthony Gonzalez Martinez", "Assistant to Faculty Coordinator", "Architecture Graduate"]],INSTRUCTORS=[["Alondra Amaya-Cruz", "Interior Architecture Post-grad"], ["Sam Brott", "Third-year Graphic Design Student"], ["Ryan Chatman", "Third-year Architecture Student"], ["Kadyn Kilbourne", "Fourth-year Graphic Design Student"], ["Julia Lawyer", "Fourth-year Graphic Design Student"], ["Katie Morriss", "Landscape Architecture Post-grad"], ["Christian Nazario Quirindongo", "Architecture Graduate"], ["Kayden Newman", "Fifth-year Architecture Student"], ["Witt Norris", "Fifth-year Architecture Student"], ["Clara Smith", "Interior Architecture Graduate"], ["Isaiah Smith", "Fifth-year Architecture Student"], ["Macy Steingrube", "Fourth-year Graphic Design Student"]],ASSISTANTS=[["Janet Iniguez", "Third-year Architecture Student"], ["Melani Jimenez", "Fifth-year Architecture Student"], ["Hayden Moody", "Third-year Architecture Student"], ["Cora Williams", "Fourth-year Graphic Design Student"]];
+(function(){
+  var sections = null;
+  function getSections(){
+    if(!sections){ sections = Array.prototype.slice.call(document.querySelectorAll('.snap-section')); }
+    return sections;
+  }
+  var scrollTimer = null;
+  function correctSnap(){
+    var secs = getSections();
+    if(!secs.length) return;
+    var current = window.scrollY;
+    var closest = secs[0];
+    var closestDist = Infinity;
+    secs.forEach(function(s){
+      var dist = Math.abs(s.offsetTop - current);
+      if(dist < closestDist){ closestDist = dist; closest = s; }
+    });
+    if(Math.abs(closest.offsetTop - current) > 2){
+      window.scrollTo({top: closest.offsetTop, behavior:'smooth'});
+    }
+  }
+  window.addEventListener('scroll', function(){
+    if(scrollTimer) clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(correctSnap, 120);
+  }, {passive:true});
+})();
 function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active', b.getAttribute('data-tab')===name);});
   document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.toggle('active', p.id==='panel-'+name);});
