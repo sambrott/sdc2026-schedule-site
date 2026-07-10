@@ -25,11 +25,10 @@
   --r:14px;--rsm:8px;--pill:999px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{scroll-behavior:smooth;}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;max-width:640px;margin:0 auto;overflow-x:hidden;}
 @media(max-width:768px){
-  body{scroll-snap-type:y mandatory;}
-  .snap-section{min-height:100dvh;box-sizing:border-box;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;justify-content:center;}
+  html,body{height:100%;scroll-snap-type:y mandatory;}
+  .snap-section{height:100vh;height:100dvh;box-sizing:border-box;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;justify-content:center;}
 }
 
 /* ===== COMPACT HERO ===== */
@@ -49,13 +48,13 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .break-band .desc .lead{color:var(--orange);font-weight:700;font-family:var(--din);letter-spacing:.02em;text-transform:uppercase;font-size:18px;}
 
 /* ===== SCHEDULE (accordion) ===== */
-.sched{background:var(--paper);padding:32px 0 34px;}
+.sched{background:var(--paper);padding:20px 0 22px;}
 .sched-head{padding:0 20px;margin-bottom:14px;}
 .sched-title{font-family:var(--din);font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);margin-bottom:14px;}
 
 /* Accordion */
 .acc-list{padding:0 20px;}
-.acc-day{border-bottom:1px solid var(--line);}
+.acc-day{border-bottom:1px solid var(--line);margin-bottom:8px;}
 .acc-head{display:flex;align-items:center;justify-content:space-between;padding:16px 2px;cursor:pointer;}
 .acc-head-l{display:flex;align-items:center;gap:10px;}
 .acc-dot{width:10px;height:10px;border-radius:50%;display:block;flex-shrink:0;}
