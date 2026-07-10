@@ -71,7 +71,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 /* ===== SCHEDULE (accordion) ===== */
 .sched{background:var(--paper);padding:24px 0 22px;}
-.sched-head{padding:0 20px;margin-bottom:14px;}
+.sched-head{padding:0 20px;margin-bottom:14px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+.sched-pdf-link{font-family:var(--body);font-weight:600;font-size:14px;color:var(--teal);text-decoration:underline;white-space:nowrap;}
 .sched-title{font-family:var(--din);font-weight:700;font-size:29px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);margin-bottom:14px;}
 
 /* Accordion */
@@ -235,6 +236,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <div class="sched snap-section">
   <div class="sched-head">
     <div class="sched-title">Schedule</div>
+    <a class="sched-pdf-link" href="schedule.pdf" target="_blank" rel="noopener">View PDF</a>
   </div>
   <div class="acc-list" id="accordionContent"></div>
 </div>
