@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SDC! 2026 · Summer Design Camp</title>
+<script>
+if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+window.addEventListener('load', function(){ window.scrollTo(0,0); });
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Archivo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -93,7 +97,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 /* ===== SECTIONS ===== */
 .section{padding:24px 20px;}
-.section.alt{background:var(--paper2);}
+.section.alt{background:var(--paper2);padding-top:10px;}
 .section-head{font-family:var(--din);font-weight:600;font-size:16px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:3px;display:flex;align-items:center;gap:10px;}
 
 
@@ -103,7 +107,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tabs-row{display:flex;gap:8px;margin-top:12px;margin-bottom:16px;}
 .tab-btn{flex:1;padding:10px 8px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:var(--body);font-weight:600;font-size:13px;color:var(--ink2);cursor:pointer;text-align:center;transition:background .15s,color .15s,border-color .15s;}
 .tab-btn.active{background:var(--teal);border-color:var(--teal);color:var(--white);}
-.tab-panel-wrap{max-height:380px;overflow-y:auto;}
+.tab-panel-wrap{max-height:640px;overflow-y:auto;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
 
