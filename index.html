@@ -2,27 +2,62 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
 <title>SDC! 2026 · Summer Design Camp</title>
 <script>
 if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
 window.addEventListener('load', function(){ window.scrollTo(0,0); });
 (function(){
-  var lastWidth = window.innerWidth;
-  function setAppHeight(){
-    document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
+  var MOBILE_MAX = 768;
+  var lockedHeight = window.innerHeight;
+
+  function applyAppHeight(){
+    document.documentElement.style.setProperty('--app-height', lockedHeight + 'px');
   }
-  setAppHeight();
-  window.addEventListener('resize', function(){
-    if (window.innerWidth !== lastWidth) {
-      lastWidth = window.innerWidth;
-      setAppHeight();
+
+  function isMobile(){
+    return window.innerWidth <= MOBILE_MAX;
+  }
+
+  function getSnapSections(){
+    return Array.prototype.slice.call(document.querySelectorAll('.snap-section'));
+  }
+
+  function anchorCurrentSection(){
+    if(!isMobile() || window.__navScrolling) return;
+    var secs = getSnapSections();
+    if(!secs.length) return;
+    var y = window.scrollY;
+    var closest = secs[0];
+    var closestDist = Infinity;
+    secs.forEach(function(s){
+      var dist = Math.abs(s.offsetTop - y);
+      if(dist < closestDist){
+        closestDist = dist;
+        closest = s;
+      }
+    });
+    if(closestDist < 96){
+      window.scrollTo(0, closest.offsetTop);
     }
-  });
+  }
+
+  applyAppHeight();
+
   window.addEventListener('orientationchange', function(){
-    lastWidth = window.innerWidth;
-    setAppHeight();
+    setTimeout(function(){
+      lockedHeight = window.innerHeight;
+      applyAppHeight();
+      anchorCurrentSection();
+    }, 150);
   });
+
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', function(){
+      if(!isMobile()) return;
+      anchorCurrentSection();
+    });
+  }
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,14 +87,18 @@ window.addEventListener('load', function(){ window.scrollTo(0,0); });
   --nav-bar-h:2.5px;
   --nav-bar-gap:6px;
   --nav-bar-step:calc(var(--nav-bar-gap) + var(--nav-bar-h));
+  --app-height:100svh;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;max-width:640px;margin:0 auto;overflow-x:hidden;}
 .snap-section{box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;}
 @media(max-width:768px){
-  html,body{height:100%;scroll-snap-type:y mandatory;overscroll-behavior-y:none;}
-  .snap-section{height:100vh;height:100dvh;height:var(--app-height,100dvh);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
+  html,body{height:var(--app-height);min-height:var(--app-height);scroll-snap-type:y mandatory;overscroll-behavior-y:none;}
+  .snap-section{height:var(--app-height);min-height:var(--app-height);max-height:var(--app-height);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
   .img-overlay-wrap{min-height:0;}
+  #section-forms{position:relative;}
+  #section-forms .footer{position:absolute;bottom:0;left:0;right:0;margin-top:0;}
+  #section-forms .section{padding-bottom:104px;}
 }
 @media(min-width:769px){
   html,body{height:auto;scroll-snap-type:none;overscroll-behavior-y:auto;}
