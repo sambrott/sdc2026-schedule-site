@@ -176,20 +176,13 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .break-band .desc{font-family:var(--body);font-weight:300;font-size:15px;line-height:1.6;color:rgba(255,255,255,.95);text-wrap:pretty;}
 .break-band .desc .lead{color:var(--orange);font-weight:700;font-family:var(--din);letter-spacing:.02em;text-transform:uppercase;font-size:18px;}
 .swipe-cue{position:absolute;left:50%;bottom:9px;z-index:2;width:42px;height:46px;transform:translateX(-50%);pointer-events:none;}
-.swipe-chevron{position:absolute;left:7px;bottom:0;width:28px;height:14px;fill:none;stroke:var(--white);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));}
-.swipe-chevron:nth-child(-n+3){opacity:0;animation:swipeTrail 1.8s cubic-bezier(.22,.61,.36,1) infinite;}
-.swipe-chevron:nth-child(1){animation-delay:0s;}
-.swipe-chevron:nth-child(2){animation-delay:.45s;}
-.swipe-chevron:nth-child(3){animation-delay:.9s;}
-.swipe-chevron:nth-child(4){opacity:.98;animation:swipeAnchor 1.8s ease-in-out infinite;}
+.swipe-chevron{position:absolute;left:7px;width:28px;height:14px;fill:none;stroke:var(--white);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));opacity:0;animation:swipeTrail 1.35s ease-in-out infinite;}
+.swipe-chevron:nth-child(1){bottom:12px;}
+.swipe-chevron:nth-child(2){bottom:0;animation-delay:.16s;}
 @keyframes swipeTrail{
-  0%{transform:translateY(0) scale(1);opacity:0;}
-  12%{transform:translateY(-1px) scale(1);opacity:.78;}
-  75%,100%{transform:translateY(-30px) scale(.9);opacity:0;}
-}
-@keyframes swipeAnchor{
-  0%,100%{transform:translateY(1px);opacity:.75;}
-  50%{transform:translateY(-2px);opacity:1;}
+  0%{transform:translateY(8px);opacity:0;}
+  35%{opacity:1;}
+  100%{transform:translateY(-8px);opacity:0;}
 }
 @media(min-width:769px){
   .break-band{padding-bottom:28px;}
@@ -197,7 +190,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 }
 @media(prefers-reduced-motion:reduce){
   .swipe-chevron{animation:none;}
-  .swipe-chevron:nth-child(-n+3){display:none;}
+  .swipe-chevron:nth-child(1){display:none;}
+  .swipe-chevron:nth-child(2){opacity:.95;transform:none;}
 }
 
 /* ===== SCHEDULE (day tabs) ===== */
@@ -433,8 +427,6 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   <div class="desc"><span class="lead">Summer Design Camp</span> provides the opportunity to experience life as a design student on a university campus, offering motivated high school students a week long, immersive introduction to design thinking, design education and careers in design. Participants live in university housing and work directly in the studios of the award-winning Art + Architecture building in the heart of the University of Tennessee, Knoxville campus and visit significant architectural sites in downtown Knoxville and the surrounding&nbsp;areas.</div>
 </div>
 <div class="swipe-cue" aria-hidden="true">
-  <svg class="swipe-chevron" viewBox="0 0 28 14"><polyline points="3 3 14 11 25 3"/></svg>
-  <svg class="swipe-chevron" viewBox="0 0 28 14"><polyline points="3 3 14 11 25 3"/></svg>
   <svg class="swipe-chevron" viewBox="0 0 28 14"><polyline points="3 3 14 11 25 3"/></svg>
   <svg class="swipe-chevron" viewBox="0 0 28 14"><polyline points="3 3 14 11 25 3"/></svg>
 </div>
