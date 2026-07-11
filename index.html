@@ -219,8 +219,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-choice-sub{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
 .tl-vote-btn:not(.is-unset):hover{background:var(--teal);color:var(--white);}
 .tl-vote-btn:not(.is-unset):active{background:var(--teal);color:var(--white);opacity:.88;}
-.lc-directions.is-unset{opacity:.55;cursor:default;}
-.lc-directions.is-unset:hover{background:transparent;color:var(--teal);}
+.lc-directions.is-unset,.tl-vote-btn.is-unset{border-color:rgba(0,0,0,.18);color:var(--ink3);background:var(--paper2);cursor:not-allowed;opacity:1;}
+.lc-directions.is-unset:hover,.tl-vote-btn.is-unset:hover{background:var(--paper2);color:var(--ink3);border-color:rgba(0,0,0,.18);}
 .tl-option-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
 .tl-option-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .tl-option-text{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);letter-spacing:.02em;line-height:1.4;}
@@ -546,7 +546,7 @@ function eveningVoteBtn(){
   if(EVENING_FORM_URL){
     return '<a class="lc-directions tl-vote-btn" href="'+EVENING_FORM_URL+'" target="_blank" rel="noopener"'+stopClick+'>Vote'+arrow+'</a>';
   }
-  return '<span class="lc-directions tl-vote-btn is-unset"'+stopClick+'>Vote'+arrow+'</span>';
+  return '<span class="lc-directions tl-vote-btn is-unset" aria-disabled="true" title="Voting unavailable"'+stopClick+'>Vote'+arrow+'</span>';
 }
 
 // Timeline event row (expands in place to reveal detail + materials)
