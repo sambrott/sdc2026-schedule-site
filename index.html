@@ -78,7 +78,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .nav-float.on-hero .nav-toggle:hover{background:rgba(255,255,255,.14);}
 .nav-toggle.pop{animation:navPop .35s cubic-bezier(.4,0,.2,1);}
 @keyframes navPop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
-.nav-menu{position:absolute;top:calc(100% + 6px);right:0;width:min(72vw,272px);min-width:200px;display:flex;flex-direction:column;align-items:stretch;gap:0;padding:6px 0;border-radius:var(--rsm);background:hsla(38,24%,94%,.78);backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);border:.5px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 12px 40px rgba(0,0,0,.1);animation:navDropIn .2s ease;}
+.nav-menu{position:absolute;top:calc(100% + 6px);right:0;width:min(72vw,272px);min-width:200px;display:none;flex-direction:column;align-items:stretch;gap:0;padding:6px 0;border-radius:var(--rsm);background:hsla(38,24%,94%,.78);backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);border:.5px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 12px 40px rgba(0,0,0,.1);}
+.nav-float.is-open .nav-menu{display:flex;animation:navDropIn .2s ease;}
 .nav-float.on-hero .nav-menu{background:rgba(0,0,0,.52);backdrop-filter:blur(28px) saturate(1.35);-webkit-backdrop-filter:blur(28px) saturate(1.35);border:.5px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 40px rgba(0,0,0,.35);}
 @keyframes navDropIn{0%{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 .nav-link{display:block;width:100%;padding:11px 16px;border:none;border-radius:6px;background:transparent;cursor:pointer;text-align:left;font-family:var(--din);font-weight:600;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);transition:background .15s ease,color .15s ease;}
@@ -209,7 +210,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <nav class="nav-float" id="navFloat" aria-label="Section navigation">
   <div class="nav-float-inner">
     <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav-mobile-menu" aria-label="Open menu">!</button>
-    <div class="nav-menu" id="nav-mobile-menu" hidden>
+    <div class="nav-menu" id="nav-mobile-menu">
       <button type="button" class="nav-link" data-target="section-schedule">Schedule</button>
       <button type="button" class="nav-link" data-target="section-locations">Locations</button>
       <button type="button" class="nav-link" data-target="section-faculty">Faculty</button>
@@ -655,7 +656,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
   }
 
   function isMenuOpen(){
-    return navMenu && !navMenu.hidden;
+    return navFloat && navFloat.classList.contains('is-open');
   }
 
   function setScrollSnapEnabled(enabled){
@@ -709,20 +710,22 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
 
   function setNavOpen(open){
     if(!navFloat||!navToggle||!navMenu)return;
+    navFloat.classList.toggle('is-open',!!open);
     navToggle.setAttribute('aria-expanded',open?'true':'false');
     navToggle.setAttribute('aria-label',open?'Close menu':'Open menu');
+    navMenu.setAttribute('aria-hidden',open?'false':'true');
     if(open){
-      navMenu.hidden=false;
       navMenu.style.animation='none';
       void navMenu.offsetWidth;
       navMenu.style.animation='';
-    }else{
-      navMenu.hidden=true;
     }
   }
 
   function toggleNav(e){
-    if(e){e.stopPropagation();}
+    if(e){
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if(!navToggle||!navMenu)return;
     navToggle.classList.remove('pop');
     void navToggle.offsetWidth;
@@ -731,11 +734,20 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
   }
 
   function goToSection(id,e){
-    if(e){e.stopPropagation();}
+    if(e){
+      e.preventDefault();
+      e.stopPropagation();
+    }
     var el=document.getElementById(id);
     if(!el)return;
     setNavOpen(false);
     smoothScrollTo(el.offsetTop,900);
+  }
+
+  function handleOutsideClose(e){
+    if(!isMenuOpen())return;
+    if(navFloat.contains(e.target))return;
+    setNavOpen(false);
   }
 
   if(navToggle){
@@ -746,11 +758,8 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
       goToSection(btn.getAttribute('data-target'),e);
     });
   });
-  document.addEventListener('click',function(e){
-    if(!isMenuOpen())return;
-    if(navFloat.contains(e.target))return;
-    setNavOpen(false);
-  });
+  document.addEventListener('pointerdown',handleOutsideClose,true);
+  document.addEventListener('touchstart',handleOutsideClose,{capture:true,passive:true});
 
   window.addEventListener('scroll',function(){
     updateNavColor();
@@ -766,6 +775,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
   });
   updateNavColor();
   updateActiveNavLink();
+  setNavOpen(false);
 })();
 
 // Init
