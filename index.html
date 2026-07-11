@@ -211,6 +211,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   <div class="nav-float-inner">
     <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav-mobile-menu" aria-label="Open menu">!</button>
     <div class="nav-menu" id="nav-mobile-menu">
+      <button type="button" class="nav-link" data-target="section-hero">Home</button>
       <button type="button" class="nav-link" data-target="section-schedule">Schedule</button>
       <button type="button" class="nav-link" data-target="section-locations">Locations</button>
       <button type="button" class="nav-link" data-target="section-faculty">Faculty</button>
@@ -613,6 +614,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
   var navMenu=document.getElementById('nav-mobile-menu');
   var heroSection=document.getElementById('section-hero');
   var navSections=[
+    {id:'section-hero',el:null},
     {id:'section-schedule',el:null},
     {id:'section-locations',el:null},
     {id:'section-faculty',el:null},
