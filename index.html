@@ -667,8 +667,12 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     document.body.style.scrollSnapType=val;
   }
 
-  function easeInOutCubic(t){
-    return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  function easeOutCubic(t){
+    return 1-Math.pow(1-t,3);
+  }
+
+  function scrollDurationForDistance(distance){
+    return Math.min(480,Math.max(260,Math.abs(distance)*0.38));
   }
 
   function smoothScrollTo(targetY,duration){
@@ -677,7 +681,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     var startY=window.scrollY;
     var diff=targetY-startY;
     var startTime=null;
-    duration=duration||850;
+    duration=duration||scrollDurationForDistance(diff);
     window.__navScrolling=true;
     setScrollSnapEnabled(false);
 
@@ -688,7 +692,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
         window.__navScrolling=false;
         setScrollSnapEnabled(true);
         updateActiveNavLink();
-      },400);
+      },120);
     }
 
     if(Math.abs(diff)<2){
@@ -700,7 +704,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
       if(!startTime)startTime=ts;
       var elapsed=ts-startTime;
       var progress=Math.min(elapsed/duration,1);
-      window.scrollTo(0,startY+diff*easeInOutCubic(progress));
+      window.scrollTo(0,startY+diff*easeOutCubic(progress));
       if(progress<1){
         scrollAnim=requestAnimationFrame(step);
       }else{
@@ -743,7 +747,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     var el=document.getElementById(id);
     if(!el)return;
     setNavOpen(false);
-    smoothScrollTo(el.offsetTop,900);
+    smoothScrollTo(el.offsetTop);
   }
 
   function handleOutsideClose(e){
