@@ -178,8 +178,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 /* ===== SCHEDULE (day tabs) ===== */
 .sched{background:var(--paper);padding:24px 0 22px;flex:1;min-height:0;}
-.sched-head{padding:0 20px;margin-bottom:14px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-shrink:0;}
-.sched-pdf-link{font-family:var(--body);font-weight:600;font-size:14px;color:var(--teal);text-decoration:underline;white-space:nowrap;}
+.sched-head{padding:0 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;}
+.sched-head .sched-title{margin-bottom:0;}
 .sched-title{font-family:var(--din);font-weight:700;font-size:var(--section-title-size);line-height:1;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);margin-bottom:14px;}
 
 /* Day tabs */
@@ -392,7 +392,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <div class="sched snap-section" id="section-schedule">
   <div class="sched-head">
     <div class="sched-title">Schedule</div>
-    <a class="sched-pdf-link" href="schedule.pdf" target="_blank" rel="noopener">View PDF</a>
+    <a class="lc-directions" href="schedule.pdf" target="_blank" rel="noopener">View PDF<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
   </div>
   <div class="day-tabs-row" id="dayTabs"></div>
   <div class="day-info" id="dayInfo"></div>
