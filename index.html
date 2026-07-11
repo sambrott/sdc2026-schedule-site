@@ -183,11 +183,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .sched-title{font-family:var(--din);font-weight:700;font-size:var(--section-title-size);line-height:1;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);margin-bottom:14px;}
 
 /* Day tabs */
-.day-tabs-row{display:flex;margin:0 10px 10px;border:1.5px solid var(--line);flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;}
+.day-tabs-row{display:flex;margin:0 10px 10px;flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;gap:0;}
 .day-tabs-row::-webkit-scrollbar{display:none;}
-.day-tab-btn{flex:1;min-width:44px;padding:10px 4px;border:none;border-right:1.5px solid var(--line);border-radius:0;background:var(--white);font-family:var(--body);font-weight:600;font-size:12px;color:var(--ink2);cursor:pointer;text-align:center;transition:background .15s,color .15s;white-space:nowrap;}
-.day-tab-btn:last-child{border-right:none;}
-.day-tab-btn.active{color:var(--white);}
+.day-tab-btn{flex:1;min-width:44px;padding:10px 4px;border:1.5px solid transparent;border-radius:0;background:var(--white);font-family:var(--body);font-weight:600;font-size:12px;cursor:pointer;text-align:center;transition:background .15s,color .15s,border-color .15s;white-space:nowrap;margin-left:-1.5px;position:relative;}
+.day-tab-btn:first-child{margin-left:0;}
+.day-tab-btn.active{z-index:1;color:var(--white);}
 .day-info{flex-shrink:0;padding:0 20px 12px;}
 .day-info-name{font-family:var(--din);font-weight:700;font-size:21px;text-transform:uppercase;letter-spacing:.02em;line-height:1.1;}
 .day-info-label{font-family:var(--body);font-weight:500;font-size:15px;color:var(--ink3);margin-top:2px;}
@@ -521,7 +521,7 @@ const SCHEDULE = {"Sunday": {"date": "Jul 13", "label": "Arrival", "events": [{"
 const TYPE_COLORS = {"meal": ["#7468A3", "rgba(116,104,163,0.10)"], "studio": ["#007179", "rgba(0,113,121,0.10)"], "field": ["#FF8200", "rgba(255,130,0,0.08)"], "jam": ["#FF8200", "rgba(255,130,0,0.10)"], "evening": ["#007179", "rgba(0,113,121,0.06)"], "check": ["#8a8a8a", "rgba(0,0,0,0.05)"], "welcome": ["#FF8200", "rgba(255,130,0,0.08)"], "photo": ["#7468A3", "rgba(116,104,163,0.10)"], "exhibit": ["#7468A3", "rgba(116,104,163,0.12)"], "depart": ["#8a8a8a", "rgba(0,0,0,0.05)"]};
 const TYPE_LABELS = {"meal": "Meal", "studio": "Studio", "field": "Field Trip", "jam": "Jam Session", "evening": "Evening", "check": "Dorm", "welcome": "Welcome", "photo": "Photo", "exhibit": "Exhibit", "depart": "Departure"};
 const DAYS = Object.keys(SCHEDULE);
-const DAY_TRACK = {Sunday:"#8a8a8a",Monday:"#FF8200",Tuesday:"#007179",Wednesday:"#7468A3",Thursday:"#007179",Friday:"#FF8200",Saturday:"#8a8a8a"};
+const DAY_TRACK = {Sunday:"#7468A3",Monday:"#FF8200",Tuesday:"#007179",Wednesday:"#7468A3",Thursday:"#007179",Friday:"#FF8200",Saturday:"#007179"};
 
 function tc(type){return (TYPE_COLORS[type]||["#007179","rgba(0,113,121,.1)"]);}
 
@@ -575,12 +575,24 @@ function updateDayInfo(day){
     (SCHEDULE[day].label?'<div class="day-info-label">'+SCHEDULE[day].label+'</div>':'');
 }
 
+function styleDayTab(btn,day,isActive){
+  const color=DAY_TRACK[day];
+  btn.style.borderColor=color;
+  if(isActive){
+    btn.style.background=color;
+    btn.style.color='#fff';
+  }else{
+    btn.style.background='var(--white)';
+    btn.style.color=color;
+  }
+}
+
 function switchDay(day){
   document.querySelectorAll('.day-tab-btn').forEach(function(b){
-    const isActive=b.getAttribute('data-day')===day;
+    const d=b.getAttribute('data-day');
+    const isActive=d===day;
     b.classList.toggle('active',isActive);
-    if(isActive)b.style.background=DAY_TRACK[day];
-    else b.style.background='';
+    styleDayTab(b,d,isActive);
   });
   document.querySelectorAll('.sched-panel').forEach(function(p){
     p.classList.toggle('active',p.id==='sched-'+day);
@@ -604,8 +616,11 @@ function buildDayTabs(){
   const defaultDay=getTodayDay();
   document.getElementById('dayTabs').innerHTML=DAYS.map(function(d){
     const isActive=d===defaultDay;
-    return '<button type="button" class="day-tab-btn'+(isActive?' active':'')+'" data-day="'+d+'" onclick="switchDay(\''+d+'\')" style="'+(isActive?'background:'+DAY_TRACK[d]+';':'')+'">'+DAY_ABBR[d]+'</button>';
+    return '<button type="button" class="day-tab-btn'+(isActive?' active':'')+'" data-day="'+d+'" onclick="switchDay(\''+d+'\')">'+DAY_ABBR[d]+'</button>';
   }).join('');
+  document.querySelectorAll('.day-tab-btn').forEach(function(b){
+    styleDayTab(b,b.getAttribute('data-day'),b.classList.contains('active'));
+  });
   document.getElementById('schedPanelWrap').innerHTML=DAYS.map(function(d){
     const evs=SCHEDULE[d].events;
     const rows=evs.map(function(e,j){return tlRow(e,d,j,evs.length);}).join('');
