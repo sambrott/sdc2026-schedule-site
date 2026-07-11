@@ -123,8 +123,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   #section-schedule .day-info-name{font-size:19px;}
   #section-schedule .sched-panel-wrap{overflow:hidden;padding-bottom:8px;}
   #section-schedule .sched-panel.active{display:flex;flex-direction:column;height:100%;min-height:0;}
-  #section-schedule .timeline{--schedule-max-rows:10;flex:1;min-height:0;display:flex;flex-direction:column;gap:2px;}
-  #section-schedule .tl-row{flex:0 0 calc((100% - 18px)/var(--schedule-max-rows));min-height:0;align-items:stretch;grid-template-columns:56px 1fr;gap:6px;}
+  #section-schedule .timeline{--schedule-row-gap:2px;--schedule-gap-total:calc((var(--schedule-max-rows) - 1) * var(--schedule-row-gap));flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--schedule-row-gap);}
+  #section-schedule .tl-row{flex:0 0 calc((100% - var(--schedule-gap-total))/var(--schedule-max-rows));min-height:0;align-items:stretch;grid-template-columns:56px 1fr;gap:6px;}
   #section-schedule .tl-tc{padding-top:4px;height:100%;justify-content:flex-start;}
   #section-schedule .tl-line{display:block;flex:1;margin-top:4px;min-height:4px;}
   #section-schedule .tl-time{font-size:11px;line-height:1.15;}
@@ -786,7 +786,7 @@ function buildDayTabs(){
   document.getElementById('schedPanelWrap').innerHTML=DAYS.map(function(d){
     const evs=SCHEDULE[d].events;
     const rows=evs.map(function(e,j){return tlRow(e,d,j,evs.length);}).join('');
-    return '<div class="sched-panel'+(d===defaultDay?' active':'')+'" id="sched-'+d+'"><div class="timeline">'+rows+'</div></div>';
+    return '<div class="sched-panel'+(d===defaultDay?' active':'')+'" id="sched-'+d+'"><div class="timeline" style="--schedule-max-rows:'+evs.length+'">'+rows+'</div></div>';
   }).join('');
   updateDayInfo(defaultDay);
   syncSchedulePanelMode();
