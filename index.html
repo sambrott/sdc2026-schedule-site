@@ -363,21 +363,14 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .form-frame{width:100%;height:560px;border:1.5px solid var(--line);border-radius:0;background:var(--white);margin-top:6px;}
 .form-frame:not([src]),.form-frame[src=""],.form-frame[src="about:blank"]{display:none;}
 
-/* Footer */
-.footer{background:var(--teal);color:var(--white);padding:28px 22px 38px;text-align:center;flex-shrink:0;width:100%;}
-.footer-url{font-family:var(--din);font-weight:600;font-size:clamp(19px,6vw,28px);color:var(--orange);letter-spacing:.01em;text-decoration:underline;}
-.footer-tag{font-family:var(--body);font-weight:300;font-size:15px;color:rgba(255,255,255,.7);margin-top:8px;letter-spacing:.04em;}
-
 /* Forms page layout */
 #section-forms{background:var(--paper);}
 .forms-shell{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;}
 #section-forms .section{flex:1;min-height:0;padding-bottom:0;}
 .forms-panel-wrap-outer{flex:1;min-height:0;display:flex;}
 .forms-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;}
-#section-forms .footer{flex-shrink:0;}
 @media(min-width:769px){
   .forms-shell{min-height:100%;}
-  #section-forms .footer{margin-top:auto;}
 }
 
 /* Breathing room between Faculty and Forms on mobile snap scroll */
@@ -612,12 +605,14 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     </div>
     <div class="briefs-menu-wrap" id="briefsMenuWrap"><div class="briefs-menu" id="briefsMenu"></div></div>
   </div>
+  <a class="link-card" href="https://archdesign.utk.edu" target="_blank" rel="noopener" id="archdesignLink">
+    <div class="lc-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+    <div class="lc-text"><div class="lc-title">archdesign.utk.edu</div><div class="lc-sub">UT College of Architecture + Design</div></div>
+    <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+  </a>
   <iframe class="form-frame" id="formEmbed" src="about:blank"></iframe>
     </div>
   </div>
-</div>
-<div class="footer">
-  <a href="https://archdesign.utk.edu" target="_blank" class="footer-url">archdesign.utk.edu</a>
 </div>
 </div>
 </div>
