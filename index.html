@@ -71,23 +71,25 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .break-band .desc{font-family:var(--body);font-weight:300;font-size:15px;line-height:1.6;color:rgba(255,255,255,.95);text-wrap:pretty;}
 .break-band .desc .lead{color:var(--orange);font-weight:700;font-family:var(--din);letter-spacing:.02em;text-transform:uppercase;font-size:18px;}
 
-/* ===== SCHEDULE (accordion) ===== */
-.sched{background:var(--paper);padding:24px 0 22px;}
-.sched-head{padding:0 20px;margin-bottom:14px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+/* ===== SCHEDULE (day tabs) ===== */
+.sched{background:var(--paper);padding:24px 0 22px;flex:1;min-height:0;}
+.sched-head{padding:0 20px;margin-bottom:14px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-shrink:0;}
 .sched-pdf-link{font-family:var(--body);font-weight:600;font-size:14px;color:var(--teal);text-decoration:underline;white-space:nowrap;}
 .sched-title{font-family:var(--din);font-weight:700;font-size:29px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);margin-bottom:14px;}
 
-/* Accordion */
-.acc-list{padding:0 10px;flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.acc-day{border-bottom:1px solid var(--line);margin-bottom:8px;}
-.acc-head{display:flex;align-items:center;justify-content:space-between;padding:16px 2px 16px 10px;cursor:pointer;}
-.acc-head-l{display:flex;align-items:center;gap:10px;}
-.acc-dot{width:10px;height:10px;border-radius:50%;display:block;flex-shrink:0;}
-.acc-day-name{font-family:var(--din);font-weight:700;font-size:21px;text-transform:uppercase;letter-spacing:.02em;}
-.acc-chev{width:22px;height:22px;fill:none;stroke-width:2.5;flex-shrink:0;transition:transform .3s cubic-bezier(.4,0,.2,1);}
-.acc-day.open .acc-chev{transform:rotate(180deg);}
-.acc-body-wrap{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
-.acc-body{padding:4px 0 18px;}
+/* Day tabs */
+.day-tabs-row{display:flex;margin:0 10px 10px;border:1.5px solid var(--line);flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;}
+.day-tabs-row::-webkit-scrollbar{display:none;}
+.day-tab-btn{flex:1;min-width:44px;padding:10px 4px;border:none;border-right:1.5px solid var(--line);border-radius:0;background:var(--white);font-family:var(--body);font-weight:600;font-size:12px;color:var(--ink2);cursor:pointer;text-align:center;transition:background .15s,color .15s;white-space:nowrap;}
+.day-tab-btn:last-child{border-right:none;}
+.day-tab-btn.active{color:var(--white);}
+.day-info{flex-shrink:0;padding:0 20px 12px;}
+.day-info-name{font-family:var(--din);font-weight:700;font-size:21px;text-transform:uppercase;letter-spacing:.02em;line-height:1.1;}
+.day-info-label{font-family:var(--body);font-weight:500;font-size:15px;color:var(--ink3);margin-top:2px;}
+.sched-panel-wrap-outer{position:relative;flex:1;min-height:0;display:flex;padding:0 10px;}
+.sched-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 4px 8px;}
+.sched-panel{display:none;}
+.sched-panel.active{display:block;}
 
 /* Timeline (events within a day) */
 .timeline{display:flex;flex-direction:column;}
@@ -241,7 +243,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <div class="sched-title">Schedule</div>
     <a class="sched-pdf-link" href="schedule.pdf" target="_blank" rel="noopener">View PDF</a>
   </div>
-  <div class="acc-list" id="accordionContent"></div>
+  <div class="day-tabs-row" id="dayTabs"></div>
+  <div class="day-info" id="dayInfo"></div>
+  <div class="sched-panel-wrap-outer">
+    <div class="sched-panel-wrap" id="schedPanelWrap"></div>
+  </div>
 </div>
 
 <!-- ===== LOCATIONS ===== -->
@@ -406,57 +412,61 @@ function toggleEvent(day,i){
   if(!row||!wrap)return;
   const inner=wrap.querySelector('.tl-detail-inner');
   const isOpen=row.classList.contains('open');
-  const dayWrap=row.closest('.acc-body-wrap');
-  const detailHeight=inner.scrollHeight;
-  const dayCurrentHeight=dayWrap?parseFloat(dayWrap.style.maxHeight)||dayWrap.scrollHeight:0;
   if(isOpen){
     row.classList.remove('open');
     wrap.style.maxHeight='0px';
-    if(dayWrap)dayWrap.style.maxHeight=Math.max(0,dayCurrentHeight-detailHeight)+'px';
   }else{
     row.classList.add('open');
-    wrap.style.maxHeight=detailHeight+'px';
-    if(dayWrap)dayWrap.style.maxHeight=(dayCurrentHeight+detailHeight)+'px';
+    wrap.style.maxHeight=inner.scrollHeight+'px';
   }
 }
 
-// Accordion (day list)
-function buildAccordion(){
+const DAY_ABBR={Sunday:'Sun',Monday:'Mon',Tuesday:'Tue',Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Sat'};
+
+function updateDayInfo(day){
+  const t=DAY_TRACK[day];
+  const info=document.getElementById('dayInfo');
+  info.innerHTML='<div class="day-info-name" style="color:'+t+';">'+day+' · '+SCHEDULE[day].date+'</div>'+
+    (SCHEDULE[day].label?'<div class="day-info-label">'+SCHEDULE[day].label+'</div>':'');
+}
+
+function switchDay(day){
+  document.querySelectorAll('.day-tab-btn').forEach(function(b){
+    const isActive=b.getAttribute('data-day')===day;
+    b.classList.toggle('active',isActive);
+    if(isActive)b.style.background=DAY_TRACK[day];
+    else b.style.background='';
+  });
+  document.querySelectorAll('.sched-panel').forEach(function(p){
+    p.classList.toggle('active',p.id==='sched-'+day);
+  });
+  updateDayInfo(day);
+  const wrap=document.getElementById('schedPanelWrap');
+  if(wrap)wrap.scrollTop=0;
+}
+
+function getTodayDay(){
   const today=new Date();
   const todayMonth=today.getMonth()===6?'Jul':today.getMonth()===7?'Aug':'';
   const todayDate=todayMonth+(today.getDate()<10?'0':'')+today.getDate();
-  let todayIdx=-1;
-  document.getElementById('accordionContent').innerHTML = DAYS.map(function(d,i){
-    const evs=SCHEDULE[d].events;const t=DAY_TRACK[d];
-    const dateStr=SCHEDULE[d].date;
-    const rows=evs.map(function(e,j){return tlRow(e,d,j,evs.length);}).join('');
-    const isToday=dateStr.toLowerCase().replace(/\s/g,'')==todayDate.toLowerCase();
-    if(isToday)todayIdx=i;
-    return '<div class="acc-day'+(isToday?' open':'')+'" id="acc-'+i+'">'+
-      '<div class="acc-head" onclick="toggleAcc('+i+')">'+
-        '<div class="acc-head-l">'+
-        '<span class="acc-day-name" style="color:'+t+';">'+d+' · '+dateStr+'</span></div>'+
-        '<svg class="acc-chev" viewBox="0 0 24 24" style="stroke:'+t+';"><polyline points="6 9 12 15 18 9"/></svg>'+
-      '</div>'+
-      '<div class="acc-body-wrap" id="acc-wrap-'+i+'"><div class="acc-body">'+rows+'</div></div>'+
-    '</div>';
-  }).join('');
-  if(todayIdx>=0){
-    const wrap=document.getElementById('acc-wrap-'+todayIdx);
-    wrap.style.maxHeight=wrap.scrollHeight+'px';
+  for(var i=0;i<DAYS.length;i++){
+    if(SCHEDULE[DAYS[i]].date.toLowerCase().replace(/\s/g,'')===todayDate.toLowerCase())return DAYS[i];
   }
+  return DAYS[0];
 }
-function toggleAcc(i){
-  const day=document.getElementById('acc-'+i);
-  const wrap=document.getElementById('acc-wrap-'+i);
-  const isOpen=day.classList.contains('open');
-  if(isOpen){
-    wrap.style.maxHeight='0px';
-    day.classList.remove('open');
-  }else{
-    day.classList.add('open');
-    wrap.style.maxHeight=wrap.scrollHeight+'px';
-  }
+
+function buildDayTabs(){
+  const defaultDay=getTodayDay();
+  document.getElementById('dayTabs').innerHTML=DAYS.map(function(d){
+    const isActive=d===defaultDay;
+    return '<button type="button" class="day-tab-btn'+(isActive?' active':'')+'" data-day="'+d+'" onclick="switchDay(\''+d+'\')" style="'+(isActive?'background:'+DAY_TRACK[d]+';':'')+'">'+DAY_ABBR[d]+'</button>';
+  }).join('');
+  document.getElementById('schedPanelWrap').innerHTML=DAYS.map(function(d){
+    const evs=SCHEDULE[d].events;
+    const rows=evs.map(function(e,j){return tlRow(e,d,j,evs.length);}).join('');
+    return '<div class="sched-panel'+(d===defaultDay?' active':'')+'" id="sched-'+d+'"><div class="timeline">'+rows+'</div></div>';
+  }).join('');
+  updateDayInfo(defaultDay);
 }
 
 // People
@@ -544,7 +554,7 @@ else{document.getElementById('formEmbed').style.display='none';}
 if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;}
 
 // Init
-buildAccordion();
+buildDayTabs();
 </script>
 </body>
 </html>
