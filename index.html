@@ -115,6 +115,28 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   .sched-panel-wrap{padding-bottom:20px;}
   .tab-panel-wrap{padding-bottom:14px;}
   #section-faculty .section{padding-bottom:56px;}
+  #section-schedule .sched{padding:14px 0 10px;}
+  #section-schedule .sched-head{margin-bottom:8px;}
+  #section-schedule .day-tabs-row{margin-bottom:6px;}
+  #section-schedule .day-tab-btn{padding:7px 2px;font-size:13px;}
+  #section-schedule .day-info{padding:0 20px 6px;}
+  #section-schedule .day-info-name{font-size:19px;}
+  #section-schedule .sched-panel-wrap{overflow:hidden;padding-bottom:8px;}
+  #section-schedule .sched-panel.active{display:flex;flex-direction:column;height:100%;min-height:0;}
+  #section-schedule .timeline{flex:1;min-height:0;display:flex;flex-direction:column;gap:2px;}
+  #section-schedule .tl-row{flex:1 1 0;min-height:0;align-items:center;grid-template-columns:56px 1fr;gap:6px;}
+  #section-schedule .tl-tc{padding-top:0;height:100%;justify-content:center;}
+  #section-schedule .tl-line{display:none;}
+  #section-schedule .tl-time{font-size:11px;line-height:1.15;}
+  #section-schedule .tl-ev{margin-bottom:0;padding:5px 10px;align-self:stretch;display:flex;flex-direction:column;justify-content:center;min-height:0;}
+  #section-schedule .tl-name{font-size:13px;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  #section-schedule .tl-loc{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #section-schedule .tl-choice-sub{display:none;}
+  #section-schedule .tl-chev{width:18px;height:18px;margin-top:0;}
+  #section-schedule .tl-ev-row .tl-vote-btn,#section-schedule .tl-ev-row .tl-brief-btn{padding:4px 8px;font-size:10px;}
+  #section-schedule .sched-panel-wrap.has-open-event{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  #section-schedule .sched-panel-wrap.has-open-event .timeline{height:auto;flex:none;}
+  #section-schedule .sched-panel-wrap.has-open-event .tl-row{flex:none;min-height:auto;}
 }
 @media(min-width:769px){
   html,body{height:auto;scroll-snap-type:none;overscroll-behavior-y:auto;}
@@ -655,6 +677,12 @@ function tlRow(ev,day,i,total){
     '</div>'+
   '</div>';
 }
+function syncSchedulePanelMode(){
+  var panelWrap=document.getElementById('schedPanelWrap');
+  if(!panelWrap)return;
+  panelWrap.classList.toggle('has-open-event',!!panelWrap.querySelector('.tl-row.open'));
+}
+
 function toggleEvent(day,i){
   const rid=day+'-'+i;
   const row=document.getElementById('row-'+rid);
@@ -666,9 +694,16 @@ function toggleEvent(day,i){
     row.classList.remove('open');
     wrap.style.maxHeight='0px';
   }else{
+    document.querySelectorAll('.tl-row.open').forEach(function(openRow){
+      if(openRow===row)return;
+      openRow.classList.remove('open');
+      var openWrap=openRow.querySelector('.tl-detail-wrap');
+      if(openWrap)openWrap.style.maxHeight='0px';
+    });
     row.classList.add('open');
     wrap.style.maxHeight=inner.scrollHeight+'px';
   }
+  syncSchedulePanelMode();
 }
 
 const DAY_ABBR={Sunday:'Sun',Monday:'Mon',Tuesday:'Tue',Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Sat'};
@@ -703,7 +738,15 @@ function switchDay(day){
   });
   updateDayInfo(day);
   const wrap=document.getElementById('schedPanelWrap');
-  if(wrap)wrap.scrollTop=0;
+  if(wrap){
+    wrap.scrollTop=0;
+    document.querySelectorAll('.tl-row.open').forEach(function(openRow){
+      openRow.classList.remove('open');
+      var openWrap=openRow.querySelector('.tl-detail-wrap');
+      if(openWrap)openWrap.style.maxHeight='0px';
+    });
+    syncSchedulePanelMode();
+  }
 }
 
 function getTodayDay(){
@@ -731,6 +774,7 @@ function buildDayTabs(){
     return '<div class="sched-panel'+(d===defaultDay?' active':'')+'" id="sched-'+d+'"><div class="timeline">'+rows+'</div></div>';
   }).join('');
   updateDayInfo(defaultDay);
+  syncSchedulePanelMode();
 }
 
 // People
