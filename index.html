@@ -69,17 +69,22 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .hero-eyebrow{font-family:var(--body);font-weight:600;font-size:12.8px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;line-height:1.45;}
 
 /* ===== FLOATING SECTION NAV ===== */
-.nav-float{position:fixed;top:14px;right:14px;z-index:200;pointer-events:none;color:var(--purple);transition:color .35s ease;}
-@media(min-width:641px){.nav-float{right:calc(50% - 306px);}}
-.nav-float-inner{display:flex;align-items:center;flex-direction:row-reverse;pointer-events:auto;}
-.nav-toggle{font-family:var(--din);font-weight:700;font-size:30px;line-height:1;width:44px;height:44px;border:none;background:transparent;cursor:pointer;color:inherit;transition:transform .2s cubic-bezier(.4,0,.2,1);flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center;}
-.nav-toggle:active{transform:scale(.88);}
+.nav-float{position:fixed;top:12px;right:12px;z-index:200;pointer-events:none;color:var(--purple);transition:color .35s ease;}
+@media(min-width:641px){.nav-float{right:calc(50% - 308px);}}
+.nav-float-inner{display:flex;flex-direction:column;align-items:flex-end;pointer-events:auto;min-width:0;}
+.nav-toggle{font-family:var(--din);font-weight:700;font-size:76px;line-height:.82;width:76px;height:76px;border:none;background:transparent;cursor:pointer;color:inherit;transition:transform .2s cubic-bezier(.4,0,.2,1),opacity .18s;flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center;}
+.nav-toggle:hover{opacity:.82;transform:scale(1.04);}
+.nav-toggle:active{transform:scale(.9);opacity:1;}
 .nav-toggle.pop{animation:navPop .42s cubic-bezier(.4,0,.2,1);}
-@keyframes navPop{0%{transform:scale(1)}35%{transform:scale(1.22)}100%{transform:scale(1)}}
-.nav-links{display:flex;flex-direction:row-reverse;align-items:center;gap:2px;overflow:hidden;max-width:0;opacity:0;transition:max-width .38s cubic-bezier(.4,0,.2,1),opacity .28s ease;}
-.nav-float.open .nav-links{max-width:360px;opacity:1;}
-.nav-link{font-family:var(--din);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;padding:8px 10px;border:none;background:transparent;cursor:pointer;color:inherit;opacity:.92;transition:opacity .15s;}
-.nav-link:hover,.nav-link:active{opacity:1;}
+@keyframes navPop{0%{transform:scale(1)}35%{transform:scale(1.18)}100%{transform:scale(1)}}
+.nav-links{display:flex;flex-direction:column;align-items:stretch;gap:8px;overflow:hidden;max-height:0;opacity:0;margin-top:0;transition:max-height .42s cubic-bezier(.4,0,.2,1),opacity .3s ease,margin-top .3s ease;min-width:210px;}
+.nav-float.open .nav-links{max-height:520px;opacity:1;margin-top:10px;}
+.nav-link{font-family:var(--din);font-weight:700;font-size:26px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;padding:14px 18px;border:2.5px solid currentColor;border-radius:0;background:transparent;cursor:pointer;color:inherit;text-align:right;transition:background .18s ease,color .18s ease,transform .12s ease,border-color .18s ease;}
+.nav-link:hover{background:rgba(116,104,163,.14);}
+.nav-float.on-hero .nav-link:hover{background:rgba(255,255,255,.18);}
+.nav-link:active{transform:scale(.97);background:var(--purple);color:var(--white);border-color:var(--purple);}
+.nav-float.on-hero .nav-link:active{background:var(--white);color:var(--purple);border-color:var(--white);}
+.nav-link:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .hero-r{text-align:right;flex-shrink:0;display:flex;align-self:flex-end;}
 .hero-year-box{background:var(--orange);width:45px;height:96px;border-radius:0;display:flex;align-items:center;justify-content:center;overflow:hidden;transform:translateY(115px);position:relative;z-index:5;}
 .hero-year-box span{display:block;transform:rotate(-90deg);white-space:nowrap;font-family:var(--din);font-weight:700;font-size:34px;letter-spacing:.02em;color:var(--teal);}
@@ -513,7 +518,7 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
   }
   var scrollTimer = null;
   function correctSnap(){
-    if(!isMobile()) return;
+    if(window.__navScrolling || !isMobile()) return;
     var secs = getSections();
     if(!secs.length) return;
     var current = window.scrollY;
@@ -528,7 +533,7 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
     }
   }
   window.addEventListener('scroll', function(){
-    if(!isMobile()) return;
+    if(!isMobile() || window.__navScrolling) return;
     if(scrollTimer) clearTimeout(scrollTimer);
     scrollTimer = setTimeout(correctSnap, 120);
   }, {passive:true});
@@ -596,6 +601,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
   var heroSection=document.getElementById('section-hero');
   var PURPLE=[116,104,163];
   var WHITE=[255,255,255];
+  var scrollAnim=null;
 
   function lerpColor(t){
     var r=Math.round(WHITE[0]+(PURPLE[0]-WHITE[0])*t);
@@ -609,6 +615,34 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     var rect=heroSection.getBoundingClientRect();
     var blend=Math.min(1,Math.max(0,1-(rect.bottom/(window.innerHeight*0.55))));
     navFloat.style.color=lerpColor(blend);
+    navFloat.classList.toggle('on-hero',blend<0.35);
+  }
+
+  function easeInOutCubic(t){
+    return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  }
+
+  function smoothScrollTo(targetY,duration){
+    if(scrollAnim)cancelAnimationFrame(scrollAnim);
+    var startY=window.scrollY;
+    var diff=targetY-startY;
+    var startTime=null;
+    duration=duration||850;
+    window.__navScrolling=true;
+
+    function step(ts){
+      if(!startTime)startTime=ts;
+      var elapsed=ts-startTime;
+      var progress=Math.min(elapsed/duration,1);
+      window.scrollTo(0,startY+diff*easeInOutCubic(progress));
+      if(progress<1){
+        scrollAnim=requestAnimationFrame(step);
+      }else{
+        scrollAnim=null;
+        setTimeout(function(){window.__navScrolling=false;},180);
+      }
+    }
+    scrollAnim=requestAnimationFrame(step);
   }
 
   function setNavOpen(open){
@@ -630,7 +664,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     var el=document.getElementById(id);
     if(!el)return;
     setNavOpen(false);
-    window.scrollTo({top:el.offsetTop,behavior:'smooth'});
+    smoothScrollTo(el.offsetTop,900);
   }
 
   if(navToggle){
