@@ -620,10 +620,18 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 const EVENING_FORM_URL="";
 const PHOTO_FORM_URL="";
 const BRIEF_SOURCES=[
-  {label:"101 Brief",urls:["brief-101.pdf","101 Brief.pdf","101.pdf","Briefs SDC/101 Brief.pdf"]},
-  {label:"Industrial Design Brief",urls:["brief-industrial-design.pdf","Industrial Design Brief.pdf","Industrial Design.pdf","Briefs SDC/Industrial Design Brief.pdf"]},
-  {label:"Architecture Brief",urls:["brief-architecture.pdf","Architecture Brief.pdf","Architecture.pdf","Briefs SDC/Architecture Brief.pdf"]},
-  {label:"Graphic Design Brief",urls:["brief-graphic-design.pdf","Graphic Design Brief.pdf","Graphic Design.pdf","Briefs SDC/Graphic Design Brief.pdf"]},
+  {label:"101 Brief",urls:["101.pdf"]},
+  {label:"102 Brief",urls:["102.pdf"]},
+  {label:"103 Brief",urls:["103.pdf"]},
+  {label:"104 Brief",urls:["104.pdf"]},
+  {label:"201 Brief",urls:["201.pdf"]},
+  {label:"202 Brief",urls:["202.pdf"]},
+  {label:"301 Brief",urls:["301.pdf"]},
+  {label:"302 Brief",urls:["302.pdf"]},
+  {label:"303 Brief",urls:["303.pdf"]},
+  {label:"401 Brief",urls:["401.pdf"]},
+  {label:"402 Brief",urls:["402.pdf"]},
+  {label:"403 Brief",urls:["403.pdf"]},
 ];
 const BRIEFS=[];
 
@@ -673,9 +681,9 @@ function eveningVoteBtn(){
 function studioBriefBtn(day,ev){
   var briefLabels={
     Monday:'101 Brief',
-    Tuesday:'Industrial Design Brief',
-    Wednesday:'Architecture Brief',
-    Thursday:'Graphic Design Brief'
+    Tuesday:'201 Brief',
+    Wednesday:'301 Brief',
+    Thursday:'401 Brief'
   };
   var label=briefLabels[day];
   if(!label)return '';
