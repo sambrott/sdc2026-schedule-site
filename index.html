@@ -337,6 +337,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .briefs-link:hover .lc-title{color:var(--teal);}
 .briefs-link .lc-arrow{stroke:var(--ink3);}
 .briefs-link:hover .lc-arrow{stroke:var(--teal);}
+.briefs-link.is-unset{color:var(--ink3);cursor:not-allowed;pointer-events:none;opacity:.72;border:1.5px dashed var(--ink3);border-radius:6px;margin:6px 8px;background:transparent;}
+.briefs-link.is-unset .lc-title{color:var(--ink3);}
+.briefs-link.is-unset .lc-arrow{stroke:var(--ink3);opacity:.55;}
+.briefs-link.is-unset:hover,.briefs-link.is-unset:hover .lc-title,.briefs-link.is-unset:hover .lc-arrow{background:transparent;color:var(--ink3);stroke:var(--ink3);}
 .briefs-wrap.is-unset .briefs-menu-wrap{display:none!important;}
 .lc-icon{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--teal);}
 .lc-icon.orange{background:var(--orange);}
@@ -689,6 +693,28 @@ function eveningVoteBtn(){
   return '<span class="lc-directions tl-vote-btn is-unset" aria-disabled="true" title="Voting unavailable"'+stopClick+'>Vote'+arrow+'</span>';
 }
 
+var BRIEF_DAY_PREFIX={Monday:'1',Tuesday:'2',Wednesday:'3',Thursday:'4'};
+
+function getCampTodayKey(){
+  var today=new Date();
+  var month=today.getMonth()===6?'Jul':today.getMonth()===7?'Aug':'';
+  if(!month)return '';
+  var dayNum=today.getDate();
+  var key=month+(dayNum<10?'0':'')+dayNum;
+  for(var i=0;i<DAYS.length;i++){
+    if(SCHEDULE[DAYS[i]].date.toLowerCase().replace(/\s/g,'')===key.toLowerCase())return DAYS[i];
+  }
+  return '';
+}
+
+function isBriefUnlocked(label){
+  var campDay=getCampTodayKey();
+  var prefix=BRIEF_DAY_PREFIX[campDay];
+  if(!prefix)return false;
+  var match=label.match(/^(\d)/);
+  return !!(match&&match[1]===prefix);
+}
+
 function studioBriefBtn(day,ev){
   var briefLabels={
     Monday:'101 Brief',
@@ -705,12 +731,14 @@ function studioBriefBtn(day,ev){
   }
   var brief=BRIEFS.find(function(item){return item.label===label;});
   var url=brief&&brief.url;
+  var unlocked=isBriefUnlocked(label);
   var arrow='<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
   var stopClick=' onclick="event.stopPropagation()"';
-  if(url){
+  if(url&&unlocked){
     return '<a class="lc-directions tl-brief-btn" href="'+url+'" target="_blank" rel="noopener"'+stopClick+'>Brief'+arrow+'</a>';
   }
-  return '<span class="lc-directions tl-brief-btn is-unset" aria-disabled="true" title="Brief unavailable"'+stopClick+'>Brief'+arrow+'</span>';
+  var lockTitle=unlocked?'Brief unavailable':'Brief locked until today';
+  return '<span class="lc-directions tl-brief-btn is-unset" aria-disabled="true" title="'+lockTitle+'"'+stopClick+'>Brief'+arrow+'</span>';
 }
 
 // Timeline event row (expands in place to reveal detail + materials)
@@ -938,7 +966,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
   var briefsBound=false;
 
   function briefsAvailable(){
-    return BRIEFS.some(function(brief){return brief.url;});
+    return BRIEF_SOURCES.length>0;
   }
 
   function briefsMenuOpenHeight(){
@@ -958,14 +986,25 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     briefsMenu.innerHTML='';
     BRIEF_SOURCES.forEach(function(source){
       var brief=BRIEFS.find(function(item){return item.label===source.label;});
-      if(!brief||!brief.url)return;
-      var link=document.createElement('a');
-      link.className='briefs-link';
-      link.href=brief.url;
-      link.target='_blank';
-      link.rel='noopener';
-      link.innerHTML='<span class="lc-title">'+brief.label+'</span><svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
-      briefsMenu.appendChild(link);
+      var unlocked=isBriefUnlocked(source.label);
+      var arrow='<svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
+      var inner='<span class="lc-title">'+source.label+'</span>'+arrow;
+      if(brief&&brief.url&&unlocked){
+        var link=document.createElement('a');
+        link.className='briefs-link';
+        link.href=brief.url;
+        link.target='_blank';
+        link.rel='noopener';
+        link.innerHTML=inner;
+        briefsMenu.appendChild(link);
+      }else{
+        var locked=document.createElement('span');
+        locked.className='briefs-link is-unset';
+        locked.setAttribute('aria-disabled','true');
+        locked.title=unlocked?'Brief unavailable':'Brief locked until today';
+        locked.innerHTML=inner;
+        briefsMenu.appendChild(locked);
+      }
     });
 
     if(!briefsAvailable()){
