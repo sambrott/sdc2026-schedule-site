@@ -213,8 +213,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-name{font-family:var(--din);font-weight:600;font-size:16.5px;line-height:1.15;color:var(--ink);letter-spacing:.01em;}
 .tl-loc{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
 .tl-choice-sub{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
-.tl-vote-wrap{margin-top:12px;}
+.tl-ev-row .tl-vote-btn{align-self:flex-start;margin-top:1px;flex-shrink:0;}
 .lc-directions.is-unset{opacity:.55;pointer-events:none;cursor:default;}
+.tl-option-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.tl-option-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.tl-option-text{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);letter-spacing:.02em;line-height:1.4;}
 .tl-chev{width:22px;height:22px;stroke:var(--ink3);fill:none;stroke-width:2.5;flex-shrink:0;margin-top:3px;transition:transform .3s cubic-bezier(.4,0,.2,1);}
 .tl-row.open .tl-chev{transform:rotate(180deg);}
 .tl-detail-wrap{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
@@ -534,9 +537,9 @@ function tc(type){return (TYPE_COLORS[type]||["#007179","rgba(0,113,121,.1)"]);}
 function eveningVoteBtn(){
   var arrow='<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
   if(EVENING_FORM_URL){
-    return '<div class="tl-vote-wrap"><a class="lc-directions tl-vote-btn" href="'+EVENING_FORM_URL+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Vote'+arrow+'</a></div>';
+    return '<a class="lc-directions tl-vote-btn" href="'+EVENING_FORM_URL+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Vote'+arrow+'</a>';
   }
-  return '<div class="tl-vote-wrap"><span class="lc-directions tl-vote-btn is-unset">Vote'+arrow+'</span></div>';
+  return '<span class="lc-directions tl-vote-btn is-unset">Vote'+arrow+'</span>';
 }
 
 // Timeline event row (expands in place to reveal detail + materials)
@@ -547,14 +550,14 @@ function tlRow(ev,day,i,total){
   const typeHtml = '';
   const locHtml = (ev.loc && !isEvening) ? '<div class="tl-loc">'+ev.loc+'</div>' : '';
   const choiceSubHtml = isEvening ? '<div class="tl-choice-sub">Your choice</div>' : '';
+  const voteHtml = isEvening ? eveningVoteBtn() : '';
   const hasExtra = isEvening || !!ev.detail || (ev.options && ev.options.length>0) || (ev.mats && ev.mats.length>0);
   const rid=day+'-'+i;
   let detailInner='';
   if(ev.detail){detailInner+='<div class="tl-detail-body">'+ev.detail+'</div>';}
   if(ev.options && ev.options.length){
-    for(var o=0;o<ev.options.length;o++){detailInner+='<div class="mat-row"><div class="mat-dot" style="background:'+c[0]+';"></div><div class="mat-text">'+ev.options[o]+'</div></div>';}
+    for(var o=0;o<ev.options.length;o++){detailInner+='<div class="tl-option-row"><div class="tl-option-dot" style="background:'+c[0]+';"></div><div class="tl-option-text">'+ev.options[o]+'</div></div>';}
   }
-  if(isEvening){detailInner+=eveningVoteBtn();}
   if(ev.mats && ev.mats.length){
     detailInner+='<div class="tl-slabel">Bring</div>';
     for(var m=0;m<ev.mats.length;m++){detailInner+='<div class="mat-row"><div class="mat-dot" style="background:'+c[0]+';"></div><div class="mat-text">'+ev.mats[m]+'</div></div>';}
@@ -565,7 +568,7 @@ function tlRow(ev,day,i,total){
   return '<div class="tl-row'+(hasExtra?' expandable':'')+'" id="row-'+rid+'" style="--tc:'+c[0]+';--tp:'+c[1]+';"'+clickAttr+'>'+
     '<div class="tl-tc"><div class="tl-time">'+ev.t+'</div><div class="tl-dot"></div>'+line+'</div>'+
     '<div class="tl-ev">'+
-      '<div class="tl-ev-row"><div class="tl-ev-text">'+typeHtml+'<div class="tl-name">'+ev.title+'</div>'+locHtml+choiceSubHtml+'</div>'+chevHtml+'</div>'+
+      '<div class="tl-ev-row"><div class="tl-ev-text">'+typeHtml+'<div class="tl-name">'+ev.title+'</div>'+locHtml+choiceSubHtml+'</div>'+voteHtml+chevHtml+'</div>'+
       detailHtml+
     '</div>'+
   '</div>';
