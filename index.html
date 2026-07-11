@@ -174,9 +174,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .nav-float.on-hero .nav-link:hover{color:var(--white);background:rgba(255,255,255,.1);}
 .nav-float.on-hero .nav-link.active{color:var(--white);background:rgba(255,255,255,.14);}
 .nav-link:focus-visible{outline:2px solid currentColor;outline-offset:2px;}
-.page-rail{position:fixed;left:max(var(--page-rail-edge,4px),calc((100vw - 640px)/2 + var(--page-rail-edge,4px)));top:var(--page-rail-center,50%);z-index:190;display:flex;flex-direction:column;align-items:center;gap:8px;transform:translateY(-50%) scale(var(--page-rail-scale,1));transform-origin:center center;pointer-events:none;}
-.page-dot{width:3px;height:3px;border-radius:50%;background:var(--white);box-shadow:0 1px 3px rgba(26,26,26,.28);transform:scale(1);transition:width .55s cubic-bezier(.22,1,.36,1),height .55s cubic-bezier(.22,1,.36,1),box-shadow .45s ease,transform .55s cubic-bezier(.22,1,.36,1);}
+.page-rail{position:fixed;left:max(var(--page-rail-edge,4px),calc((100vw - 640px)/2 + var(--page-rail-edge,4px)));top:var(--page-rail-center,50%);z-index:190;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 12px;transform:translate(-12px,-50%) scale(var(--page-rail-scale,1));transform-origin:center center;pointer-events:auto;touch-action:none;cursor:ns-resize;}
+.page-dot{appearance:none;width:3px;height:3px;min-width:0;padding:0;border:0;border-radius:50%;background:var(--white);box-shadow:0 1px 3px rgba(26,26,26,.28);transform:scale(1);transition:width .55s cubic-bezier(.22,1,.36,1),height .55s cubic-bezier(.22,1,.36,1),background-color .45s ease,box-shadow .45s ease,transform .55s cubic-bezier(.22,1,.36,1);}
 .page-dot.active{width:8px;height:8px;background:var(--white);box-shadow:0 1px 4px rgba(26,26,26,.32);transform:scale(1.06);}
+.page-rail.on-light .page-dot,.page-rail.on-light .page-dot.active{background:var(--purple);}
+.page-dot:focus-visible{outline:2px solid var(--orange);outline-offset:3px;}
 @media(prefers-reduced-motion:reduce){.page-dot{transition-duration:.01ms;}}
 .hero-r{text-align:right;flex-shrink:0;display:flex;align-self:flex-end;}
 .hero-year-box{background:var(--orange);width:45px;height:96px;border-radius:0;display:flex;align-items:center;justify-content:center;overflow:hidden;transform:translateY(115px);position:relative;z-index:5;}
@@ -385,13 +387,13 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   </div>
 </nav>
 
-<div class="page-rail" aria-hidden="true">
-  <span class="page-dot active" data-section="section-hero"></span>
-  <span class="page-dot" data-section="section-schedule"></span>
-  <span class="page-dot" data-section="section-locations"></span>
-  <span class="page-dot" data-section="section-faculty"></span>
-  <span class="page-dot" data-section="section-forms"></span>
-</div>
+<nav class="page-rail" aria-label="Page slider">
+  <button type="button" class="page-dot active" data-section="section-hero" aria-label="Home" aria-current="page"></button>
+  <button type="button" class="page-dot" data-section="section-schedule" aria-label="Schedule"></button>
+  <button type="button" class="page-dot" data-section="section-locations" aria-label="Locations"></button>
+  <button type="button" class="page-dot" data-section="section-faculty" aria-label="Faculty"></button>
+  <button type="button" class="page-dot" data-section="section-forms" aria-label="Forms"></button>
+</nav>
 
 <div class="snap-section" id="section-hero">
 <div class="hero-wrap">
@@ -953,6 +955,9 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
   var navToggle=document.getElementById('navToggle');
   var navMenu=document.getElementById('nav-mobile-menu');
   var heroSection=document.getElementById('section-hero');
+  var pageRail=document.querySelector('.page-rail');
+  var railDragging=false;
+  var railCurrent=null;
   var navSections=[
     {id:'section-hero',el:null},
     {id:'section-schedule',el:null},
@@ -996,8 +1001,12 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
       btn.classList.toggle('active',btn.getAttribute('data-target')===current);
     });
     document.querySelectorAll('.page-dot').forEach(function(dot){
-      dot.classList.toggle('active',dot.getAttribute('data-section')===current);
+      var isCurrent=dot.getAttribute('data-section')===current;
+      dot.classList.toggle('active',isCurrent);
+      if(isCurrent)dot.setAttribute('aria-current','page');
+      else dot.removeAttribute('aria-current');
     });
+    if(pageRail)pageRail.classList.toggle('on-light',current!=='section-hero');
   }
 
   function isMenuOpen(){
@@ -1090,6 +1099,63 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     smoothScrollTo(el.offsetTop);
   }
 
+  function showRailSection(id){
+    if(id===railCurrent)return;
+    var el=document.getElementById(id);
+    if(!el)return;
+    railCurrent=id;
+    if(scrollAnim){
+      cancelAnimationFrame(scrollAnim);
+      scrollAnim=null;
+    }
+    window.scrollTo(0,el.offsetTop);
+    updateActiveNavLink();
+    if(window.__syncViewport)window.__syncViewport();
+  }
+
+  function nearestRailSection(clientY){
+    var nearest=null;
+    var nearestDistance=Infinity;
+    document.querySelectorAll('.page-dot').forEach(function(dot){
+      var rect=dot.getBoundingClientRect();
+      var distance=Math.abs(clientY-(rect.top+rect.height/2));
+      if(distance<nearestDistance){
+        nearestDistance=distance;
+        nearest=dot.getAttribute('data-section');
+      }
+    });
+    return nearest;
+  }
+
+  function startRailDrag(e){
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    e.preventDefault();
+    railDragging=true;
+    railCurrent=null;
+    window.__navScrolling=true;
+    setScrollSnapEnabled(false);
+    if(pageRail.setPointerCapture)pageRail.setPointerCapture(e.pointerId);
+    showRailSection(nearestRailSection(e.clientY));
+  }
+
+  function moveRailDrag(e){
+    if(!railDragging)return;
+    e.preventDefault();
+    showRailSection(nearestRailSection(e.clientY));
+  }
+
+  function endRailDrag(e){
+    if(!railDragging)return;
+    railDragging=false;
+    railCurrent=null;
+    if(pageRail.hasPointerCapture&&pageRail.hasPointerCapture(e.pointerId))pageRail.releasePointerCapture(e.pointerId);
+    requestAnimationFrame(function(){
+      window.__navScrolling=false;
+      setScrollSnapEnabled(true);
+      updateActiveNavLink();
+    });
+  }
+
   function handleOutsideClose(e){
     if(!isMenuOpen())return;
     if(e.target.closest('.nav-float'))return;
@@ -1104,6 +1170,19 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
       goToSection(btn.getAttribute('data-target'),e);
     });
   });
+  if(pageRail){
+    pageRail.addEventListener('pointerdown',startRailDrag);
+    pageRail.addEventListener('pointermove',moveRailDrag);
+    pageRail.addEventListener('pointerup',endRailDrag);
+    pageRail.addEventListener('pointercancel',endRailDrag);
+    pageRail.querySelectorAll('.page-dot').forEach(function(dot){
+      dot.addEventListener('click',function(e){
+        if(e.detail!==0)return;
+        showRailSection(dot.getAttribute('data-section'));
+        railCurrent=null;
+      });
+    });
+  }
   document.addEventListener('click',handleOutsideClose);
 
   window.addEventListener('scroll',function(){
