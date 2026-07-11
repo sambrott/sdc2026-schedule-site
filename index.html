@@ -72,12 +72,13 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .nav-float{position:fixed;top:12px;right:12px;z-index:200;pointer-events:none;color:var(--purple);transition:color .35s ease;}
 @media(min-width:641px){.nav-float{right:calc(50% - 308px);}}
 .nav-float-inner{position:relative;display:flex;align-items:flex-start;justify-content:flex-end;pointer-events:auto;}
-.nav-toggle{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:none;border-radius:var(--rsm);background:transparent;cursor:pointer;color:inherit;font-family:var(--din);font-weight:700;font-size:32px;line-height:1;flex-shrink:0;transition:background .15s ease,transform .15s ease;}
+.nav-toggle{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;padding:0;border:none;border-radius:var(--rsm);background:transparent;cursor:pointer;color:inherit;flex-shrink:0;transition:background .15s ease;}
 .nav-toggle:hover{background:rgba(116,104,163,.12);}
-.nav-toggle:active{transform:scale(.94);}
 .nav-float.on-hero .nav-toggle:hover{background:rgba(255,255,255,.14);}
-.nav-toggle.pop{animation:navPop .35s cubic-bezier(.4,0,.2,1);}
-@keyframes navPop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+.nav-bar{display:block;width:20px;height:2px;background:currentColor;border-radius:1px;transition:transform .2s ease,opacity .2s ease;}
+.nav-toggle[aria-expanded=true] .nav-bar:first-child{transform:translateY(7px) rotate(45deg);}
+.nav-toggle[aria-expanded=true] .nav-bar:nth-child(2){opacity:0;transform:scaleX(0);}
+.nav-toggle[aria-expanded=true] .nav-bar:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
 .nav-menu{position:absolute;top:calc(100% + 6px);right:0;width:min(72vw,272px);min-width:200px;display:none;flex-direction:column;align-items:stretch;gap:0;padding:0;border-radius:var(--rsm);overflow:hidden;background:hsla(38,24%,94%,.78);backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);border:.5px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 12px 40px rgba(0,0,0,.1);}
 .nav-float.is-open .nav-menu{display:flex;animation:navDropIn .2s ease;}
 .nav-float.on-hero .nav-menu{background:rgba(0,0,0,.52);backdrop-filter:blur(28px) saturate(1.35);-webkit-backdrop-filter:blur(28px) saturate(1.35);border:.5px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 40px rgba(0,0,0,.35);}
@@ -209,7 +210,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 <nav class="nav-float" id="navFloat" aria-label="Section navigation">
   <div class="nav-float-inner">
-    <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav-mobile-menu" aria-label="Open menu">!</button>
+    <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav-mobile-menu" aria-label="Open menu">
+      <span class="nav-bar"></span>
+      <span class="nav-bar"></span>
+      <span class="nav-bar"></span>
+    </button>
     <div class="nav-menu" id="nav-mobile-menu">
       <button type="button" class="nav-link" data-target="section-hero">Home</button>
       <button type="button" class="nav-link" data-target="section-schedule">Schedule</button>
@@ -733,9 +738,6 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
       e.stopPropagation();
     }
     if(!navToggle||!navMenu)return;
-    navToggle.classList.remove('pop');
-    void navToggle.offsetWidth;
-    navToggle.classList.add('pop');
     setNavOpen(!isMenuOpen());
   }
 
