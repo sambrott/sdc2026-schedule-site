@@ -316,6 +316,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .lc-sub{font-family:var(--body);font-weight:300;font-size:16px;color:var(--ink3);margin-top:2px;}
 .lc-arrow{stroke:var(--ink3);width:17px;height:17px;fill:none;stroke-width:2;flex-shrink:0;}
 .lc-directions{display:inline-flex;align-items:center;gap:5px;padding:7px 11px;border:1.5px solid var(--teal);border-radius:20px;color:var(--teal);font-family:var(--body);font-weight:600;font-size:12px;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background .15s,color .15s,border-color .15s;}
+.lc-directions.is-click-guarded{pointer-events:none;}
 .lc-directions:not(.is-unset):hover,.lc-directions:not(.is-unset):active{background:var(--teal);color:var(--white);}
 .lc-directions:not(.is-unset):active{opacity:.88;}
 .lc-directions.is-unset,.tl-vote-btn.is-unset{border:1.5px dashed var(--ink3);border-radius:20px;color:var(--ink3);background:transparent;cursor:not-allowed;opacity:.72;}
@@ -439,7 +440,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <div class="sched snap-section" id="section-schedule">
   <div class="sched-head">
     <div class="sched-title">Schedule</div>
-    <a class="lc-directions" href="schedule.pdf" target="_blank" rel="noopener">View PDF<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
+    <a class="lc-directions" id="schedulePdfLink" href="schedule.pdf" target="_blank" rel="noopener">View PDF<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
   </div>
   <div class="day-tabs-row" id="dayTabs"></div>
   <div class="day-info" id="dayInfo"></div>
@@ -1164,6 +1165,15 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
   if(swipeCue){
     swipeCue.addEventListener('click',function(){
       var nextSection=document.getElementById('section-schedule');
+      var pdfLink=document.getElementById('schedulePdfLink');
+      if(pdfLink){
+        pdfLink.classList.add('is-click-guarded');
+        pdfLink.setAttribute('aria-disabled','true');
+        setTimeout(function(){
+          pdfLink.classList.remove('is-click-guarded');
+          pdfLink.removeAttribute('aria-disabled');
+        },300);
+      }
       if(nextSection)nextSection.scrollIntoView({behavior:'smooth',block:'start'});
     });
   }
