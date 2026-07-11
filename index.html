@@ -272,6 +272,20 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .link-card.is-unset .lc-icon,.link-card.is-unset .lc-icon.orange{background:rgba(122,122,122,.55);}
 .link-card.is-unset .lc-arrow{stroke:var(--ink3);opacity:.55;}
 .link-card:not(.is-unset) .lc-icon{display:none;}
+.briefs-wrap{margin-bottom:9px;}
+.briefs-card{width:100%;margin-bottom:0;font:inherit;color:inherit;}
+.briefs-wrap.is-open:not(.is-unset) .briefs-card{border-color:var(--teal);background:rgba(0,113,121,.06);}
+.briefs-wrap.is-open:not(.is-unset) .briefs-card .lc-title{color:var(--teal);}
+.briefs-chev{width:17px;height:17px;stroke:var(--ink3);fill:none;stroke-width:2;flex-shrink:0;margin-left:auto;transition:transform .2s ease;}
+.briefs-wrap.is-open .briefs-chev{transform:rotate(180deg);}
+.briefs-wrap.is-unset .briefs-chev{opacity:.55;}
+.briefs-menu{border:1.5px solid var(--line);border-top:none;background:var(--white);}
+.briefs-wrap.is-open:not(.is-unset) .briefs-menu{border-color:var(--teal);}
+.briefs-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border-top:1px solid var(--line);text-decoration:none;font-family:var(--body);font-weight:600;font-size:15px;color:var(--ink);transition:background .15s ease,color .15s ease;}
+.briefs-link:first-child{border-top:none;}
+.briefs-link:hover{background:rgba(0,113,121,.06);color:var(--teal);}
+.briefs-link svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+.briefs-wrap.is-unset .briefs-menu{display:none!important;}
 .lc-icon{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--teal);}
 .lc-icon.orange{background:var(--orange);}
 .lc-icon.purple{background:var(--purple);}
@@ -526,6 +540,14 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <div class="lc-text"><div class="lc-title">Upload Your Work</div><div class="lc-sub">Share photos from the week</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </div>
+  <div class="briefs-wrap is-unset" id="briefsWrap">
+    <button type="button" class="link-card briefs-card is-unset" id="briefsToggle" aria-expanded="false" aria-controls="briefsMenu" aria-disabled="true">
+      <div class="lc-icon purple"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="lc-text"><div class="lc-title">Briefs</div><div class="lc-sub">Studio project briefs</div></div>
+      <svg class="briefs-chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="briefs-menu" id="briefsMenu" hidden></div>
+  </div>
   <iframe class="form-frame" id="formEmbed" src="about:blank"></iframe>
 </div>
 <div class="footer">
@@ -537,6 +559,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <script>
 const EVENING_FORM_URL="";
 const PHOTO_FORM_URL="";
+const BRIEFS=[
+  // {label:"Architecture Brief",url:""},
+  // {label:"Industrial Design Brief",url:""},
+  // {label:"Graphic Design Brief",url:""},
+];
 
 const SCHEDULE = {"Sunday":{"date":"Jul 13","label":"Arrival","events":[{"t":"2:00–4:00pm","type":"check","title":"Check-In","loc":"Magnolia Hall","detail":"Pick up your room key and get settled in. Staff are at the front desk to help you move in.","mats":[]},{"t":"4:00pm","type":"welcome","title":"Welcome + A+A Tour","loc":"Art + Architecture Building","detail":"Meet the camp directors, advisors, and instructors, then tour the award-winning Art + Architecture building where you'll spend the week.","mats":[]},{"t":"4:30pm","type":"studio","title":"Studio Intro","loc":"A+A Studios","detail":"First look at the studio space and an overview of the week's projects.","mats":[]},{"t":"5:30–6:30pm","type":"meal","title":"Dinner","loc":"Rocky Top","detail":"","mats":[]},{"t":"6:30–9:00pm","type":"evening","title":"Evening Activity","loc":"","detail":"","mats":[],"options":["Pool","Sand volleyball","Fields","Basketball courts"]},{"t":"11:00pm","type":"check","title":"Room Check + Lights Out","loc":"Magnolia Hall","detail":"","mats":[]}]},"Monday":{"date":"Jul 14","label":"Field + Studio","events":[{"t":"8:00–9:00am","type":"meal","title":"Breakfast","loc":"Rocky Top","detail":"","mats":[]},{"t":"9:00am","type":"studio","title":"Intro to Studio","loc":"A+A Studios","detail":"Introduction to the studio projects and activities for the week.","mats":["Sketchbook","Pencils"]},{"t":"morning","type":"field","title":"Field Trip / Studio","loc":"Downtown Knoxville","detail":"Field trip and studio rotation. Groups alternate between exploring downtown Knoxville and working in studio.","mats":["Phone for photos","Sketchbook"]},{"t":"12:00–1:00pm","type":"meal","title":"Lunch","loc":"Downtown Knoxville","detail":"Lunch while downtown.","mats":[]},{"t":"afternoon","type":"field","title":"Field Trip / Studio","loc":"Downtown Knoxville","detail":"Continued field trip and studio rotation.","mats":[]},{"t":"2:00–3:00pm","type":"studio","title":"Design Studio","loc":"A+A Studios","detail":"Beginning of projects for the week and establishing a shared language.","mats":[]},{"t":"5:00pm","type":"jam","title":"End of Day Jam-Session","loc":"A+A Studios","detail":"Everyone shows their work from the day. Peers walk the room and leave stickers next to work that stands out.","mats":["Your work from the day"]},{"t":"5:30–6:30pm","type":"meal","title":"Dinner","loc":"Rocky Top","detail":"","mats":[]},{"t":"6:30–9:00pm","type":"evening","title":"Evening Activity","loc":"","detail":"","mats":[],"options":["Pool","Sand volleyball","Fields","Basketball courts"]},{"t":"11:00pm","type":"check","title":"Room Check + Lights Out","loc":"Magnolia Hall","detail":"","mats":[]}]},"Tuesday":{"date":"Jul 15","label":"Industrial Design","events":[{"t":"8:00–9:00am","type":"meal","title":"Breakfast","loc":"Rocky Top","detail":"","mats":[]},{"t":"9:00am","type":"studio","title":"Design Studio — Industrial Design Kickoff","loc":"A+A Studios","detail":"Charrette 01: the lamp as a foldable object. Ideating, sketching, and mock ups.","mats":["Sketchbook","Chipboard / cardboard","X-acto knife"]},{"t":"12:00–1:00pm","type":"meal","title":"Lunch","loc":"Student Union","detail":"","mats":[]},{"t":"2:00pm","type":"studio","title":"Design Studio","loc":"A+A Studios","detail":"Charrette 01 continued. Form finding through physical models, exploring with texture, material, structure, and light.","mats":["Model materials","Light source"]},{"t":"5:00pm","type":"jam","title":"End of Day Jam-Session","loc":"A+A Studios","detail":"Show your work from the day and see everyone else's. Stickers go to standout pieces.","mats":["Your work"]},{"t":"5:30–6:30pm","type":"meal","title":"Dinner","loc":"Rocky Top","detail":"","mats":[]},{"t":"6:30–9:00pm","type":"evening","title":"Evening Activity","loc":"","detail":"","mats":[],"options":["Pool","Sand volleyball","Basketball courts"]},{"t":"11:00pm","type":"check","title":"Room Check + Lights Out","loc":"Magnolia Hall","detail":"","mats":[]}]},"Wednesday":{"date":"Jul 16","label":"Architecture + IA","events":[{"t":"8:00–9:00am","type":"meal","title":"Breakfast","loc":"Rocky Top","detail":"","mats":[]},{"t":"9:00am","type":"studio","title":"Design Studio — Architecture + Interior Architecture Kickoff","loc":"A+A Studios","detail":"Charrette 02: folded objects as occupiable additions to the urban fabric. Ideating, sketching, and mock ups.","mats":["Sketchbook","Model materials"]},{"t":"12:00–1:00pm","type":"meal","title":"Lunch","loc":"Student Union","detail":"","mats":[]},{"t":"2:00pm","type":"studio","title":"Design Studio","loc":"A+A Studios","detail":"Charrette 02 continued. Communication through two dimensions: drawing plans, sections, elevations. Photographs of light and texture studies.","mats":["Drawing tools","Trace paper"]},{"t":"5:00pm","type":"jam","title":"End of Day Jam-Session","loc":"A+A Studios","detail":"Daily work showcase with peer stickers.","mats":["Your work"]},{"t":"5:30–6:30pm","type":"meal","title":"Dinner","loc":"Rocky Top","detail":"","mats":[]},{"t":"6:30–9:00pm","type":"evening","title":"Evening Activity","loc":"Downtown Knoxville","detail":"","mats":[],"options":["Downtown Knoxville","Sand volleyball","Fields","Basketball courts"]},{"t":"11:00pm","type":"check","title":"Room Check + Lights Out","loc":"Magnolia Hall","detail":"","mats":[]}]},"Thursday":{"date":"Jul 17","label":"Graphic Design","events":[{"t":"8:00–9:00am","type":"meal","title":"Breakfast","loc":"Rocky Top","detail":"","mats":[]},{"t":"9:00am","type":"studio","title":"Design Studio — Graphic Design Kickoff","loc":"A+A Studios","detail":"Charrette 03: frankenfont. Exploring principles of graphic design by forming “new” letters using the logic of folding.","mats":["Sketchbook","Markers"]},{"t":"12:00–1:00pm","type":"meal","title":"Lunch","loc":"Student Union","detail":"","mats":[]},{"t":"2:00pm","type":"studio","title":"Design Studio","loc":"A+A Studios","detail":"Charrette 03 continued. Using principles of graphic design to create logos and packaging for lamps. Working as a studio to develop a collective brand for the exhibition.","mats":["Design tools"]},{"t":"5:00pm","type":"jam","title":"End of Day Jam-Session","loc":"A+A Studios","detail":"Daily work showcase with peer stickers.","mats":["Your work"]},{"t":"5:30–6:30pm","type":"meal","title":"Dinner","loc":"Rocky Top","detail":"","mats":[]},{"t":"6:30–9:00pm","type":"evening","title":"Evening Activity","loc":"","detail":"","mats":[],"options":["Pool","Sand volleyball","Fields"]},{"t":"11:00pm","type":"check","title":"Room Check + Lights Out","loc":"Magnolia Hall","detail":"","mats":[]}]},"Friday":{"date":"Jul 18","label":"Exhibition","events":[{"t":"8:00–9:00am","type":"meal","title":"Breakfast","loc":"Rocky Top","detail":"","mats":[]},{"t":"9:00am","type":"studio","title":"Design Studio — Exhibition Build Out","loc":"A+A Studios","detail":"Charrette 04: 1:1 build out. Working as a team to argue a common vision through strategic exhibition choices.","mats":["All your work","Build materials"]},{"t":"12:00–1:00pm","type":"meal","title":"Lunch","loc":"Rocky Top","detail":"","mats":[]},{"t":"2:00pm","type":"studio","title":"Design Studio","loc":"A+A Studios","detail":"Charrette 04 continued. Finalize build out.","mats":[]},{"t":"5:00pm","type":"studio","title":"Final Review + Exhibit","loc":"A+A Building","detail":"Closing review and exhibit of the week's work.","mats":["All work installed"]},{"t":"6:00–7:00pm","type":"meal","title":"Dinner","loc":"Pizza at A&A","detail":"","mats":[]},{"t":"7:00–9:00pm","type":"evening","title":"Evening Activity","loc":"","detail":"","mats":[],"options":["Sand volleyball","Fields"]},{"t":"11:00pm","type":"check","title":"Room Check + Lights Out","loc":"Magnolia Hall","detail":"","mats":[]}]},"Saturday":{"date":"Jul 19","label":"Departure","events":[{"t":"8:00–9:00am","type":"meal","title":"Breakfast","loc":"Rocky Top","detail":"","mats":[]},{"t":"9:00am","type":"photo","title":"Group Photo","loc":"A+A Building","detail":"All-camp group photo.","mats":[]},{"t":"9:00am","type":"studio","title":"Design Studio — Wrap Up + Exhibit","loc":"A+A Atrium","detail":"Final wrap up and exhibit setup.","mats":[]},{"t":"11:00–1:00pm","type":"exhibit","title":"Brunch + Exhibit","loc":"A+A Atrium","detail":"Families welcome. Brunch and final exhibit in the A+A Atrium.","mats":[]},{"t":"after lunch","type":"depart","title":"Departure","loc":"Magnolia Hall","detail":"Move out of the dorm by 2:00pm. Safe travels.","mats":[]}]}};
 const TYPE_COLORS = {"meal": ["#7468A3", "rgba(116,104,163,0.10)"], "studio": ["#007179", "rgba(0,113,121,0.10)"], "field": ["#FF8200", "rgba(255,130,0,0.08)"], "jam": ["#FF8200", "rgba(255,130,0,0.10)"], "evening": ["#007179", "rgba(0,113,121,0.06)"], "check": ["#8a8a8a", "rgba(0,0,0,0.05)"], "welcome": ["#FF8200", "rgba(255,130,0,0.08)"], "photo": ["#7468A3", "rgba(116,104,163,0.10)"], "exhibit": ["#7468A3", "rgba(116,104,163,0.12)"], "depart": ["#8a8a8a", "rgba(0,0,0,0.05)"]};
@@ -784,6 +811,59 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
   });
 
   if(!EVENING_FORM_URL){formEmbed.style.display='none';}
+
+  var briefsWrap=document.getElementById('briefsWrap');
+  var briefsToggle=document.getElementById('briefsToggle');
+  var briefsMenu=document.getElementById('briefsMenu');
+
+  function briefsAvailable(){
+    return BRIEFS.some(function(brief){return brief.url;});
+  }
+
+  function setBriefsOpen(open){
+    if(!briefsWrap||!briefsToggle||!briefsMenu)return;
+    briefsWrap.classList.toggle('is-open',!!open);
+    briefsToggle.setAttribute('aria-expanded',open?'true':'false');
+    briefsMenu.hidden=!open;
+  }
+
+  function initBriefs(){
+    if(!briefsWrap||!briefsToggle||!briefsMenu)return;
+    briefsMenu.innerHTML='';
+    BRIEFS.forEach(function(brief){
+      if(!brief.url)return;
+      var link=document.createElement('a');
+      link.className='briefs-link';
+      link.href=brief.url;
+      link.target='_blank';
+      link.rel='noopener';
+      link.innerHTML='<span>'+brief.label+'</span><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
+      briefsMenu.appendChild(link);
+    });
+
+    if(!briefsAvailable()){
+      briefsWrap.classList.add('is-unset');
+      briefsToggle.classList.add('is-unset');
+      briefsToggle.setAttribute('aria-disabled','true');
+      setBriefsOpen(false);
+      return;
+    }
+
+    briefsWrap.classList.remove('is-unset');
+    briefsToggle.classList.remove('is-unset');
+    briefsToggle.removeAttribute('aria-disabled');
+    briefsToggle.addEventListener('click',function(e){
+      e.stopPropagation();
+      setBriefsOpen(!briefsWrap.classList.contains('is-open'));
+    });
+    document.addEventListener('click',function(e){
+      if(!briefsWrap.classList.contains('is-open'))return;
+      if(briefsWrap.contains(e.target))return;
+      setBriefsOpen(false);
+    });
+  }
+
+  initBriefs();
 })();
 
 // Floating section nav
