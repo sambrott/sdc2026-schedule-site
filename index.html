@@ -515,12 +515,18 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
 (function(){
   var MOBILE_MAX = 768;
   var sections = null;
+  var scrollTimer = null;
+
   function isMobile(){ return window.innerWidth <= MOBILE_MAX; }
   function getSections(){
     if(!sections){ sections = Array.prototype.slice.call(document.querySelectorAll('.snap-section')); }
     return sections;
   }
-  var scrollTimer = null;
+
+  window.__cancelSnapCorrection = function(){
+    if(scrollTimer){ clearTimeout(scrollTimer); scrollTimer = null; }
+  };
+
   function correctSnap(){
     if(window.__navScrolling || !isMobile()) return;
     var secs = getSections();
@@ -536,6 +542,7 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
       window.scrollTo({top: closest.offsetTop, behavior:'smooth'});
     }
   }
+
   window.addEventListener('scroll', function(){
     if(!isMobile() || window.__navScrolling) return;
     if(scrollTimer) clearTimeout(scrollTimer);
@@ -647,17 +654,44 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     });
   }
 
+  function isMenuOpen(){
+    return navMenu && !navMenu.hidden;
+  }
+
+  function setScrollSnapEnabled(enabled){
+    var val=enabled?'':'none';
+    document.documentElement.style.scrollSnapType=val;
+    document.body.style.scrollSnapType=val;
+  }
+
   function easeInOutCubic(t){
     return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   }
 
   function smoothScrollTo(targetY,duration){
     if(scrollAnim)cancelAnimationFrame(scrollAnim);
+    if(window.__cancelSnapCorrection)window.__cancelSnapCorrection();
     var startY=window.scrollY;
     var diff=targetY-startY;
     var startTime=null;
     duration=duration||850;
     window.__navScrolling=true;
+    setScrollSnapEnabled(false);
+
+    function finishScroll(){
+      window.scrollTo(0,targetY);
+      scrollAnim=null;
+      setTimeout(function(){
+        window.__navScrolling=false;
+        setScrollSnapEnabled(true);
+        updateActiveNavLink();
+      },400);
+    }
+
+    if(Math.abs(diff)<2){
+      finishScroll();
+      return;
+    }
 
     function step(ts){
       if(!startTime)startTime=ts;
@@ -667,8 +701,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
       if(progress<1){
         scrollAnim=requestAnimationFrame(step);
       }else{
-        scrollAnim=null;
-        setTimeout(function(){window.__navScrolling=false;updateActiveNavLink();},180);
+        finishScroll();
       }
     }
     scrollAnim=requestAnimationFrame(step);
@@ -688,15 +721,17 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     }
   }
 
-  function toggleNav(){
+  function toggleNav(e){
+    if(e){e.stopPropagation();}
     if(!navToggle||!navMenu)return;
     navToggle.classList.remove('pop');
     void navToggle.offsetWidth;
     navToggle.classList.add('pop');
-    setNavOpen(navMenu.hidden);
+    setNavOpen(!isMenuOpen());
   }
 
-  function goToSection(id){
+  function goToSection(id,e){
+    if(e){e.stopPropagation();}
     var el=document.getElementById(id);
     if(!el)return;
     setNavOpen(false);
@@ -707,12 +742,12 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     navToggle.addEventListener('click',toggleNav);
   }
   document.querySelectorAll('.nav-link').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      goToSection(btn.getAttribute('data-target'));
+    btn.addEventListener('click',function(e){
+      goToSection(btn.getAttribute('data-target'),e);
     });
   });
   document.addEventListener('click',function(e){
-    if(!navMenu||navMenu.hidden)return;
+    if(!isMenuOpen())return;
     if(navFloat.contains(e.target))return;
     setNavOpen(false);
   });
