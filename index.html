@@ -66,7 +66,20 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .hero{position:static;background:var(--teal);color:var(--white);padding:16px 0 15px 20px;display:flex;align-items:stretch;justify-content:space-between;gap:14px;}
 .hero-l{min-width:0;}
 .hero-logo{width:300px;max-width:84vw;height:auto;display:block;}
-.hero-eyebrow{font-family:var(--body);font-weight:600;font-size:12.8px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
+.hero-eyebrow{font-family:var(--body);font-weight:600;font-size:12.8px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;line-height:1.45;}
+
+/* ===== FLOATING SECTION NAV ===== */
+.nav-float{position:fixed;top:14px;right:14px;z-index:200;pointer-events:none;color:var(--purple);transition:color .35s ease;}
+@media(min-width:641px){.nav-float{right:calc(50% - 306px);}}
+.nav-float-inner{display:flex;align-items:center;flex-direction:row-reverse;pointer-events:auto;}
+.nav-toggle{font-family:var(--din);font-weight:700;font-size:30px;line-height:1;width:44px;height:44px;border:none;background:transparent;cursor:pointer;color:inherit;transition:transform .2s cubic-bezier(.4,0,.2,1);flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center;}
+.nav-toggle:active{transform:scale(.88);}
+.nav-toggle.pop{animation:navPop .42s cubic-bezier(.4,0,.2,1);}
+@keyframes navPop{0%{transform:scale(1)}35%{transform:scale(1.22)}100%{transform:scale(1)}}
+.nav-links{display:flex;flex-direction:row-reverse;align-items:center;gap:2px;overflow:hidden;max-width:0;opacity:0;transition:max-width .38s cubic-bezier(.4,0,.2,1),opacity .28s ease;}
+.nav-float.open .nav-links{max-width:360px;opacity:1;}
+.nav-link{font-family:var(--din);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;padding:8px 10px;border:none;background:transparent;cursor:pointer;color:inherit;opacity:.92;transition:opacity .15s;}
+.nav-link:hover,.nav-link:active{opacity:1;}
 .hero-r{text-align:right;flex-shrink:0;display:flex;align-self:flex-end;}
 .hero-year-box{background:var(--orange);width:45px;height:96px;border-radius:0;display:flex;align-items:center;justify-content:center;overflow:hidden;transform:translateY(115px);position:relative;z-index:5;}
 .hero-year-box span{display:block;transform:rotate(-90deg);white-space:nowrap;font-family:var(--din);font-weight:700;font-size:34px;letter-spacing:.02em;color:var(--teal);}
@@ -184,11 +197,23 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </head>
 <body>
 
-<div class="snap-section">
+<nav class="nav-float" id="navFloat" aria-label="Section navigation">
+  <div class="nav-float-inner">
+    <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-label="Open section menu">!</button>
+    <div class="nav-links" id="navLinks">
+      <button type="button" class="nav-link" data-target="section-schedule">Schedule</button>
+      <button type="button" class="nav-link" data-target="section-locations">Locations</button>
+      <button type="button" class="nav-link" data-target="section-faculty">Faculty</button>
+      <button type="button" class="nav-link" data-target="section-forms">Forms</button>
+    </div>
+  </div>
+</nav>
+
+<div class="snap-section" id="section-hero">
 <div class="hero-wrap">
 <div class="hero">
   <div class="hero-l">
-    <div class="hero-eyebrow">UT · College of Architecture + Design</div>
+    <div class="hero-eyebrow">UT · College of<br>Architecture + Design</div>
     <svg class="hero-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 597.7 190.46">
   <defs>
     <style>
@@ -245,7 +270,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 
 <!-- ===== SCHEDULE ===== -->
-<div class="sched snap-section">
+<div class="sched snap-section" id="section-schedule">
   <div class="sched-head">
     <div class="sched-title">Schedule</div>
     <a class="sched-pdf-link" href="schedule.pdf" target="_blank" rel="noopener">View PDF</a>
@@ -258,7 +283,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </div>
 
 <!-- ===== LOCATIONS ===== -->
-<div class="section snap-section">
+<div class="section snap-section" id="section-locations">
   <div class="sched-title">Campus Locations</div>
   <div class="map-wrap">
     <iframe id="mapFrameA" class="map-frame" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -330,7 +355,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </div>
 
 <!-- ===== FACULTY ===== -->
-<div class="snap-section">
+<div class="snap-section" id="section-faculty">
 <div class="section">
   <div class="sched-title">Faculty</div>
   <div class="tabs-row">
@@ -358,7 +383,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </div>
 
 <!-- ===== FORMS ===== -->
-<div class="snap-section">
+<div class="snap-section" id="section-forms">
 <div class="section">
   <div class="sched-title">Forms</div>
   <div class="link-card" id="eveningFormLink" style="cursor:pointer;">
@@ -563,6 +588,70 @@ const PHOTO_FORM_URL="";
 if(EVENING_FORM_URL){document.getElementById('eveningFormLink').href=EVENING_FORM_URL;document.getElementById('formEmbed').src=EVENING_FORM_URL;}
 else{document.getElementById('formEmbed').style.display='none';}
 if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;}
+
+// Floating section nav
+(function(){
+  var navFloat=document.getElementById('navFloat');
+  var navToggle=document.getElementById('navToggle');
+  var heroSection=document.getElementById('section-hero');
+  var PURPLE=[116,104,163];
+  var WHITE=[255,255,255];
+
+  function lerpColor(t){
+    var r=Math.round(WHITE[0]+(PURPLE[0]-WHITE[0])*t);
+    var g=Math.round(WHITE[1]+(PURPLE[1]-WHITE[1])*t);
+    var b=Math.round(WHITE[2]+(PURPLE[2]-WHITE[2])*t);
+    return 'rgb('+r+','+g+','+b+')';
+  }
+
+  function updateNavColor(){
+    if(!navFloat||!heroSection)return;
+    var rect=heroSection.getBoundingClientRect();
+    var blend=Math.min(1,Math.max(0,1-(rect.bottom/(window.innerHeight*0.55))));
+    navFloat.style.color=lerpColor(blend);
+  }
+
+  function setNavOpen(open){
+    if(!navFloat||!navToggle)return;
+    navFloat.classList.toggle('open',open);
+    navToggle.setAttribute('aria-expanded',open?'true':'false');
+    navToggle.setAttribute('aria-label',open?'Close section menu':'Open section menu');
+  }
+
+  function toggleNav(){
+    if(!navToggle)return;
+    navToggle.classList.remove('pop');
+    void navToggle.offsetWidth;
+    navToggle.classList.add('pop');
+    setNavOpen(!navFloat.classList.contains('open'));
+  }
+
+  function goToSection(id){
+    var el=document.getElementById(id);
+    if(!el)return;
+    setNavOpen(false);
+    window.scrollTo({top:el.offsetTop,behavior:'smooth'});
+  }
+
+  if(navToggle){
+    navToggle.addEventListener('click',toggleNav);
+  }
+  document.querySelectorAll('.nav-link').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      goToSection(btn.getAttribute('data-target'));
+    });
+  });
+  document.addEventListener('click',function(e){
+    if(!navFloat||!navFloat.classList.contains('open'))return;
+    if(navFloat.contains(e.target))return;
+    setNavOpen(false);
+  });
+
+  window.addEventListener('scroll',updateNavColor,{passive:true});
+  window.addEventListener('resize',updateNavColor);
+  window.addEventListener('load',updateNavColor);
+  updateNavColor();
+})();
 
 // Init
 buildDayTabs();
