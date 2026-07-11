@@ -132,9 +132,6 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 @media(max-width:768px){
   html,body{height:var(--app-height);min-height:var(--app-height);scroll-snap-type:y mandatory;overscroll-behavior-y:none;}
   .snap-section{height:var(--app-height);min-height:var(--app-height);max-height:var(--app-height);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
-  #section-schedule.snap-section{height:auto;min-height:var(--app-height);max-height:none;scroll-snap-align:start;scroll-snap-stop:normal;overflow:visible;}
-  #section-schedule .sched-panel-wrap-outer{flex:none;min-height:0;}
-  #section-schedule .sched-panel-wrap{overflow:visible;flex:none;min-height:0;padding-bottom:calc(28px + var(--vv-inset-bottom, 0px));}
   .img-overlay-wrap{min-height:0;}
   #section-forms .forms-shell.is-pinned .section{padding-bottom:104px;}
   .sched-panel-wrap{padding-bottom:calc(20px + var(--vv-inset-bottom, 0px));}
@@ -731,10 +728,6 @@ function switchDay(day){
   updateDayInfo(day);
   const wrap=document.getElementById('schedPanelWrap');
   if(wrap)wrap.scrollTop=0;
-  if(window.innerWidth<=768){
-    var schedule=document.getElementById('section-schedule');
-    if(schedule)window.scrollTo(0,schedule.offsetTop);
-  }
 }
 
 function getTodayDay(){
@@ -781,21 +774,11 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
     if(scrollTimer){ clearTimeout(scrollTimer); scrollTimer = null; }
   };
 
-  function isWithinScheduleScroll(current){
-    if(window.innerWidth>768)return false;
-    var schedule=document.getElementById('section-schedule');
-    if(!schedule)return false;
-    var top=schedule.offsetTop;
-    var end=top+schedule.offsetHeight-window.innerHeight;
-    return current>top+1&&current<end-1;
-  }
-
   function correctSnap(){
     if(window.__navScrolling || !isMobile()) return;
     var secs = getSections();
     if(!secs.length) return;
     var current = window.scrollY;
-    if(isWithinScheduleScroll(current)) return;
     var closest = secs[0];
     var closestDist = Infinity;
     secs.forEach(function(s){
@@ -1339,13 +1322,37 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 buildDayTabs();
 
 (function(){
+  var MOBILE_MAX=768;
   var schedWrap=document.getElementById('schedPanelWrap');
   if(!schedWrap)return;
 
-  function isMobile(){return window.innerWidth<=768;}
+  function isMobile(){return window.innerWidth<=MOBILE_MAX;}
   function scrollable(el){return el.scrollHeight>el.clientHeight+2;}
   function atTop(el){return el.scrollTop<=2;}
   function atBottom(el){return el.scrollTop+el.clientHeight>=el.scrollHeight-2;}
+
+  var lastY=0;
+
+  schedWrap.addEventListener('touchstart',function(e){
+    if(!isMobile()||e.touches.length!==1)return;
+    lastY=e.touches[0].clientY;
+  },{passive:true});
+
+  schedWrap.addEventListener('touchmove',function(e){
+    if(!isMobile()||window.__navScrolling||e.touches.length!==1)return;
+    var y=e.touches[0].clientY;
+    var delta=lastY-y;
+    if(!delta)return;
+    lastY=y;
+
+    var canScroll=scrollable(schedWrap);
+    var escapeUp=delta<0&&(!canScroll||atTop(schedWrap));
+    var escapeDown=delta>0&&(!canScroll||atBottom(schedWrap));
+    if(escapeUp||escapeDown){
+      e.preventDefault();
+      window.scrollBy(0,delta);
+    }
+  },{passive:false});
 
   schedWrap.addEventListener('wheel',function(e){
     if(isMobile()||window.__navScrolling)return;
