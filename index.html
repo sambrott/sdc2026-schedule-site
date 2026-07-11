@@ -253,8 +253,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-name{font-family:var(--din);font-weight:600;font-size:16.5px;line-height:1.15;color:var(--ink);letter-spacing:.01em;}
 .tl-loc{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
 .tl-choice-sub{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
-.tl-option-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
-.tl-option-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.tl-option-row{margin-bottom:4px;}
 .tl-option-text{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);letter-spacing:.02em;line-height:1.4;}
 .tl-chev{width:22px;height:22px;stroke:var(--ink3);fill:none;stroke-width:2.5;flex-shrink:0;margin-top:3px;transition:transform .3s cubic-bezier(.4,0,.2,1);}
 .tl-row.open .tl-chev{transform:rotate(180deg);}
@@ -262,8 +261,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-detail-inner{padding-top:10px;}
 .tl-detail-body{font-family:var(--body);font-weight:300;font-size:17px;color:var(--ink2);line-height:1.6;}
 .tl-slabel{font-family:var(--din);font-weight:600;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:10px 0 6px;}
-.mat-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--paper);border-radius:0;margin-bottom:4px;}
-.mat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.mat-row{padding:9px 12px;background:var(--paper);border-radius:0;margin-bottom:4px;}
 .mat-text{font-family:var(--body);font-size:17px;color:var(--ink2);}
 
 /* ===== SECTIONS ===== */
@@ -667,11 +665,11 @@ function tlRow(ev,day,i,total){
   let detailInner='';
   if(ev.detail){detailInner+='<div class="tl-detail-body">'+ev.detail+'</div>';}
   if(ev.options && ev.options.length){
-    for(var o=0;o<ev.options.length;o++){detailInner+='<div class="tl-option-row"><div class="tl-option-dot" style="background:'+c[0]+';"></div><div class="tl-option-text">'+ev.options[o]+'</div></div>';}
+    for(var o=0;o<ev.options.length;o++){detailInner+='<div class="tl-option-row"><div class="tl-option-text">'+ev.options[o]+'</div></div>';}
   }
   if(ev.mats && ev.mats.length){
     detailInner+='<div class="tl-slabel">Bring</div>';
-    for(var m=0;m<ev.mats.length;m++){detailInner+='<div class="mat-row"><div class="mat-dot" style="background:'+c[0]+';"></div><div class="mat-text">'+ev.mats[m]+'</div></div>';}
+    for(var m=0;m<ev.mats.length;m++){detailInner+='<div class="mat-row"><div class="mat-text">'+ev.mats[m]+'</div></div>';}
   }
   const chevHtml = hasExtra ? '<svg class="tl-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>' : '';
   const detailHtml = hasExtra ? '<div class="tl-detail-wrap" id="detail-'+rid+'"><div class="tl-detail-inner">'+detailInner+'</div></div>' : '';
