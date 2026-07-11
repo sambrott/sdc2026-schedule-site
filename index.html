@@ -175,8 +175,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .nav-float.on-hero .nav-link.active{color:var(--white);background:rgba(255,255,255,.14);}
 .nav-link:focus-visible{outline:2px solid currentColor;outline-offset:2px;}
 .page-rail{position:fixed;left:max(var(--page-rail-edge,4px),calc((100vw - 640px)/2 + var(--page-rail-edge,4px)));top:var(--page-rail-center,50%);z-index:190;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 12px;transform:translate(-12px,-50%) scale(var(--page-rail-scale,1));transform-origin:center center;pointer-events:auto;touch-action:none;cursor:ns-resize;}
-.page-dot{appearance:none;width:3px;height:3px;min-width:0;padding:0;border:0;border-radius:50%;background:var(--white);box-shadow:0 1px 3px rgba(26,26,26,.28);transform:scale(1);transition:width .55s cubic-bezier(.22,1,.36,1),height .55s cubic-bezier(.22,1,.36,1),background-color .45s ease,box-shadow .45s ease,transform .55s cubic-bezier(.22,1,.36,1);}
-.page-dot.active{width:8px;height:8px;background:var(--white);box-shadow:0 1px 4px rgba(26,26,26,.32);transform:scale(1.06);}
+.page-dot{appearance:none;width:3px;height:3px;min-width:0;padding:0;border:0;border-radius:50%;background:var(--white);transform:scale(1);transition:width .55s cubic-bezier(.22,1,.36,1),height .55s cubic-bezier(.22,1,.36,1),background-color .45s ease,transform .55s cubic-bezier(.22,1,.36,1);}
+.page-dot.active{width:8px;height:8px;background:var(--white);transform:scale(1.06);}
 .page-rail.on-light .page-dot,.page-rail.on-light .page-dot.active{background:var(--purple);}
 .page-dot:focus-visible{outline:2px solid var(--orange);outline-offset:3px;}
 @media(prefers-reduced-motion:reduce){.page-dot{transition-duration:.01ms;}}
@@ -1099,10 +1099,17 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     smoothScrollTo(el.offsetTop);
   }
 
+  function pulseRailHaptic(){
+    if(!navigator.vibrate)return;
+    try{navigator.vibrate(12);}catch(err){}
+  }
+
   function showRailSection(id){
     if(id===railCurrent)return;
     var el=document.getElementById(id);
     if(!el)return;
+    var activeDot=document.querySelector('.page-dot.active');
+    var fromId=activeDot?activeDot.getAttribute('data-section'):null;
     railCurrent=id;
     if(scrollAnim){
       cancelAnimationFrame(scrollAnim);
@@ -1110,6 +1117,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     }
     window.scrollTo(0,el.offsetTop);
     updateActiveNavLink();
+    if(fromId!==id)pulseRailHaptic();
     if(window.__syncViewport)window.__syncViewport();
   }
 
