@@ -109,7 +109,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   html,body{height:var(--app-height);min-height:var(--app-height);scroll-snap-type:y mandatory;overscroll-behavior-y:none;}
   .snap-section{height:var(--app-height);min-height:var(--app-height);max-height:var(--app-height);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
   .img-overlay-wrap{min-height:0;}
-  #section-forms .forms-scroll{padding-bottom:calc(12px + var(--vv-inset-bottom, 0px));}
+  .forms-panel-wrap{padding-bottom:calc(12px + var(--vv-inset-bottom, 0px));}
   .sched-panel-wrap{padding-bottom:calc(20px + var(--vv-inset-bottom, 0px));}
   .tab-panel-wrap{padding-bottom:calc(14px + var(--vv-inset-bottom, 0px));}
 }
@@ -324,19 +324,19 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 /* Forms page layout */
 #section-forms{background:var(--paper);}
 .forms-shell{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;}
-#section-forms .forms-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:auto;}
+#section-forms .section{flex:1;min-height:0;padding-bottom:0;}
+.forms-panel-wrap-outer{flex:1;min-height:0;display:flex;}
+.forms-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:auto;}
 #section-forms .footer{flex-shrink:0;}
+@media(max-width:768px){
+  #section-forms{padding-top:56px;}
+}
 @media(min-width:769px){
   .forms-shell{min-height:100%;}
   #section-forms .footer{margin-top:auto;}
 }
 
 /* Breathing room between Faculty and Forms on mobile snap scroll */
-.snap-gap{display:none;}
-@media(max-width:768px){
-  .snap-gap{display:block;height:56px;background:var(--paper);flex-shrink:0;}
-}
-
 </style>
 </head>
 <body>
@@ -543,13 +543,13 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </div>
 </div>
 
-<div class="snap-gap" aria-hidden="true"></div>
-
 <!-- ===== FORMS ===== -->
 <div class="snap-section" id="section-forms">
 <div class="forms-shell" id="formsShell">
-<div class="section forms-scroll">
+<div class="section">
   <div class="sched-title">Forms</div>
+  <div class="forms-panel-wrap-outer">
+    <div class="forms-panel-wrap" id="formsPanelWrap">
   <div class="link-card" id="eveningFormLink">
     <div class="lc-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
     <div class="lc-text"><div class="lc-title">Evening Activity Sign-Up</div><div class="lc-sub">Pick what you're doing tonight</div></div>
@@ -569,6 +569,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <div class="briefs-menu" id="briefsMenu" hidden></div>
   </div>
   <iframe class="form-frame" id="formEmbed" src="about:blank"></iframe>
+    </div>
+  </div>
 </div>
 <div class="footer">
   <a href="https://archdesign.utk.edu" target="_blank" class="footer-url">archdesign.utk.edu</a>
@@ -1336,40 +1338,6 @@ buildDayTabs();
     }else if(e.deltaY>0&&(!canScroll||atBottom(schedWrap))){
       e.preventDefault();
       window.scrollBy(0,e.deltaY);
-    }
-  },{passive:false});
-})();
-
-(function(){
-  var MOBILE_MAX=768;
-  var formsScroll=document.querySelector('#section-forms .forms-scroll');
-  if(!formsScroll)return;
-
-  function isMobile(){return window.innerWidth<=MOBILE_MAX;}
-  function scrollable(el){return el.scrollHeight>el.clientHeight+2;}
-  function atTop(el){return el.scrollTop<=2;}
-  function atBottom(el){return el.scrollTop+el.clientHeight>=el.scrollHeight-2;}
-
-  var lastY=0;
-
-  formsScroll.addEventListener('touchstart',function(e){
-    if(!isMobile()||e.touches.length!==1)return;
-    lastY=e.touches[0].clientY;
-  },{passive:true});
-
-  formsScroll.addEventListener('touchmove',function(e){
-    if(!isMobile()||window.__navScrolling||e.touches.length!==1)return;
-    var y=e.touches[0].clientY;
-    var delta=lastY-y;
-    if(!delta)return;
-    lastY=y;
-
-    var canScroll=scrollable(formsScroll);
-    var escapeUp=delta<0&&(!canScroll||atTop(formsScroll));
-    var escapeDown=delta>0&&(!canScroll||atBottom(formsScroll));
-    if(escapeUp||escapeDown){
-      e.preventDefault();
-      window.scrollBy(0,delta);
     }
   },{passive:false});
 })();
