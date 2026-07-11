@@ -809,13 +809,12 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     }
     var el=document.getElementById(id);
     if(!el)return;
-    setNavOpen(false);
     smoothScrollTo(el.offsetTop);
   }
 
   function handleOutsideClose(e){
     if(!isMenuOpen())return;
-    if(navFloat.contains(e.target))return;
+    if(e.target.closest('.nav-float'))return;
     setNavOpen(false);
   }
 
@@ -827,8 +826,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
       goToSection(btn.getAttribute('data-target'),e);
     });
   });
-  document.addEventListener('pointerdown',handleOutsideClose,true);
-  document.addEventListener('touchstart',handleOutsideClose,{capture:true,passive:true});
+  document.addEventListener('click',handleOutsideClose);
 
   window.addEventListener('scroll',function(){
     updateNavColor();
