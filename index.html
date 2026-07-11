@@ -273,18 +273,20 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .link-card.is-unset .lc-arrow{stroke:var(--ink3);opacity:.55;}
 #section-forms .link-card:not(.is-unset) .lc-icon{display:none;}
 .briefs-wrap{margin-bottom:9px;}
-.briefs-card{width:100%;margin-bottom:0;font:inherit;color:inherit;}
+.briefs-card{width:100%;margin-bottom:0;}
 .briefs-wrap.is-open:not(.is-unset) .briefs-card{border-color:var(--teal);background:rgba(0,113,121,.06);}
 .briefs-wrap.is-open:not(.is-unset) .briefs-card .lc-title{color:var(--teal);}
-.briefs-chev{width:17px;height:17px;stroke:var(--ink3);fill:none;stroke-width:2;flex-shrink:0;margin-left:auto;transition:transform .2s ease;}
+.briefs-chev{width:17px;height:17px;stroke:var(--ink3);fill:none;stroke-width:2;flex-shrink:0;transition:transform .2s ease;}
 .briefs-wrap.is-open .briefs-chev{transform:rotate(180deg);}
-.briefs-wrap.is-unset .briefs-chev{opacity:.55;}
+.briefs-wrap.is-unset .briefs-chev{stroke:var(--ink3);opacity:.55;}
 .briefs-menu{border:1.5px solid var(--line);border-top:none;background:var(--white);}
 .briefs-wrap.is-open:not(.is-unset) .briefs-menu{border-color:var(--teal);}
-.briefs-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border-top:1px solid var(--line);text-decoration:none;font-family:var(--body);font-weight:600;font-size:15px;color:var(--ink);transition:background .15s ease,color .15s ease;}
+.briefs-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;border-top:1px solid var(--line);text-decoration:none;color:inherit;transition:background .15s ease;}
 .briefs-link:first-child{border-top:none;}
-.briefs-link:hover{background:rgba(0,113,121,.06);color:var(--teal);}
-.briefs-link svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+.briefs-link:hover{background:rgba(0,113,121,.06);}
+.briefs-link:hover .lc-title{color:var(--teal);}
+.briefs-link .lc-arrow{stroke:var(--ink3);}
+.briefs-link:hover .lc-arrow{stroke:var(--teal);}
 .briefs-wrap.is-unset .briefs-menu{display:none!important;}
 .lc-icon{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--teal);}
 .lc-icon.orange{background:var(--orange);}
@@ -541,11 +543,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </div>
   <div class="briefs-wrap is-unset" id="briefsWrap">
-    <button type="button" class="link-card briefs-card is-unset" id="briefsToggle" aria-expanded="false" aria-controls="briefsMenu" aria-disabled="true">
+    <div class="link-card briefs-card is-unset" id="briefsToggle" role="button" tabindex="-1" aria-expanded="false" aria-controls="briefsMenu" aria-disabled="true">
       <div class="lc-icon purple"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
       <div class="lc-text"><div class="lc-title">Briefs</div><div class="lc-sub">Studio project briefs</div></div>
-      <svg class="briefs-chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
+      <svg class="lc-arrow briefs-marker" viewBox="0 0 24 24" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+    </div>
     <div class="briefs-menu" id="briefsMenu" hidden></div>
   </div>
   <iframe class="form-frame" id="formEmbed" src="about:blank"></iframe>
@@ -837,7 +839,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
       link.href=brief.url;
       link.target='_blank';
       link.rel='noopener';
-      link.innerHTML='<span>'+brief.label+'</span><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
+      link.innerHTML='<span class="lc-title">'+brief.label+'</span><svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
       briefsMenu.appendChild(link);
     });
 
@@ -845,6 +847,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
       briefsWrap.classList.add('is-unset');
       briefsToggle.classList.add('is-unset');
       briefsToggle.setAttribute('aria-disabled','true');
+      briefsToggle.setAttribute('tabindex','-1');
       setBriefsOpen(false);
       return;
     }
@@ -852,8 +855,21 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     briefsWrap.classList.remove('is-unset');
     briefsToggle.classList.remove('is-unset');
     briefsToggle.removeAttribute('aria-disabled');
+    briefsToggle.setAttribute('tabindex','0');
+    briefsToggle.style.cursor='pointer';
+    var marker=briefsToggle.querySelector('.briefs-marker');
+    if(marker){
+      marker.classList.remove('lc-arrow');
+      marker.classList.add('briefs-chev');
+      marker.innerHTML='<polyline points="6 9 12 15 18 9"/>';
+    }
     briefsToggle.addEventListener('click',function(e){
       e.stopPropagation();
+      setBriefsOpen(!briefsWrap.classList.contains('is-open'));
+    });
+    briefsToggle.addEventListener('keydown',function(e){
+      if(e.key!=='Enter'&&e.key!==' ')return;
+      e.preventDefault();
       setBriefsOpen(!briefsWrap.classList.contains('is-open'));
     });
     document.addEventListener('click',function(e){
