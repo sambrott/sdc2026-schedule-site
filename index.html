@@ -164,6 +164,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .nav-float.on-hero .nav-link:hover{color:var(--white);background:rgba(255,255,255,.1);}
 .nav-float.on-hero .nav-link.active{color:var(--white);background:rgba(255,255,255,.14);}
 .nav-link:focus-visible{outline:2px solid currentColor;outline-offset:2px;}
+.page-rail{position:fixed;left:max(4px,calc((100vw - 640px)/2 + 4px));top:50%;z-index:190;display:flex;flex-direction:column;align-items:center;gap:8px;transform:translateY(-50%);pointer-events:none;}
+.page-dot{width:3px;height:3px;border-radius:50%;background:rgba(26,26,26,.42);box-shadow:0 0 0 1px rgba(255,255,255,.24);transform:scale(1);transition:width .55s cubic-bezier(.22,1,.36,1),height .55s cubic-bezier(.22,1,.36,1),background-color .45s ease,box-shadow .45s ease,transform .55s cubic-bezier(.22,1,.36,1);}
+.page-dot.active{width:8px;height:8px;background:var(--purple);box-shadow:0 1px 4px rgba(26,26,26,.25);transform:scale(1.06);}
+@media(prefers-reduced-motion:reduce){.page-dot{transition-duration:.01ms;}}
 .hero-r{text-align:right;flex-shrink:0;display:flex;align-self:flex-end;}
 .hero-year-box{background:var(--orange);width:45px;height:96px;border-radius:0;display:flex;align-items:center;justify-content:center;overflow:hidden;transform:translateY(115px);position:relative;z-index:5;}
 .hero-year-box span{display:block;transform:rotate(-90deg);white-space:nowrap;font-family:var(--din);font-weight:700;font-size:34px;letter-spacing:.02em;color:var(--teal);}
@@ -370,6 +374,14 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     </div>
   </div>
 </nav>
+
+<div class="page-rail" aria-hidden="true">
+  <span class="page-dot active" data-section="section-hero"></span>
+  <span class="page-dot" data-section="section-schedule"></span>
+  <span class="page-dot" data-section="section-locations"></span>
+  <span class="page-dot" data-section="section-faculty"></span>
+  <span class="page-dot" data-section="section-forms"></span>
+</div>
 
 <div class="snap-section" id="section-hero">
 <div class="hero-wrap">
@@ -972,6 +984,9 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     });
     document.querySelectorAll('.nav-link').forEach(function(btn){
       btn.classList.toggle('active',btn.getAttribute('data-target')===current);
+    });
+    document.querySelectorAll('.page-dot').forEach(function(dot){
+      dot.classList.toggle('active',dot.getAttribute('data-section')===current);
     });
   }
 
