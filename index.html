@@ -206,11 +206,23 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .map-frame{position:absolute;top:0;left:0;width:100%;height:100%;border:0;opacity:0;transition:opacity .4s ease;}
 .map-frame.visible{opacity:1;}
 .form-frame{width:100%;height:560px;border:1.5px solid var(--line);border-radius:6px;background:var(--white);margin-top:6px;}
+.form-frame:not([src]),.form-frame[src=""],.form-frame[src="about:blank"]{display:none;}
 
 /* Footer */
-.footer{background:var(--teal);color:var(--white);padding:28px 22px 38px;text-align:center;}
-.footer-url{font-family:var(--din);font-weight:600;font-size:clamp(19px,6vw,28px);color:var(--orange);letter-spacing:.01em;}
+.footer{background:var(--teal);color:var(--white);padding:28px 22px 38px;text-align:center;flex-shrink:0;width:100%;}
+.footer-url{font-family:var(--din);font-weight:600;font-size:clamp(19px,6vw,28px);color:var(--orange);letter-spacing:.01em;text-decoration:underline;}
 .footer-tag{font-family:var(--body);font-weight:300;font-size:15px;color:rgba(255,255,255,.7);margin-top:8px;letter-spacing:.04em;}
+
+/* Forms page layout */
+#section-forms{background:var(--paper);}
+#section-forms .section{flex:0 0 auto;min-height:0;padding-bottom:0;}
+#section-forms .footer{margin-top:auto;}
+
+/* Breathing room between Faculty and Forms on mobile snap scroll */
+.snap-gap{display:none;}
+@media(max-width:768px){
+  .snap-gap{display:block;height:56px;background:var(--paper);flex-shrink:0;}
+}
 
 </style>
 </head>
@@ -405,6 +417,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   </div>
 </div>
 </div>
+
+<div class="snap-gap" aria-hidden="true"></div>
 
 <!-- ===== FORMS ===== -->
 <div class="snap-section" id="section-forms">
