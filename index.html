@@ -227,10 +227,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-row.expandable .tl-ev{cursor:pointer;}
 .tl-row.expandable:active .tl-ev{box-shadow:0 4px 16px rgba(0,0,0,.08);}
 .tl-ev-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-.tl-ev-row.has-vote{justify-content:flex-start;gap:10px;}
-.tl-ev-row.has-vote .tl-ev-text{flex:0 1 auto;}
-.tl-ev-row.has-vote .tl-chev{margin-left:auto;}
-.tl-ev-row .tl-vote-btn{align-self:flex-start;margin-top:1px;flex-shrink:0;cursor:pointer;}
+.tl-ev-row.has-action{justify-content:flex-start;gap:10px;}
+.tl-ev-row.has-action .tl-ev-text{flex:0 1 auto;}
+.tl-ev-row.has-action .tl-chev{margin-left:auto;}
+.tl-ev-row .tl-vote-btn,.tl-ev-row .tl-brief-btn{align-self:flex-start;margin-top:1px;flex-shrink:0;cursor:pointer;}
 .tl-ev-text{min-width:0;flex:1;}
 .tl-type{display:inline-block;font-family:var(--body);font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--tc);background:var(--tp);padding:2px 7px;border-radius:2px;margin-bottom:5px;}
 .tl-name{font-family:var(--din);font-weight:600;font-size:16.5px;line-height:1.15;color:var(--ink);letter-spacing:.01em;}
@@ -608,6 +608,25 @@ function eveningVoteBtn(){
   return '<span class="lc-directions tl-vote-btn is-unset" aria-disabled="true" title="Voting unavailable"'+stopClick+'>Vote'+arrow+'</span>';
 }
 
+function studioBriefBtn(day,ev){
+  if(ev.type!=='studio')return '';
+  var briefLabels={
+    Tuesday:'Industrial Design Brief',
+    Wednesday:'Architecture Brief',
+    Thursday:'Graphic Design Brief'
+  };
+  var label=briefLabels[day];
+  if(!label)return '';
+  var brief=BRIEFS.find(function(item){return item.label===label;});
+  var url=brief&&brief.url;
+  var arrow='<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
+  var stopClick=' onclick="event.stopPropagation()"';
+  if(url){
+    return '<a class="lc-directions tl-brief-btn" href="'+url+'" target="_blank" rel="noopener"'+stopClick+'>Brief'+arrow+'</a>';
+  }
+  return '<span class="lc-directions tl-brief-btn is-unset" aria-disabled="true" title="Brief unavailable"'+stopClick+'>Brief'+arrow+'</span>';
+}
+
 // Timeline event row (expands in place to reveal detail + materials)
 function tlRow(ev,day,i,total){
   const c=tc(ev.type);const label=TYPE_LABELS[ev.type]||"";
@@ -617,6 +636,7 @@ function tlRow(ev,day,i,total){
   const locHtml = (ev.loc && !isEvening) ? '<div class="tl-loc">'+ev.loc+'</div>' : '';
   const choiceSubHtml = isEvening ? '<div class="tl-choice-sub">Your choice</div>' : '';
   const voteHtml = isEvening ? eveningVoteBtn() : '';
+  const briefHtml = studioBriefBtn(day,ev);
   const hasExtra = isEvening || !!ev.detail || (ev.options && ev.options.length>0) || (ev.mats && ev.mats.length>0);
   const rid=day+'-'+i;
   let detailInner='';
@@ -634,7 +654,7 @@ function tlRow(ev,day,i,total){
   return '<div class="tl-row'+(hasExtra?' expandable':'')+'" id="row-'+rid+'" style="--tc:'+c[0]+';--tp:'+c[1]+';"'+clickAttr+'>'+
     '<div class="tl-tc"><div class="tl-time">'+ev.t+'</div><div class="tl-dot"></div>'+line+'</div>'+
     '<div class="tl-ev">'+
-      '<div class="tl-ev-row'+(isEvening?' has-vote':'')+'"><div class="tl-ev-text">'+typeHtml+'<div class="tl-name">'+ev.title+'</div>'+locHtml+choiceSubHtml+'</div>'+voteHtml+chevHtml+'</div>'+
+      '<div class="tl-ev-row'+((voteHtml||briefHtml)?' has-action':'')+'"><div class="tl-ev-text">'+typeHtml+'<div class="tl-name">'+ev.title+'</div>'+locHtml+choiceSubHtml+'</div>'+voteHtml+briefHtml+chevHtml+'</div>'+
       detailHtml+
     '</div>'+
   '</div>';
