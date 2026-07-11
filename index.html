@@ -11,53 +11,71 @@ window.addEventListener('load', function(){ window.scrollTo(0,0); });
   var MOBILE_MAX = 768;
   var lockedHeight = window.innerHeight;
 
-  function applyAppHeight(){
-    document.documentElement.style.setProperty('--app-height', lockedHeight + 'px');
-  }
-
   function isMobile(){
     return window.innerWidth <= MOBILE_MAX;
   }
 
-  function getSnapSections(){
-    return Array.prototype.slice.call(document.querySelectorAll('.snap-section'));
+  function applyAppHeight(){
+    document.documentElement.style.setProperty('--app-height', lockedHeight + 'px');
   }
 
-  function anchorCurrentSection(){
-    if(!isMobile() || window.__navScrolling) return;
-    var secs = getSnapSections();
-    if(!secs.length) return;
-    var y = window.scrollY;
-    var closest = secs[0];
-    var closestDist = Infinity;
-    secs.forEach(function(s){
-      var dist = Math.abs(s.offsetTop - y);
-      if(dist < closestDist){
-        closestDist = dist;
-        closest = s;
-      }
-    });
-    if(closestDist < 96){
-      window.scrollTo(0, closest.offsetTop);
+  function syncVisualViewport(){
+    if(!isMobile()){
+      document.documentElement.style.setProperty('--vv-offset-top', '0px');
+      return;
+    }
+    var vv = window.visualViewport;
+    document.documentElement.style.setProperty('--vv-offset-top', ((vv && vv.offsetTop) || 0) + 'px');
+  }
+
+  var lockingFormsScroll = false;
+
+  function syncFormsShell(){
+    var forms = document.getElementById('section-forms');
+    var shell = document.getElementById('formsShell');
+    if(!forms || !shell) return;
+
+    if(!isMobile()){
+      shell.classList.remove('is-pinned');
+      return;
+    }
+
+    var target = forms.offsetTop;
+    var onForms = Math.abs(window.scrollY - target) < 48;
+    shell.classList.toggle('is-pinned', onForms);
+
+    if(onForms && !window.__navScrolling && !lockingFormsScroll && Math.abs(window.scrollY - target) > 1){
+      lockingFormsScroll = true;
+      window.scrollTo(0, target);
+      lockingFormsScroll = false;
     }
   }
 
+  function syncViewport(){
+    syncVisualViewport();
+    syncFormsShell();
+  }
+
   applyAppHeight();
+  syncViewport();
+  window.__syncViewport = syncViewport;
 
   window.addEventListener('orientationchange', function(){
     setTimeout(function(){
       lockedHeight = window.innerHeight;
       applyAppHeight();
-      anchorCurrentSection();
+      syncViewport();
     }, 150);
   });
 
+  window.addEventListener('scroll', syncViewport, {passive:true});
+
   if(window.visualViewport){
-    window.visualViewport.addEventListener('resize', function(){
-      if(!isMobile()) return;
-      anchorCurrentSection();
-    });
+    window.visualViewport.addEventListener('resize', syncViewport);
+    window.visualViewport.addEventListener('scroll', syncViewport);
   }
+
+  window.addEventListener('load', syncViewport);
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,6 +106,7 @@ window.addEventListener('load', function(){ window.scrollTo(0,0); });
   --nav-bar-gap:6px;
   --nav-bar-step:calc(var(--nav-bar-gap) + var(--nav-bar-h));
   --app-height:100svh;
+  --vv-offset-top:0px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;max-width:640px;margin:0 auto;overflow-x:hidden;}
@@ -96,9 +115,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   html,body{height:var(--app-height);min-height:var(--app-height);scroll-snap-type:y mandatory;overscroll-behavior-y:none;}
   .snap-section{height:var(--app-height);min-height:var(--app-height);max-height:var(--app-height);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
   .img-overlay-wrap{min-height:0;}
-  #section-forms{position:relative;}
-  #section-forms .footer{position:absolute;bottom:0;left:0;right:0;margin-top:0;}
-  #section-forms .section{padding-bottom:104px;}
+  #section-forms .forms-shell.is-pinned .section{padding-bottom:104px;}
 }
 @media(min-width:769px){
   html,body{height:auto;scroll-snap-type:none;overscroll-behavior-y:auto;}
@@ -116,7 +133,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .hero-eyebrow{font-family:var(--body);font-weight:600;font-size:12.8px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;line-height:1.45;}
 
 /* ===== FLOATING SECTION NAV (forma.cool pattern) ===== */
-.nav-float{position:fixed;top:calc(var(--section-pad-top) + var(--section-title-size) * .5 - var(--nav-toggle-size) * .5);right:var(--section-pad-x);z-index:200;pointer-events:none;color:var(--purple);transition:color .35s ease;}
+.nav-float{position:fixed;top:calc(var(--section-pad-top) + var(--section-title-size) * .5 - var(--nav-toggle-size) * .5 + var(--vv-offset-top, 0px));right:var(--section-pad-x);z-index:200;pointer-events:none;color:var(--purple);transition:color .35s ease;}
 @media(min-width:641px){.nav-float{right:calc(50% - 320px + var(--section-pad-x));}}
 .nav-float-inner{position:relative;display:flex;align-items:flex-start;justify-content:flex-end;pointer-events:auto;}
 .nav-toggle{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--nav-bar-gap);width:var(--nav-toggle-size);height:var(--nav-toggle-size);padding:0;border:none;border-radius:var(--rsm);background:transparent;cursor:pointer;color:inherit;flex-shrink:0;transition:background .15s ease;}
@@ -254,8 +271,15 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 /* Forms page layout */
 #section-forms{background:var(--paper);}
-#section-forms .section{flex:0 0 auto;min-height:0;padding-bottom:0;}
-#section-forms .footer{margin-top:auto;}
+.forms-shell{display:flex;flex-direction:column;min-height:100%;}
+#section-forms .section{flex:0 0 auto;min-height:0;}
+@media(max-width:768px){
+  #section-forms .forms-shell.is-pinned{position:fixed;top:var(--vv-offset-top,0px);left:0;right:0;margin:0 auto;max-width:640px;height:var(--app-height);z-index:5;background:var(--paper);}
+  #section-forms .forms-shell.is-pinned .footer{position:absolute;bottom:0;left:0;right:0;margin-top:0;}
+}
+@media(min-width:769px){
+  #section-forms .footer{margin-top:auto;}
+}
 
 /* Breathing room between Faculty and Forms on mobile snap scroll */
 .snap-gap{display:none;}
@@ -461,6 +485,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 <!-- ===== FORMS ===== -->
 <div class="snap-section" id="section-forms">
+<div class="forms-shell" id="formsShell">
 <div class="section">
   <div class="sched-title">Forms</div>
   <div class="link-card" id="eveningFormLink" style="cursor:pointer;">
@@ -477,6 +502,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </div>
 <div class="footer">
   <a href="https://archdesign.utk.edu" target="_blank" class="footer-url">archdesign.utk.edu</a>
+</div>
 </div>
 </div>
 
@@ -758,6 +784,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
         window.__navScrolling=false;
         setScrollSnapEnabled(true);
         updateActiveNavLink();
+        if(window.__syncViewport)window.__syncViewport();
       },180);
     }
 
