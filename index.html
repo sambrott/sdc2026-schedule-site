@@ -175,7 +175,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .break-band{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(to top,rgba(0,0,0,.75) 45%,rgba(0,0,0,0));color:var(--white);padding:40px 22px 48px;}
 .break-band .desc{font-family:var(--body);font-weight:300;font-size:15px;line-height:1.6;color:rgba(255,255,255,.95);text-wrap:pretty;}
 .break-band .desc .lead{color:var(--orange);font-weight:700;font-family:var(--din);letter-spacing:.02em;text-transform:uppercase;font-size:18px;}
-.swipe-cue{position:absolute;left:50%;bottom:7px;z-index:2;width:42px;height:46px;transform:translateX(-50%);pointer-events:none;}
+.swipe-cue{position:absolute;left:50%;bottom:9px;z-index:2;width:42px;height:46px;transform:translateX(-50%);pointer-events:none;}
 .swipe-chevron{position:absolute;left:7px;bottom:0;width:28px;height:14px;fill:none;stroke:var(--white);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));}
 .swipe-chevron:nth-child(-n+3){opacity:0;animation:swipeTrail 1.8s cubic-bezier(.22,.61,.36,1) infinite;}
 .swipe-chevron:nth-child(1){animation-delay:0s;}
@@ -183,7 +183,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .swipe-chevron:nth-child(3){animation-delay:.9s;}
 .swipe-chevron:nth-child(4){opacity:.98;animation:swipeAnchor 1.8s ease-in-out infinite;}
 @keyframes swipeTrail{
-  0%{transform:translateY(0) scale(1);opacity:.78;}
+  0%{transform:translateY(0) scale(1);opacity:0;}
+  12%{transform:translateY(-1px) scale(1);opacity:.78;}
   75%,100%{transform:translateY(-30px) scale(.9);opacity:0;}
 }
 @keyframes swipeAnchor{
