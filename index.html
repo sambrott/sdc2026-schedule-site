@@ -328,7 +328,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .briefs-wrap.is-open .briefs-chev{transform:rotate(180deg);}
 .briefs-wrap.is-unset .briefs-chev{stroke:var(--ink3);opacity:.55;}
 .briefs-menu-wrap{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
-.briefs-menu{border:1.5px solid var(--line);border-top:none;background:var(--white);}
+.briefs-menu{border:1.5px solid var(--line);border-top:none;background:var(--white);max-height:min(230px,40vh);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;}
 .briefs-wrap.is-open:not(.is-unset) .briefs-menu{border-color:var(--teal);}
 .briefs-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;border-top:1px solid var(--line);text-decoration:none;color:inherit;transition:background .15s ease;}
 .briefs-link:first-child{border-top:none;}
@@ -946,11 +946,16 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     return BRIEFS.some(function(brief){return brief.url;});
   }
 
+  function briefsMenuOpenHeight(){
+    var max=parseFloat(window.getComputedStyle(briefsMenu).maxHeight);
+    return Math.min(briefsMenu.scrollHeight,isNaN(max)?briefsMenu.scrollHeight:max);
+  }
+
   function setBriefsOpen(open){
     if(!briefsWrap||!briefsToggle||!briefsMenuWrap||!briefsMenu)return;
     briefsWrap.classList.toggle('is-open',!!open);
     briefsToggle.setAttribute('aria-expanded',open?'true':'false');
-    briefsMenuWrap.style.maxHeight=open?briefsMenu.scrollHeight+'px':'0px';
+    briefsMenuWrap.style.maxHeight=open?briefsMenuOpenHeight()+'px':'0px';
   }
 
   function initBriefs(){
@@ -988,7 +993,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
       marker.innerHTML='<polyline points="6 9 12 15 18 9"/>';
     }
     if(briefsWrap.classList.contains('is-open')){
-      briefsMenuWrap.style.maxHeight=briefsMenu.scrollHeight+'px';
+      briefsMenuWrap.style.maxHeight=briefsMenuOpenHeight()+'px';
     }
     if(briefsBound)return;
     briefsBound=true;
