@@ -226,7 +226,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .day-info-name{font-family:var(--din);font-weight:700;font-size:23.1px;text-transform:uppercase;letter-spacing:.02em;line-height:1.1;}
 .day-info-label{font-family:var(--body);font-weight:500;font-size:15px;color:var(--ink3);margin-top:2px;}
 .sched-panel-wrap-outer{position:relative;flex:1;min-height:0;display:flex;padding:0 10px;}
-.sched-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 4px 8px;}
+.sched-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:auto;padding:0 4px 8px;}
 .sched-panel{display:none;}
 .sched-panel.active{display:block;}
 
@@ -1322,6 +1322,52 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 
 // Init
 buildDayTabs();
+
+(function(){
+  var MOBILE_MAX=768;
+  var schedWrap=document.getElementById('schedPanelWrap');
+  if(!schedWrap)return;
+
+  function isMobile(){return window.innerWidth<=MOBILE_MAX;}
+  function scrollable(el){return el.scrollHeight>el.clientHeight+2;}
+  function atTop(el){return el.scrollTop<=2;}
+  function atBottom(el){return el.scrollTop+el.clientHeight>=el.scrollHeight-2;}
+
+  var lastY=0;
+
+  schedWrap.addEventListener('touchstart',function(e){
+    if(!isMobile()||e.touches.length!==1)return;
+    lastY=e.touches[0].clientY;
+  },{passive:true});
+
+  schedWrap.addEventListener('touchmove',function(e){
+    if(!isMobile()||window.__navScrolling||e.touches.length!==1)return;
+    var y=e.touches[0].clientY;
+    var delta=lastY-y;
+    if(!delta)return;
+    lastY=y;
+
+    var canScroll=scrollable(schedWrap);
+    var escapeUp=delta<0&&(!canScroll||atTop(schedWrap));
+    var escapeDown=delta>0&&(!canScroll||atBottom(schedWrap));
+    if(escapeUp||escapeDown){
+      e.preventDefault();
+      window.scrollBy(0,delta);
+    }
+  },{passive:false});
+
+  schedWrap.addEventListener('wheel',function(e){
+    if(isMobile()||window.__navScrolling)return;
+    var canScroll=scrollable(schedWrap);
+    if(e.deltaY<0&&(!canScroll||atTop(schedWrap))){
+      e.preventDefault();
+      window.scrollBy(0,e.deltaY);
+    }else if(e.deltaY>0&&(!canScroll||atBottom(schedWrap))){
+      e.preventDefault();
+      window.scrollBy(0,e.deltaY);
+    }
+  },{passive:false});
+})();
 </script>
 </body>
 </html>
