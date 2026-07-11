@@ -636,17 +636,11 @@ const BRIEF_SOURCES=[
 ];
 const BRIEFS=[];
 
-function briefSortKey(brief){
-  var match=(brief.label||brief.url||'').match(/\d+/);
-  return match?parseInt(match[0],10):0;
-}
-
 function finalizeBriefAssets(results,callback){
   BRIEFS.length=0;
-  results.forEach(function(item){
-    if(item)BRIEFS.push(item);
-  });
-  BRIEFS.sort(function(a,b){return briefSortKey(a)-briefSortKey(b);});
+  for(var i=0;i<results.length;i++){
+    if(results[i])BRIEFS.push(results[i]);
+  }
   if(callback)callback();
 }
 
@@ -961,8 +955,9 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
   function initBriefs(){
     if(!briefsWrap||!briefsToggle||!briefsMenuWrap||!briefsMenu)return;
     briefsMenu.innerHTML='';
-    BRIEFS.forEach(function(brief){
-      if(!brief.url)return;
+    BRIEF_SOURCES.forEach(function(source){
+      var brief=BRIEFS.find(function(item){return item.label===source.label;});
+      if(!brief||!brief.url)return;
       var link=document.createElement('a');
       link.className='briefs-link';
       link.href=brief.url;
