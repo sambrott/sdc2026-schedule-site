@@ -153,11 +153,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .nav-toggle[aria-expanded=true] .nav-bar:first-child{transform:translateY(var(--nav-bar-step)) rotate(45deg);}
 .nav-toggle[aria-expanded=true] .nav-bar:nth-child(2){opacity:0;transform:scaleX(0);}
 .nav-toggle[aria-expanded=true] .nav-bar:nth-child(3){transform:translateY(calc(-1 * var(--nav-bar-step))) rotate(-45deg);}
-.nav-menu{position:absolute;top:calc(100% + 6px);right:0;width:min(72vw,272px);min-width:200px;display:none;flex-direction:column;align-items:stretch;gap:0;padding:0;border-radius:var(--rsm);overflow:hidden;background:hsla(38,24%,94%,.78);backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);border:.5px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 12px 40px rgba(0,0,0,.1);}
+.nav-menu{position:absolute;top:calc(100% + 6px);right:0;width:max-content;min-width:132px;max-width:min(48vw,188px);display:none;flex-direction:column;align-items:stretch;gap:0;padding:0;border-radius:var(--rsm);overflow:hidden;background:hsla(38,24%,94%,.78);backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);border:.5px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 12px 40px rgba(0,0,0,.1);}
 .nav-float.is-open .nav-menu{display:flex;animation:navDropIn .2s ease;}
 .nav-float.on-hero .nav-menu{background:rgba(0,0,0,.52);backdrop-filter:blur(28px) saturate(1.35);-webkit-backdrop-filter:blur(28px) saturate(1.35);border:.5px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 40px rgba(0,0,0,.35);}
 @keyframes navDropIn{0%{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.nav-link{display:block;width:100%;padding:12px 16px;border:none;border-radius:0;background:transparent;cursor:pointer;text-align:left;font-family:var(--din);font-weight:600;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);transition:background .15s ease,color .15s ease;}
+.nav-link{display:block;width:100%;padding:12px 18px 12px 10px;border:none;border-radius:0;background:transparent;cursor:pointer;text-align:right;font-family:var(--din);font-weight:600;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);transition:background .15s ease,color .15s ease;}
 .nav-link:hover{color:var(--ink);background:rgba(116,104,163,.1);}
 .nav-link:active{background:rgba(116,104,163,.18);}
 .nav-link.active{color:var(--purple);background:rgba(116,104,163,.12);}
