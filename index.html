@@ -133,7 +133,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   #section-schedule .tl-loc{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   #section-schedule .tl-choice-sub{display:none;}
   #section-schedule .tl-chev{width:18px;height:18px;margin-top:0;}
-  #section-schedule .tl-ev-row .tl-vote-btn,#section-schedule .tl-ev-row .tl-brief-btn{padding:4px 8px;font-size:10px;}
+  #section-schedule .tl-ev-row{min-width:0;flex-wrap:nowrap;}
+  #section-schedule .tl-ev-row .tl-vote-btn,#section-schedule .tl-ev-row .tl-brief-btn{padding:4px 8px;font-size:10px;flex-shrink:0;}
   #section-schedule .tl-detail-inner{padding-top:6px;}
   #section-schedule .tl-detail-body{font-size:13px;line-height:1.45;}
   #section-schedule .tl-option-row{display:flex;align-items:center;gap:8px;margin-bottom:3px;}
@@ -652,7 +653,7 @@ function studioBriefBtn(day,ev){
   var label=briefLabels[day];
   if(!label)return '';
   if(day==='Monday'){
-    if(ev.type!=='field'||ev.t!=='morning')return '';
+    if(ev.type!=='field')return '';
   }else if(ev.type!=='studio'){
     return '';
   }
