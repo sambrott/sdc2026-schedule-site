@@ -108,10 +108,13 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 @media(max-width:768px){
   html,body{height:var(--app-height);min-height:var(--app-height);scroll-snap-type:y mandatory;overscroll-behavior-y:none;}
   .snap-section{height:var(--app-height);min-height:var(--app-height);max-height:var(--app-height);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
+  #section-schedule.snap-section,#section-forms.snap-section{scroll-snap-stop:normal;}
+  .sched.snap-section{display:flex;flex-direction:column;}
   .img-overlay-wrap{min-height:0;}
-  .forms-panel-wrap{padding-bottom:calc(12px + var(--vv-inset-bottom, 0px));}
-  .sched-panel-wrap{padding-bottom:calc(20px + var(--vv-inset-bottom, 0px));}
-  .tab-panel-wrap{padding-bottom:calc(14px + var(--vv-inset-bottom, 0px));}
+  .forms-panel-wrap{padding-bottom:12px;}
+  .sched-panel-wrap{padding-bottom:20px;}
+  .tab-panel-wrap{padding-bottom:14px;}
+  #section-faculty .section{padding-bottom:56px;}
 }
 @media(min-width:769px){
   html,body{height:auto;scroll-snap-type:none;overscroll-behavior-y:auto;}
@@ -202,7 +205,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .day-info-name{font-family:var(--din);font-weight:700;font-size:23.1px;text-transform:uppercase;letter-spacing:.02em;line-height:1.1;}
 .day-info-label{font-family:var(--body);font-weight:500;font-size:15px;color:var(--ink3);margin-top:2px;}
 .sched-panel-wrap-outer{position:relative;flex:1;min-height:0;display:flex;padding:0 10px;}
-.sched-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:auto;padding:0 4px 8px;}
+.sched-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;padding:0 4px 8px;}
 .sched-panel{display:none;}
 .sched-panel.active{display:block;}
 
@@ -326,11 +329,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .forms-shell{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;}
 #section-forms .section{flex:1;min-height:0;padding-bottom:0;}
 .forms-panel-wrap-outer{flex:1;min-height:0;display:flex;}
-.forms-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:auto;}
+.forms-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;}
 #section-forms .footer{flex-shrink:0;}
-@media(max-width:768px){
-  #section-forms{padding-top:56px;}
-}
 @media(min-width:769px){
   .forms-shell{min-height:100%;}
   #section-forms .footer{margin-top:auto;}
@@ -736,41 +736,7 @@ function buildDayTabs(){
 // People
 const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of Student Development \u00b7 Adjunct Assistant Professor, School of Architecture"], ["Anja Cordell", "Faculty Coordinator and Instructor", ""], ["Jessica Bocangel", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["DeMauri Mumphrey", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["Anthony Gonzalez Martinez", "Assistant to Faculty Coordinator", "Architecture Graduate"]],INSTRUCTORS=[["Alondra Amaya-Cruz", "Interior Architecture Post-grad"], ["Sam Brott", "Third-year Graphic Design Student"], ["Ryan Chatman", "Third-year Architecture Student"], ["Kadyn Kilbourne", "Fourth-year Graphic Design Student"], ["Julia Lawyer", "Fourth-year Graphic Design Student"], ["Katie Morriss", "Landscape Architecture Post-grad"], ["Christian Nazario Quirindongo", "Architecture Graduate"], ["Kayden Newman", "Fifth-year Architecture Student"], ["Witt Norris", "Fifth-year Architecture Student"], ["Clara Smith", "Interior Architecture Graduate"], ["Isaiah Smith", "Fifth-year Architecture Student"], ["Macy Steingrube", "Fourth-year Graphic Design Student"]],ASSISTANTS=[["Janet Iniguez", "Third-year Architecture Student"], ["Melani Jimenez", "Fifth-year Architecture Student"], ["Hayden Moody", "Third-year Architecture Student"], ["Cora Williams", "Fourth-year Graphic Design Student"]];
 (function(){
-  var MOBILE_MAX = 768;
-  var sections = null;
-  var scrollTimer = null;
-
-  function isMobile(){ return window.innerWidth <= MOBILE_MAX; }
-  function getSections(){
-    if(!sections){ sections = Array.prototype.slice.call(document.querySelectorAll('.snap-section')); }
-    return sections;
-  }
-
-  window.__cancelSnapCorrection = function(){
-    if(scrollTimer){ clearTimeout(scrollTimer); scrollTimer = null; }
-  };
-
-  function correctSnap(){
-    if(window.__navScrolling || !isMobile()) return;
-    var secs = getSections();
-    if(!secs.length) return;
-    var current = window.scrollY;
-    var closest = secs[0];
-    var closestDist = Infinity;
-    secs.forEach(function(s){
-      var dist = Math.abs(s.offsetTop - current);
-      if(dist < closestDist){ closestDist = dist; closest = s; }
-    });
-    if(Math.abs(closest.offsetTop - current) > 2){
-      window.scrollTo({top: closest.offsetTop, behavior:'smooth'});
-    }
-  }
-
-  window.addEventListener('scroll', function(){
-    if(!isMobile() || window.__navScrolling) return;
-    if(scrollTimer) clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(correctSnap, 120);
-  }, {passive:true});
+  window.__cancelSnapCorrection = function(){};
 })();
 function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active', b.getAttribute('data-tab')===name);});
@@ -1295,52 +1261,6 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 
 // Init
 buildDayTabs();
-
-(function(){
-  var MOBILE_MAX=768;
-  var schedWrap=document.getElementById('schedPanelWrap');
-  if(!schedWrap)return;
-
-  function isMobile(){return window.innerWidth<=MOBILE_MAX;}
-  function scrollable(el){return el.scrollHeight>el.clientHeight+2;}
-  function atTop(el){return el.scrollTop<=2;}
-  function atBottom(el){return el.scrollTop+el.clientHeight>=el.scrollHeight-2;}
-
-  var lastY=0;
-
-  schedWrap.addEventListener('touchstart',function(e){
-    if(!isMobile()||e.touches.length!==1)return;
-    lastY=e.touches[0].clientY;
-  },{passive:true});
-
-  schedWrap.addEventListener('touchmove',function(e){
-    if(!isMobile()||window.__navScrolling||e.touches.length!==1)return;
-    var y=e.touches[0].clientY;
-    var delta=lastY-y;
-    if(!delta)return;
-    lastY=y;
-
-    var canScroll=scrollable(schedWrap);
-    var escapeUp=delta<0&&(!canScroll||atTop(schedWrap));
-    var escapeDown=delta>0&&(!canScroll||atBottom(schedWrap));
-    if(escapeUp||escapeDown){
-      e.preventDefault();
-      window.scrollBy(0,delta);
-    }
-  },{passive:false});
-
-  schedWrap.addEventListener('wheel',function(e){
-    if(isMobile()||window.__navScrolling)return;
-    var canScroll=scrollable(schedWrap);
-    if(e.deltaY<0&&(!canScroll||atTop(schedWrap))){
-      e.preventDefault();
-      window.scrollBy(0,e.deltaY);
-    }else if(e.deltaY>0&&(!canScroll||atBottom(schedWrap))){
-      e.preventDefault();
-      window.scrollBy(0,e.deltaY);
-    }
-  },{passive:false});
-})();
 </script>
 </body>
 </html>
