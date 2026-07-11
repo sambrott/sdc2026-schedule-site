@@ -324,9 +324,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .briefs-card{width:100%;margin-bottom:0;}
 .briefs-wrap.is-open:not(.is-unset) .briefs-card{border-color:var(--teal);background:rgba(0,113,121,.06);}
 .briefs-wrap.is-open:not(.is-unset) .briefs-card .lc-title{color:var(--teal);}
-.briefs-chev{width:17px;height:17px;stroke:var(--ink3);fill:none;stroke-width:2;flex-shrink:0;transition:transform .2s ease;}
+.briefs-chev{width:17px;height:17px;stroke:var(--ink3);fill:none;stroke-width:2;flex-shrink:0;transition:transform .3s cubic-bezier(.4,0,.2,1);}
 .briefs-wrap.is-open .briefs-chev{transform:rotate(180deg);}
 .briefs-wrap.is-unset .briefs-chev{stroke:var(--ink3);opacity:.55;}
+.briefs-menu-wrap{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
 .briefs-menu{border:1.5px solid var(--line);border-top:none;background:var(--white);}
 .briefs-wrap.is-open:not(.is-unset) .briefs-menu{border-color:var(--teal);}
 .briefs-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;border-top:1px solid var(--line);text-decoration:none;color:inherit;transition:background .15s ease;}
@@ -335,7 +336,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .briefs-link:hover .lc-title{color:var(--teal);}
 .briefs-link .lc-arrow{stroke:var(--ink3);}
 .briefs-link:hover .lc-arrow{stroke:var(--teal);}
-.briefs-wrap.is-unset .briefs-menu{display:none!important;}
+.briefs-wrap.is-unset .briefs-menu-wrap{display:none!important;}
 .lc-icon{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--teal);}
 .lc-icon.orange{background:var(--orange);}
 .lc-icon.purple{background:var(--purple);}
@@ -604,7 +605,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
       <div class="lc-text"><div class="lc-title">Briefs</div><div class="lc-sub">Studio project briefs</div></div>
       <svg class="lc-arrow briefs-marker" viewBox="0 0 24 24" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </div>
-    <div class="briefs-menu" id="briefsMenu" hidden></div>
+    <div class="briefs-menu-wrap" id="briefsMenuWrap"><div class="briefs-menu" id="briefsMenu"></div></div>
   </div>
   <iframe class="form-frame" id="formEmbed" src="about:blank"></iframe>
     </div>
@@ -635,22 +636,37 @@ const BRIEF_SOURCES=[
 ];
 const BRIEFS=[];
 
+function briefSortKey(brief){
+  var match=(brief.label||brief.url||'').match(/\d+/);
+  return match?parseInt(match[0],10):0;
+}
+
+function finalizeBriefAssets(results,callback){
+  BRIEFS.length=0;
+  results.forEach(function(item){
+    if(item)BRIEFS.push(item);
+  });
+  BRIEFS.sort(function(a,b){return briefSortKey(a)-briefSortKey(b);});
+  if(callback)callback();
+}
+
 function verifyBriefAssets(callback){
   BRIEFS.length=0;
   if(!BRIEF_SOURCES.length){ if(callback)callback(); return; }
   var remaining=BRIEF_SOURCES.length;
-  BRIEF_SOURCES.forEach(function(item){
+  var results=new Array(BRIEF_SOURCES.length);
+  BRIEF_SOURCES.forEach(function(item,sourceIndex){
     (function tryUrl(index){
       if(index>=item.urls.length){
         remaining--;
-        if(!remaining && callback)callback();
+        if(!remaining)finalizeBriefAssets(results,callback);
         return;
       }
       fetch(item.urls[index],{method:'HEAD',cache:'no-store'}).then(function(res){
         if(res.ok){
-          BRIEFS.push({label:item.label,url:item.urls[index]});
+          results[sourceIndex]={label:item.label,url:item.urls[index]};
           remaining--;
-          if(!remaining && callback)callback();
+          if(!remaining)finalizeBriefAssets(results,callback);
         }else{
           tryUrl(index+1);
         }
@@ -922,21 +938,23 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 
   var briefsWrap=document.getElementById('briefsWrap');
   var briefsToggle=document.getElementById('briefsToggle');
+  var briefsMenuWrap=document.getElementById('briefsMenuWrap');
   var briefsMenu=document.getElementById('briefsMenu');
+  var briefsBound=false;
 
   function briefsAvailable(){
     return BRIEFS.some(function(brief){return brief.url;});
   }
 
   function setBriefsOpen(open){
-    if(!briefsWrap||!briefsToggle||!briefsMenu)return;
+    if(!briefsWrap||!briefsToggle||!briefsMenuWrap||!briefsMenu)return;
     briefsWrap.classList.toggle('is-open',!!open);
     briefsToggle.setAttribute('aria-expanded',open?'true':'false');
-    briefsMenu.hidden=!open;
+    briefsMenuWrap.style.maxHeight=open?briefsMenu.scrollHeight+'px':'0px';
   }
 
   function initBriefs(){
-    if(!briefsWrap||!briefsToggle||!briefsMenu)return;
+    if(!briefsWrap||!briefsToggle||!briefsMenuWrap||!briefsMenu)return;
     briefsMenu.innerHTML='';
     BRIEFS.forEach(function(brief){
       if(!brief.url)return;
@@ -969,6 +987,11 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
       marker.classList.add('briefs-chev');
       marker.innerHTML='<polyline points="6 9 12 15 18 9"/>';
     }
+    if(briefsWrap.classList.contains('is-open')){
+      briefsMenuWrap.style.maxHeight=briefsMenu.scrollHeight+'px';
+    }
+    if(briefsBound)return;
+    briefsBound=true;
     briefsToggle.addEventListener('click',function(e){
       e.stopPropagation();
       setBriefsOpen(!briefsWrap.classList.contains('is-open'));
