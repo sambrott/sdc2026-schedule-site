@@ -53,6 +53,13 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   .snap-section{height:100vh;height:100dvh;height:var(--app-height,100dvh);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
   .img-overlay-wrap{min-height:0;}
 }
+@media(min-width:769px){
+  html,body{height:auto;scroll-snap-type:none;overscroll-behavior-y:auto;}
+  .snap-section{height:auto;min-height:0;scroll-snap-align:none;scroll-snap-stop:normal;overflow:visible;}
+  .img-overlay-wrap{min-height:360px;}
+  .sched.snap-section{display:flex;flex-direction:column;}
+  .sched-panel-wrap-outer{flex:none;max-height:min(560px,calc(100vh - 260px));min-height:320px;}
+}
 
 /* ===== COMPACT HERO ===== */
 .hero-wrap{flex-shrink:0;}
@@ -472,13 +479,16 @@ function buildDayTabs(){
 // People
 const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of Student Development \u00b7 Adjunct Assistant Professor, School of Architecture"], ["Anja Cordell", "Faculty Coordinator and Instructor", ""], ["Jessica Bocangel", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["DeMauri Mumphrey", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["Anthony Gonzalez Martinez", "Assistant to Faculty Coordinator", "Architecture Graduate"]],INSTRUCTORS=[["Alondra Amaya-Cruz", "Interior Architecture Post-grad"], ["Sam Brott", "Third-year Graphic Design Student"], ["Ryan Chatman", "Third-year Architecture Student"], ["Kadyn Kilbourne", "Fourth-year Graphic Design Student"], ["Julia Lawyer", "Fourth-year Graphic Design Student"], ["Katie Morriss", "Landscape Architecture Post-grad"], ["Christian Nazario Quirindongo", "Architecture Graduate"], ["Kayden Newman", "Fifth-year Architecture Student"], ["Witt Norris", "Fifth-year Architecture Student"], ["Clara Smith", "Interior Architecture Graduate"], ["Isaiah Smith", "Fifth-year Architecture Student"], ["Macy Steingrube", "Fourth-year Graphic Design Student"]],ASSISTANTS=[["Janet Iniguez", "Third-year Architecture Student"], ["Melani Jimenez", "Fifth-year Architecture Student"], ["Hayden Moody", "Third-year Architecture Student"], ["Cora Williams", "Fourth-year Graphic Design Student"]];
 (function(){
+  var MOBILE_MAX = 768;
   var sections = null;
+  function isMobile(){ return window.innerWidth <= MOBILE_MAX; }
   function getSections(){
     if(!sections){ sections = Array.prototype.slice.call(document.querySelectorAll('.snap-section')); }
     return sections;
   }
   var scrollTimer = null;
   function correctSnap(){
+    if(!isMobile()) return;
     var secs = getSections();
     if(!secs.length) return;
     var current = window.scrollY;
@@ -493,6 +503,7 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
     }
   }
   window.addEventListener('scroll', function(){
+    if(!isMobile()) return;
     if(scrollTimer) clearTimeout(scrollTimer);
     scrollTimer = setTimeout(correctSnap, 120);
   }, {passive:true});
