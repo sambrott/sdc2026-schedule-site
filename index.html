@@ -619,6 +619,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 const EVENING_FORM_URL="";
 const PHOTO_FORM_URL="";
 const BRIEFS=[
+  {label:"Field Trip Brief",url:"https://drive.google.com/file/d/1UanjHBWEDsUSraxkNR5hgugoFqLDbneU/view?usp=drivesdk"},
   // {label:"Architecture Brief",url:""},
   // {label:"Industrial Design Brief",url:""},
   // {label:"Graphic Design Brief",url:""},
@@ -642,14 +643,19 @@ function eveningVoteBtn(){
 }
 
 function studioBriefBtn(day,ev){
-  if(ev.type!=='studio')return '';
   var briefLabels={
+    Monday:'Field Trip Brief',
     Tuesday:'Industrial Design Brief',
     Wednesday:'Architecture Brief',
     Thursday:'Graphic Design Brief'
   };
   var label=briefLabels[day];
   if(!label)return '';
+  if(day==='Monday'){
+    if(ev.type!=='field'||ev.t!=='morning')return '';
+  }else if(ev.type!=='studio'){
+    return '';
+  }
   var brief=BRIEFS.find(function(item){return item.label===label;});
   var url=brief&&brief.url;
   var arrow='<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
