@@ -23,16 +23,19 @@ window.addEventListener('load', function(){ window.scrollTo(0,0); });
     if(!isMobile()){
       document.documentElement.style.setProperty('--vv-offset-top', '0px');
       document.documentElement.style.setProperty('--vv-inset-bottom', '0px');
+      document.documentElement.style.setProperty('--vv-height', '100%');
       return;
     }
     var vv = window.visualViewport;
     var offsetTop = (vv && vv.offsetTop) || 0;
+    var vvHeight = (vv && vv.height) || window.innerHeight;
     var bottomInset = 0;
     if(vv){
       bottomInset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
     }
     document.documentElement.style.setProperty('--vv-offset-top', offsetTop + 'px');
     document.documentElement.style.setProperty('--vv-inset-bottom', bottomInset + 'px');
+    document.documentElement.style.setProperty('--vv-height', vvHeight + 'px');
   }
 
   var lockingFormsScroll = false;
@@ -48,7 +51,10 @@ window.addEventListener('load', function(){ window.scrollTo(0,0); });
     }
 
     var target = forms.offsetTop;
-    var onForms = Math.abs(window.scrollY - target) < 48;
+    var vv = window.visualViewport;
+    var vvTop = (vv && vv.offsetTop) || 0;
+    var formsTop = forms.getBoundingClientRect().top;
+    var onForms = Math.abs(window.scrollY - target) < 80 || Math.abs(formsTop - vvTop) < 48;
     shell.classList.toggle('is-pinned', onForms);
 
     if(onForms && !window.__navScrolling && !lockingFormsScroll && Math.abs(window.scrollY - target) > 1){
@@ -115,6 +121,7 @@ window.addEventListener('load', function(){ window.scrollTo(0,0); });
   --app-height:100svh;
   --vv-offset-top:0px;
   --vv-inset-bottom:0px;
+  --vv-height:100%;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;max-width:640px;margin:0 auto;overflow-x:hidden;}
@@ -123,7 +130,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   html,body{height:var(--app-height);min-height:var(--app-height);scroll-snap-type:y mandatory;overscroll-behavior-y:none;}
   .snap-section{height:var(--app-height);min-height:var(--app-height);max-height:var(--app-height);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
   .img-overlay-wrap{min-height:0;}
-  #section-forms .forms-shell.is-pinned .section{padding-bottom:104px;}
+  #section-forms .forms-shell.is-pinned .section{flex:0 0 auto;}
   .sched-panel-wrap{padding-bottom:calc(20px + var(--vv-inset-bottom, 0px));}
   .tab-panel-wrap{padding-bottom:calc(14px + var(--vv-inset-bottom, 0px));}
 }
@@ -284,8 +291,9 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .forms-shell{display:flex;flex-direction:column;min-height:100%;}
 #section-forms .section{flex:0 0 auto;min-height:0;}
 @media(max-width:768px){
-  #section-forms .forms-shell.is-pinned{position:fixed;top:var(--vv-offset-top,0px);left:0;right:0;margin:0 auto;max-width:640px;height:var(--app-height);z-index:5;background:var(--paper);}
-  #section-forms .forms-shell.is-pinned .footer{position:absolute;bottom:0;left:0;right:0;margin-top:0;}
+  #section-forms .forms-shell{height:100%;}
+  #section-forms .footer{margin-top:auto;}
+  #section-forms .forms-shell.is-pinned{position:fixed;top:var(--vv-offset-top,0px);left:0;right:0;margin:0 auto;max-width:640px;height:var(--vv-height,var(--app-height));z-index:5;background:var(--paper);}
 }
 @media(min-width:769px){
   #section-forms .footer{margin-top:auto;}
