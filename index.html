@@ -667,12 +667,12 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
     document.body.style.scrollSnapType=val;
   }
 
-  function easeOutCubic(t){
-    return 1-Math.pow(1-t,3);
+  function easeInOutQuart(t){
+    return t<0.5?8*t*t*t*t:1-Math.pow(-2*t+2,4)/2;
   }
 
   function scrollDurationForDistance(distance){
-    return Math.min(480,Math.max(260,Math.abs(distance)*0.38));
+    return Math.min(720,Math.max(480,Math.abs(distance)*0.52));
   }
 
   function smoothScrollTo(targetY,duration){
@@ -692,7 +692,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
         window.__navScrolling=false;
         setScrollSnapEnabled(true);
         updateActiveNavLink();
-      },120);
+      },180);
     }
 
     if(Math.abs(diff)<2){
@@ -704,7 +704,7 @@ if(PHOTO_FORM_URL){document.getElementById('photoFormLink').href=PHOTO_FORM_URL;
       if(!startTime)startTime=ts;
       var elapsed=ts-startTime;
       var progress=Math.min(elapsed/duration,1);
-      window.scrollTo(0,startY+diff*easeOutCubic(progress));
+      window.scrollTo(0,startY+diff*easeInOutQuart(progress));
       if(progress<1){
         scrollAnim=requestAnimationFrame(step);
       }else{
