@@ -144,9 +144,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   #section-schedule .tl-slabel{font-size:11px;margin:6px 0 4px;}
   #section-schedule .mat-row{padding:5px 8px;margin-bottom:3px;}
   #section-schedule .mat-text{font-size:13px;line-height:1.35;}
-  #section-schedule .sched-panel-wrap.has-open-event{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  #section-schedule .sched-panel-wrap.has-open-event{overflow-y:auto;-webkit-overflow-scrolling:touch;overflow-anchor:none;}
   #section-schedule .sched-panel-wrap.has-open-event .timeline{height:auto;flex:none;}
-  #section-schedule .sched-panel-wrap.has-open-event .tl-row{flex:none;min-height:auto;}
+  #section-schedule .sched-panel-wrap.has-open-event .tl-row:not(.open):not([data-collapsing="1"]){flex:0 0 var(--schedule-row-h,calc((100% - 18px)/var(--schedule-max-rows)));min-height:0;transition:none;}
+  #section-schedule .sched-panel-wrap.has-open-event .tl-row.open,#section-schedule .sched-panel-wrap.has-open-event .tl-row[data-collapsing="1"]{flex:none;min-height:auto;}
   #section-locations .lc-directions{padding:4px 8px;font-size:10px;}
 }
 @media(min-width:769px){
@@ -796,10 +797,32 @@ function tlRow(ev,day,i,total){
     '</div>'+
   '</div>';
 }
+function lockScheduleRowHeights(panelWrap){
+  var panel=panelWrap.querySelector('.sched-panel.active');
+  if(!panel)return;
+  var timeline=panel.querySelector('.timeline');
+  if(!timeline)return;
+  var sample=timeline.querySelector('.tl-row:not(.open):not([data-collapsing="1"])');
+  if(!sample)return;
+  var h=Math.round(sample.getBoundingClientRect().height);
+  if(h>0)timeline.style.setProperty('--schedule-row-h',h+'px');
+}
+
+function clearScheduleRowHeights(panelWrap){
+  panelWrap.querySelectorAll('.timeline').forEach(function(timeline){
+    timeline.style.removeProperty('--schedule-row-h');
+  });
+}
+
 function syncSchedulePanelMode(){
   var panelWrap=document.getElementById('schedPanelWrap');
   if(!panelWrap)return;
   var hasOpen=!!panelWrap.querySelector('.tl-row.open')||panelWrap.dataset.eventAnimating==='1';
+  if(hasOpen){
+    lockScheduleRowHeights(panelWrap);
+  }else{
+    clearScheduleRowHeights(panelWrap);
+  }
   panelWrap.classList.toggle('has-open-event',hasOpen);
 }
 
@@ -850,6 +873,8 @@ function toggleEvent(day,i){
       if(openRow===row)return;
       collapseEventRow(openRow);
     });
+    var panelWrap=document.getElementById('schedPanelWrap');
+    if(panelWrap)lockScheduleRowHeights(panelWrap);
     row.classList.add('open');
     wrap.style.maxHeight=inner.scrollHeight+'px';
     syncSchedulePanelMode();
