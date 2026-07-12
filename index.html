@@ -128,9 +128,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   #section-schedule .tl-tc{padding-top:4px;height:100%;justify-content:flex-start;}
   #section-schedule .tl-line{display:block;flex:1;margin-top:4px;min-height:4px;}
   #section-schedule .tl-time{font-size:11px;line-height:1.15;}
-  #section-schedule .tl-ev{margin-bottom:0;padding:5px 10px;align-self:stretch;display:flex;flex-direction:column;justify-content:center;min-height:0;}
-  #section-schedule .tl-name{font-size:13px;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  #section-schedule .tl-loc{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #section-schedule .tl-ev{margin-bottom:0;padding:6px 10px;align-self:stretch;display:flex;flex-direction:column;justify-content:center;min-height:0;overflow:visible;}
+  #section-schedule .tl-ev-text{overflow:visible;}
+  #section-schedule .tl-name{font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding-bottom:1px;}
+  #section-schedule .tl-loc{font-size:11px;line-height:1.3;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   #section-schedule .tl-choice-sub{display:none;}
   #section-schedule .tl-chev{width:18px;height:18px;margin-top:0;}
   #section-schedule .tl-ev-row{min-width:0;flex-wrap:nowrap;}
@@ -262,7 +263,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-ev-row .tl-vote-btn,.tl-ev-row .tl-brief-btn{align-self:flex-start;margin-top:1px;margin-left:auto;flex-shrink:0;cursor:pointer;}
 .tl-ev-text{min-width:0;flex:1;}
 .tl-type{display:inline-block;font-family:var(--body);font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--tc);background:var(--tp);padding:2px 7px;border-radius:2px;margin-bottom:5px;}
-.tl-name{font-family:var(--din);font-weight:600;font-size:16.5px;line-height:1.15;color:var(--ink);letter-spacing:.01em;}
+.tl-name{font-family:var(--din);font-weight:600;font-size:16.5px;line-height:1.25;color:var(--ink);letter-spacing:.01em;}
 .tl-loc{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
 .tl-choice-sub{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
 .tl-option-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
