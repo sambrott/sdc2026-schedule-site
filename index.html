@@ -108,13 +108,12 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 @media(max-width:768px){
   html,body{height:var(--app-height);min-height:var(--app-height);scroll-snap-type:y mandatory;overscroll-behavior-y:none;}
   .snap-section{height:var(--app-height);min-height:var(--app-height);max-height:var(--app-height);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
-  #section-schedule.snap-section,#section-forms.snap-section{scroll-snap-stop:normal;}
+  #section-schedule.snap-section{scroll-snap-stop:normal;}
   .sched.snap-section{display:flex;flex-direction:column;}
   .img-overlay-wrap{min-height:0;}
   .forms-panel-wrap{padding-bottom:12px;}
   .sched-panel-wrap{padding-bottom:20px;}
   .tab-panel-wrap{padding-bottom:14px;}
-  #section-faculty .section{padding-bottom:56px;}
   #section-schedule .sched{padding:14px 0 10px;}
   #section-schedule .sched-head{margin-bottom:8px;}
   #section-schedule .day-tabs-row{margin-bottom:6px;}
@@ -879,7 +878,66 @@ function buildDayTabs(){
 // People
 const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of Student Development \u00b7 Adjunct Assistant Professor, School of Architecture"], ["Anja Cordell", "Faculty Coordinator and Instructor", ""], ["Jessica Bocangel", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["DeMauri Mumphrey", "Summer Design Camp Special Ops", "Academic + Professional Development Advisor"], ["Anthony Gonzalez Martinez", "Assistant to Faculty Coordinator", "Architecture Graduate"]],INSTRUCTORS=[["Alondra Amaya-Cruz", "Interior Architecture Post-grad"], ["Sam Brott", "Third-year Graphic Design Student"], ["Ryan Chatman", "Third-year Architecture Student"], ["Kadyn Kilbourne", "Fourth-year Graphic Design Student"], ["Julia Lawyer", "Fourth-year Graphic Design Student"], ["Katie Morriss", "Landscape Architecture Post-grad"], ["Christian Nazario Quirindongo", "Architecture Graduate"], ["Kayden Newman", "Fifth-year Architecture Student"], ["Witt Norris", "Fifth-year Architecture Student"], ["Clara Smith", "Interior Architecture Graduate"], ["Isaiah Smith", "Fifth-year Architecture Student"], ["Macy Steingrube", "Fourth-year Graphic Design Student"]],ASSISTANTS=[["Janet Iniguez", "Third-year Architecture Student"], ["Melani Jimenez", "Fifth-year Architecture Student"], ["Hayden Moody", "Third-year Architecture Student"], ["Cora Williams", "Fourth-year Graphic Design Student"]];
 (function(){
-  window.__cancelSnapCorrection = function(){};
+  var MOBILE_MAX=768;
+  var snapCorrectionTimer=null;
+
+  function isMobile(){
+    return window.innerWidth<=MOBILE_MAX;
+  }
+
+  function getSnapSections(){
+    return Array.prototype.slice.call(document.querySelectorAll('.snap-section'));
+  }
+
+  window.__cancelSnapCorrection=function(){
+    if(snapCorrectionTimer){
+      clearTimeout(snapCorrectionTimer);
+      snapCorrectionTimer=null;
+    }
+  };
+
+  function snapToNearestSection(){
+    if(window.__navScrolling||!isMobile())return;
+    var sections=getSnapSections();
+    if(!sections.length)return;
+    var current=window.scrollY;
+    var closest=sections[0];
+    var closestDist=Infinity;
+    sections.forEach(function(section){
+      var dist=Math.abs(section.offsetTop-current);
+      if(dist<closestDist){
+        closestDist=dist;
+        closest=section;
+      }
+    });
+    if(Math.abs(closest.offsetTop-current)>2){
+      window.scrollTo(0,closest.offsetTop);
+    }
+    if(window.__syncViewport)window.__syncViewport();
+  }
+
+  window.__snapToNearestSection=snapToNearestSection;
+
+  function scheduleSnapCorrection(){
+    window.__cancelSnapCorrection();
+    snapCorrectionTimer=setTimeout(function(){
+      snapCorrectionTimer=null;
+      if(window.__snapToNearestSection)window.__snapToNearestSection();
+    },150);
+  }
+
+  window.addEventListener('scroll',function(){
+    if(!isMobile()||window.__navScrolling)return;
+    scheduleSnapCorrection();
+  },{passive:true});
+
+  if('onscrollend' in window){
+    window.addEventListener('scrollend',function(){
+      if(!isMobile()||window.__navScrolling)return;
+      window.__cancelSnapCorrection();
+      if(window.__snapToNearestSection)window.__snapToNearestSection();
+    });
+  }
 })();
 function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active', b.getAttribute('data-tab')===name);});
@@ -1296,6 +1354,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     requestAnimationFrame(function(){
       window.__navScrolling=false;
       setScrollSnapEnabled(true);
+      if(window.__snapToNearestSection)window.__snapToNearestSection();
       updateActiveNavLink();
     });
   }
