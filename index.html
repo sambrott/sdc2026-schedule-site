@@ -127,12 +127,13 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   #section-schedule .tl-tc{padding-top:4px;height:100%;justify-content:flex-start;}
   #section-schedule .tl-line{display:block;flex:1;margin-top:4px;min-height:4px;}
   #section-schedule .tl-time{font-size:11px;line-height:1.15;}
-  #section-schedule .tl-ev{margin-bottom:0;padding:5px 10px;align-self:stretch;display:flex;flex-direction:column;justify-content:center;min-height:0;}
-  #section-schedule .tl-name{font-size:13px;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  #section-schedule .tl-loc{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #section-schedule .tl-ev{margin-bottom:0;padding:7px 10px 9px;align-self:stretch;display:flex;flex-direction:column;justify-content:flex-start;min-height:0;overflow:visible;}
+  #section-schedule .tl-ev-text{overflow:visible;min-width:0;}
+  #section-schedule .tl-name{font-size:13px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding-bottom:3px;}
+  #section-schedule .tl-loc{font-size:11px;line-height:1.35;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   #section-schedule .tl-choice-sub{display:none;}
   #section-schedule .tl-chev{width:18px;height:18px;margin-top:0;}
-  #section-schedule .tl-ev-row{min-width:0;flex-wrap:nowrap;}
+  #section-schedule .tl-ev-row{min-width:0;flex-wrap:nowrap;align-items:flex-start;}
   #section-schedule .tl-ev-row .tl-vote-btn,#section-schedule .tl-ev-row .tl-brief-btn{padding:4px 8px;font-size:10px;flex-shrink:0;}
   #section-schedule .tl-detail-inner{padding-top:6px;}
   #section-schedule .tl-detail-body{font-size:13px;line-height:1.45;}
@@ -261,7 +262,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-ev-row .tl-vote-btn,.tl-ev-row .tl-brief-btn{align-self:flex-start;margin-top:1px;margin-left:auto;flex-shrink:0;cursor:pointer;}
 .tl-ev-text{min-width:0;flex:1;}
 .tl-type{display:inline-block;font-family:var(--body);font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--tc);background:var(--tp);padding:2px 7px;border-radius:2px;margin-bottom:5px;}
-.tl-name{font-family:var(--din);font-weight:600;font-size:16.5px;line-height:1.15;color:var(--ink);letter-spacing:.01em;}
+.tl-name{font-family:var(--din);font-weight:600;font-size:16.5px;line-height:1.3;color:var(--ink);letter-spacing:.01em;}
 .tl-loc{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
 .tl-choice-sub{font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink3);margin-top:3px;letter-spacing:.02em;}
 .tl-option-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
@@ -880,6 +881,7 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
 (function(){
   var MOBILE_MAX=768;
   var snapCorrectionTimer=null;
+  var SECTION_MARKER=0.28;
 
   function isMobile(){
     return window.innerWidth<=MOBILE_MAX;
@@ -896,22 +898,24 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
     }
   };
 
+  function getActiveSnapSection(){
+    var sections=getSnapSections();
+    if(!sections.length)return null;
+    var marker=window.scrollY+window.innerHeight*SECTION_MARKER;
+    var active=sections[0];
+    sections.forEach(function(section){
+      if(section.offsetTop<=marker)active=section;
+    });
+    return active;
+  }
+
   function snapToNearestSection(){
     if(window.__navScrolling||!isMobile())return;
-    var sections=getSnapSections();
-    if(!sections.length)return;
-    var current=window.scrollY;
-    var closest=sections[0];
-    var closestDist=Infinity;
-    sections.forEach(function(section){
-      var dist=Math.abs(section.offsetTop-current);
-      if(dist<closestDist){
-        closestDist=dist;
-        closest=section;
-      }
-    });
-    if(Math.abs(closest.offsetTop-current)>2){
-      window.scrollTo(0,closest.offsetTop);
+    var active=getActiveSnapSection();
+    if(!active)return;
+    var targetY=active.offsetTop;
+    if(Math.abs(targetY-window.scrollY)>2){
+      window.scrollTo(0,targetY);
     }
     if(window.__syncViewport)window.__syncViewport();
   }
@@ -923,20 +927,23 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
     snapCorrectionTimer=setTimeout(function(){
       snapCorrectionTimer=null;
       if(window.__snapToNearestSection)window.__snapToNearestSection();
-    },150);
+    },220);
   }
 
-  window.addEventListener('scroll',function(){
+  function onScrollSettled(){
     if(!isMobile()||window.__navScrolling)return;
-    scheduleSnapCorrection();
-  },{passive:true});
+    window.__cancelSnapCorrection();
+    if(window.__snapToNearestSection)window.__snapToNearestSection();
+  }
 
   if('onscrollend' in window){
-    window.addEventListener('scrollend',function(){
+    window.addEventListener('scrollend',onScrollSettled);
+  }else{
+    window.addEventListener('scroll',function(){
       if(!isMobile()||window.__navScrolling)return;
-      window.__cancelSnapCorrection();
-      if(window.__snapToNearestSection)window.__snapToNearestSection();
-    });
+      scheduleSnapCorrection();
+    },{passive:true});
+    window.addEventListener('touchend',scheduleSnapCorrection,{passive:true});
   }
 })();
 function switchTab(name){
