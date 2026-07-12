@@ -738,7 +738,20 @@ function getCampTodayKey(){
 }
 
 function getEveningFormUrl(day){
-  return EVENING_FORM_URLS[day||getCampTodayKey()]||'';
+  if(day&&EVENING_FORM_URLS[day])return EVENING_FORM_URLS[day];
+  var campDay=getCampTodayKey();
+  if(campDay&&EVENING_FORM_URLS[campDay])return EVENING_FORM_URLS[campDay];
+  var today=new Date();
+  today.setHours(0,0,0,0);
+  for(var i=0;i<DAYS.length;i++){
+    if(!EVENING_FORM_URLS[DAYS[i]])continue;
+    var parts=SCHEDULE[DAYS[i]].date.split(' ');
+    if(parts.length!==2)continue;
+    var campDate=new Date(parts[0]+' '+parts[1]+', '+today.getFullYear());
+    campDate.setHours(0,0,0,0);
+    if(campDate>=today)return EVENING_FORM_URLS[DAYS[i]];
+  }
+  return '';
 }
 
 function isBriefUnlocked(label){
@@ -1105,7 +1118,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 
   var eveningFormUrl=getEveningFormUrl();
   setFormLink(eveningLink,eveningFormUrl,function(url){
-    formEmbed.src=url;
+    formEmbed.src=url+(url.indexOf('?')>-1?'&':'?')+'embedded=true';
     formEmbed.style.display='';
   });
   setFormLink(photoLink,PHOTO_FORM_URL,function(url){
