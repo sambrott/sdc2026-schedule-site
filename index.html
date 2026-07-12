@@ -122,8 +122,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   #section-schedule .day-info-name{font-size:19px;}
   #section-schedule .sched-panel-wrap{overflow:hidden;padding-bottom:8px;}
   #section-schedule .sched-panel.active{display:flex;flex-direction:column;height:100%;min-height:0;}
-  #section-schedule .timeline{flex:1;min-height:0;display:flex;flex-direction:column;gap:2px;transition:flex .35s cubic-bezier(.4,0,.2,1);}
-  #section-schedule .tl-row{flex:1 1 0;min-height:0;align-items:stretch;grid-template-columns:56px 1fr;gap:6px;transition:flex .35s cubic-bezier(.4,0,.2,1),min-height .35s cubic-bezier(.4,0,.2,1);}
+  #section-schedule .timeline{--schedule-max-rows:10;flex:1;min-height:0;display:flex;flex-direction:column;gap:2px;}
+  #section-schedule .tl-row{flex:0 0 calc((100% - 18px)/var(--schedule-max-rows));min-height:0;align-items:stretch;grid-template-columns:56px 1fr;gap:6px;transition:flex-basis .35s cubic-bezier(.4,0,.2,1),min-height .35s cubic-bezier(.4,0,.2,1);}
   #section-schedule .tl-tc{padding-top:4px;height:100%;justify-content:flex-start;}
   #section-schedule .tl-line{display:block;flex:1;margin-top:4px;min-height:4px;}
   #section-schedule .tl-time{font-size:11px;line-height:1.15;}
@@ -144,9 +144,9 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   #section-schedule .tl-slabel{font-size:11px;margin:6px 0 4px;}
   #section-schedule .mat-row{padding:5px 8px;margin-bottom:3px;}
   #section-schedule .mat-text{font-size:13px;line-height:1.35;}
-  #section-schedule .sched-panel-wrap.has-open-event{overflow-y:auto;-webkit-overflow-scrolling:touch;overflow-anchor:none;}
+  #section-schedule .sched-panel-wrap.has-open-event{overflow-y:auto;-webkit-overflow-scrolling:touch;}
   #section-schedule .sched-panel-wrap.has-open-event .timeline{height:auto;flex:none;}
-  #section-schedule .sched-panel-wrap.has-open-event .tl-row{flex:0 0 auto;min-height:auto;}
+  #section-schedule .sched-panel-wrap.has-open-event .tl-row{flex:none;min-height:auto;}
   #section-locations .lc-directions{padding:4px 8px;font-size:10px;}
 }
 @media(min-width:769px){
@@ -627,7 +627,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   </div>
   <a class="link-card" href="https://archdesign.utk.edu" target="_blank" rel="noopener" id="archdesignLink">
     <div class="lc-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-    <div class="lc-text"><div class="lc-title">UT College of Architecture + Design website</div><div class="lc-sub">archdesign.utk.edu</div></div>
+    <div class="lc-text"><div class="lc-title">UT College of Architecture + Design website</div><div class="lc-sub">College's official website</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </a>
   <div class="briefs-wrap is-unset" id="briefsWrap">
@@ -817,6 +817,7 @@ function collapseEventRow(row,onComplete){
   if(panelWrap)panelWrap.dataset.eventAnimating='1';
   row.classList.remove('open');
   wrap.style.maxHeight='0px';
+  syncSchedulePanelMode();
   var done=false;
   function finish(){
     if(done)return;
@@ -835,40 +836,6 @@ function collapseEventRow(row,onComplete){
   setTimeout(finish,DETAIL_TRANSITION_MS+50);
 }
 
-function openEventRow(row,wrap,inner){
-  var panelWrap=document.getElementById('schedPanelWrap');
-  function doOpen(){
-    if(panelWrap)panelWrap.dataset.eventAnimating='1';
-    syncSchedulePanelMode();
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        row.classList.add('open');
-        wrap.style.maxHeight=inner.scrollHeight+'px';
-        var done=false;
-        function finish(){
-          if(done)return;
-          done=true;
-          wrap.removeEventListener('transitionend',onTransitionEnd);
-          if(panelWrap)panelWrap.dataset.eventAnimating='';
-          syncSchedulePanelMode();
-        }
-        function onTransitionEnd(e){
-          if(e.target!==wrap||e.propertyName!=='max-height')return;
-          finish();
-        }
-        wrap.addEventListener('transitionend',onTransitionEnd);
-        setTimeout(finish,DETAIL_TRANSITION_MS+50);
-      });
-    });
-  }
-  var otherOpen=document.querySelector('.tl-row.open');
-  if(otherOpen&&otherOpen!==row){
-    collapseEventRow(otherOpen,doOpen);
-  }else{
-    doOpen();
-  }
-}
-
 function toggleEvent(day,i){
   const rid=day+'-'+i;
   const row=document.getElementById('row-'+rid);
@@ -879,7 +846,13 @@ function toggleEvent(day,i){
   if(isOpen){
     collapseEventRow(row);
   }else{
-    openEventRow(row,wrap,inner);
+    document.querySelectorAll('.tl-row.open').forEach(function(openRow){
+      if(openRow===row)return;
+      collapseEventRow(openRow);
+    });
+    row.classList.add('open');
+    wrap.style.maxHeight=inner.scrollHeight+'px';
+    syncSchedulePanelMode();
   }
 }
 
@@ -903,21 +876,6 @@ function styleDayTab(btn,day,isActive){
   }
 }
 
-function resetScheduleEvents(){
-  var panelWrap=document.getElementById('schedPanelWrap');
-  document.querySelectorAll('.tl-row.open').forEach(function(openRow){
-    openRow.classList.remove('open');
-    openRow.dataset.collapsing='';
-    var detailWrap=openRow.querySelector('.tl-detail-wrap');
-    if(detailWrap)detailWrap.style.maxHeight='0px';
-  });
-  if(panelWrap){
-    panelWrap.dataset.eventAnimating='';
-    panelWrap.scrollTop=0;
-    syncSchedulePanelMode();
-  }
-}
-
 function switchDay(day){
   document.querySelectorAll('.day-tab-btn').forEach(function(b){
     const d=b.getAttribute('data-day');
@@ -929,7 +887,13 @@ function switchDay(day){
     p.classList.toggle('active',p.id==='sched-'+day);
   });
   updateDayInfo(day);
-  resetScheduleEvents();
+  const wrap=document.getElementById('schedPanelWrap');
+  if(wrap){
+    wrap.scrollTop=0;
+    document.querySelectorAll('.tl-row.open').forEach(function(openRow){
+      collapseEventRow(openRow);
+    });
+  }
 }
 
 function getTodayDay(){
