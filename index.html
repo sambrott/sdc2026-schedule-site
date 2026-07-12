@@ -1124,14 +1124,13 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 
   var eveningFormUrl=getEveningFormUrl();
   setFormLink(eveningLink,eveningFormUrl,function(url){
-    formEmbed.src=url+(url.indexOf('?')>-1?'&':'?')+'embedded=true';
-    formEmbed.style.display='';
+    window.open(url,'_blank','noopener');
   });
   setFormLink(photoLink,PHOTO_FORM_URL,function(url){
     window.open(url,'_blank','noopener');
   });
 
-  if(!eveningFormUrl){formEmbed.style.display='none';}
+  formEmbed.style.display='none';
 
   var briefsWrap=document.getElementById('briefsWrap');
   var briefsToggle=document.getElementById('briefsToggle');
