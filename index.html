@@ -650,7 +650,9 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </div>
 
 <script>
-const EVENING_FORM_URL="";
+const EVENING_FORM_URLS={
+  Sunday:"https://docs.google.com/forms/d/e/1FAIpQLSeuWN8ykXqfqP3M2Wxs2IImb5U72YY0YzKwNDT2xc07YwU0Cg/viewform"
+};
 const PHOTO_FORM_URL="";
 const BRIEF_SOURCES=[
   {label:"101 Brief",urls:["101.pdf"]},
@@ -711,11 +713,12 @@ const DAY_TRACK = {Sunday:"#7468A3",Monday:"#FF8200",Tuesday:"#007179",Wednesday
 
 function tc(type){return (TYPE_COLORS[type]||["#007179","rgba(0,113,121,.1)"]);}
 
-function eveningVoteBtn(){
+function eveningVoteBtn(day){
   var arrow='<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
   var stopClick=' onclick="event.stopPropagation()"';
-  if(EVENING_FORM_URL){
-    return '<a class="lc-directions tl-vote-btn" href="'+EVENING_FORM_URL+'" target="_blank" rel="noopener"'+stopClick+'>Vote'+arrow+'</a>';
+  var url=EVENING_FORM_URLS[day]||'';
+  if(url){
+    return '<a class="lc-directions tl-vote-btn" href="'+url+'" target="_blank" rel="noopener"'+stopClick+'>Vote'+arrow+'</a>';
   }
   return '<span class="lc-directions tl-vote-btn is-unset" aria-disabled="true" title="Voting unavailable"'+stopClick+'>Vote'+arrow+'</span>';
 }
@@ -732,6 +735,10 @@ function getCampTodayKey(){
     if(SCHEDULE[DAYS[i]].date.toLowerCase().replace(/\s/g,'')===key.toLowerCase())return DAYS[i];
   }
   return '';
+}
+
+function getEveningFormUrl(day){
+  return EVENING_FORM_URLS[day||getCampTodayKey()]||'';
 }
 
 function isBriefUnlocked(label){
@@ -776,7 +783,7 @@ function tlRow(ev,day,i,total){
   const typeHtml = '';
   const locHtml = (ev.loc && !isEvening) ? '<div class="tl-loc">'+ev.loc+'</div>' : '';
   const choiceSubHtml = isEvening ? '<div class="tl-choice-sub">Your choice</div>' : '';
-  const voteHtml = isEvening ? eveningVoteBtn() : '';
+  const voteHtml = isEvening ? eveningVoteBtn(day) : '';
   const briefHtml = studioBriefBtn(day,ev);
   const hasExtra = isEvening || !!ev.detail || (ev.options && ev.options.length>0) || (ev.mats && ev.mats.length>0);
   const rid=day+'-'+i;
@@ -1096,7 +1103,8 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     }
   }
 
-  setFormLink(eveningLink,EVENING_FORM_URL,function(url){
+  var eveningFormUrl=getEveningFormUrl();
+  setFormLink(eveningLink,eveningFormUrl,function(url){
     formEmbed.src=url;
     formEmbed.style.display='';
   });
@@ -1104,7 +1112,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     window.open(url,'_blank','noopener');
   });
 
-  if(!EVENING_FORM_URL){formEmbed.style.display='none';}
+  if(!eveningFormUrl){formEmbed.style.display='none';}
 
   var briefsWrap=document.getElementById('briefsWrap');
   var briefsToggle=document.getElementById('briefsToggle');
