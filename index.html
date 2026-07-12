@@ -298,10 +298,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tab-btn:last-child{border-right:none;}
 .tab-btn.active{background:var(--teal);color:var(--white);}
 .tab-panel-wrap-outer{position:relative;flex:1;min-height:0;display:flex;}
-.tab-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;padding-right:14px;}
+.tab-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none;-ms-overflow-style:none;padding-right:16px;}
 .tab-panel-wrap::-webkit-scrollbar{display:none;width:0;height:0;}
-.fac-scrollbar-track{position:absolute;top:0;right:0;bottom:0;width:6px;background:var(--paper2);border-radius:3px;opacity:0;}
-.fac-scrollbar-thumb{position:absolute;top:0;left:0;width:100%;min-height:30px;background:var(--teal);border-radius:3px;}
+.fac-scrollbar-track{position:absolute;top:0;right:0;bottom:0;width:6px;background:var(--paper2);border-radius:0;opacity:0;pointer-events:none;}
+.fac-scrollbar-thumb{position:absolute;top:0;left:0;width:100%;min-height:30px;background:var(--teal);border-radius:0;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
 
@@ -336,7 +336,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .briefs-wrap.is-unset .briefs-chev{stroke:var(--ink3);opacity:.55;}
 .briefs-menu-wrap{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
 .briefs-menu-outer{position:relative;}
-.briefs-menu{border:1.5px solid var(--line);border-top:none;background:var(--white);max-height:min(230px,40vh);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none;-ms-overflow-style:none;padding-right:10px;}
+.briefs-menu{border:1.5px solid var(--line);border-top:none;background:var(--white);max-height:min(230px,40vh);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none;-ms-overflow-style:none;padding:6px 16px 6px 10px;}
 .briefs-menu::-webkit-scrollbar{display:none;width:0;height:0;}
 .briefs-scrollbar-track{position:absolute;top:0;right:0;bottom:0;width:6px;background:var(--paper2);border-radius:0;opacity:0;pointer-events:none;}
 .briefs-scrollbar-thumb{position:absolute;top:0;left:0;width:100%;min-height:30px;background:var(--teal);border-radius:0;}
@@ -347,7 +347,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .briefs-link:hover .lc-title{color:var(--teal);}
 .briefs-link .lc-arrow{stroke:var(--ink3);}
 .briefs-link:hover .lc-arrow{stroke:var(--teal);}
-.briefs-link.is-unset{color:var(--ink3);cursor:not-allowed;pointer-events:none;opacity:.72;border:1.5px dashed var(--ink3);border-radius:0;margin:6px 8px;background:transparent;}
+.briefs-link.is-unset{color:var(--ink3);cursor:not-allowed;pointer-events:none;opacity:.72;border:1.5px dashed var(--ink3);border-radius:0;margin:0 0 6px;box-sizing:border-box;width:100%;background:transparent;}
 .briefs-link.is-unset .lc-title{color:var(--ink3);}
 .briefs-link.is-unset .lc-arrow{stroke:var(--ink3);opacity:.55;}
 .briefs-link.is-unset:hover,.briefs-link.is-unset:hover .lc-title,.briefs-link.is-unset:hover .lc-arrow{background:transparent;color:var(--ink3);stroke:var(--ink3);}
@@ -368,6 +368,15 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .lc-directions.is-unset:hover,.tl-vote-btn.is-unset:hover{background:transparent;color:var(--ink3);border-color:var(--ink3);}
 .lc-directions svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;flex-shrink:0;}
 .map-wrap{position:relative;width:100%;height:240px;margin-bottom:9px;border-radius:0;overflow:hidden;border:1.5px solid var(--line);}
+#section-locations .map-wrap{height:208px;margin-bottom:6px;}
+#section-locations .sched-title{margin-bottom:10px;}
+#section-locations .link-card{min-height:58px;padding:9px 11px;margin-bottom:5px;gap:9px;}
+#section-locations .link-card:last-child{margin-bottom:0;}
+#section-locations .lc-icon{width:32px;height:32px;}
+#section-locations .lc-icon svg{width:16px;height:16px;}
+#section-locations .lc-title{font-size:14.5px;line-height:1.1;}
+#section-locations .lc-sub{font-size:13px;margin-top:1px;}
+#section-locations .lc-directions{padding:4px 8px;font-size:10px;gap:4px;}
 .map-frame{position:absolute;top:0;left:0;width:100%;height:100%;border:0;opacity:0;transition:opacity .4s ease;}
 .map-frame.visible{opacity:1;}
 .form-frame{width:100%;height:560px;border:1.5px solid var(--line);border-radius:0;background:var(--white);margin-top:6px;}
@@ -380,7 +389,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .forms-panel-wrap-outer{flex:1;min-height:0;display:flex;}
 .forms-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;}
 @media(min-width:769px){
-  .forms-shell{min-height:100%;}
+  .forms-shell{min-height:0;}
+  #section-forms .section{padding-bottom:48px;}
+  .forms-panel-wrap-outer{flex:none;}
+  .forms-panel-wrap{flex:none;overflow:visible;padding-bottom:32px;}
 }
 
 /* Breathing room between Faculty and Forms on mobile snap scroll */
@@ -512,6 +524,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <div class="lc-text"><div class="lc-title">Tennessee Rec Center (TREC)</div><div class="lc-sub">Evening Activities</div></div>
     <a class="lc-directions" href="https://www.google.com/maps/dir/?api=1&destination=35.948889,-83.9343242&travelmode=walking" target="_blank" rel="noopener" onclick="event.stopPropagation()">Get directions<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
   </div>
+  <div class="link-card" style="cursor:pointer;" data-location="Student Union">
+    <div class="lc-icon purple"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg></div>
+    <div class="lc-text"><div class="lc-title">Student Union</div><div class="lc-sub">Lunch</div></div>
+    <a class="lc-directions" href="https://www.google.com/maps/dir/?api=1&destination=35.9567119,-83.9291522&travelmode=walking" target="_blank" rel="noopener" onclick="event.stopPropagation()">Get directions<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
+  </div>
   <div class="link-card" style="cursor:pointer;" data-location="Rocky Top Dining Hall">
     <div class="lc-icon"><svg viewBox="0 0 2000 2000" style="fill:white;stroke:none;"><path d="m1443.6 2000c-79.371 0-143.944-64.574-143.944-143.944 0-.158.001-.312.003-.47l14.331-939.708c-.096-28.288-19.302-42.133-28.046-46.97-.859-.428-1.715-.86-2.569-1.292-.48-.233-.953-.477-1.419-.732-57.301-29.538-104.454-76.343-136.392-135.398-34.042-62.952-51.302-138.893-51.302-225.725 0-259.972 169.771-505.761 349.338-505.761s349.338 245.789 349.338 505.761c0 88.506-17.913 165.638-53.242 229.259-33.078 59.565-81.751 106.239-140.802 135.045-6.808 4.018-20.93 14.405-25.454 33.368l14.102 952.168c.002.15.003.304.003.454 0 79.371-64.574 143.945-143.945 143.945zm-82.419-143.727c.117 45.348 37.045 82.201 82.419 82.201 45.38 0 82.311-36.865 82.419-82.22l-14.148-955.304c-.03-2.013.138-4.03.502-6.012 8.608-46.876 42.667-70.737 56.91-78.822.589-.334 1.189-.646 1.799-.942 103.391-49.959 160.331-159.848 160.331-309.414 0-109.396-34.163-222.867-93.73-311.321-56.883-84.469-127.623-132.915-194.083-132.915s-137.202 48.446-194.085 132.915c-59.566 88.454-93.729 201.925-93.729 311.321 0 146.652 55.04 255.59 154.981 306.755.117.06.234.12.351.184l2.75 1.382c.32.157.638.323.953.495 14.239 7.706 60.695 37.807 60.695 101.515 0 .158-.001.312-.004.469zm-807.768 139.037c-79.204 0-143.643-64.439-143.643-143.644 0-.161.001-.323.003-.484l14.497-919.284c-.091-28.844-18.314-44.165-22.516-47.315l-.835-.586c-.33-.225-.656-.454-.976-.691-72.31-50.849-192.882-160.22-192.882-323.894 0-180.418 47.17-404.596 67.45-492.603 8.432-36.598 40.571-62.156 78.156-62.156 44.231 0 80.215 35.986 80.215 80.215v397.379c0 6.271 3.298 10.297 5.265 12.141 1.962 1.84 6.191 4.867 12.531 4.45 8.529-.552 15.466-8.723 15.466-18.217v-388.697c0-48.123 39.149-87.271 87.269-87.271s87.269 39.148 87.269 87.271v390.323c0 6.268 3.298 10.297 5.264 12.141 1.962 1.836 6.2 4.885 12.537 4.454 8.524-.552 15.461-8.723 15.461-18.217v-395.757c0-44.229 35.985-80.215 80.216-80.215 37.585 0 69.723 25.558 78.155 62.156 20.28 88.007 67.45 312.185 67.45 492.603 0 163.682-120.594 273.063-192.902 323.908-.311.229-.627.451-.947.669l-.841.593c-4.197 3.143-22.426 18.468-22.519 47.312l14.497 919.287c.003.161.004.323.004.484 0 79.205-64.439 143.645-143.644 143.645zm-82.118-143.423c.121 45.179 36.913 81.897 82.117 81.897 45.206 0 81.998-36.719 82.119-81.897l-14.497-919.287c-.003-.161-.003-.323-.003-.484 0-57.593 36.563-88.983 47.77-97.229.252-.188.508-.368.766-.548l1.123-.793c.099-.071.199-.143.298-.21 62.463-43.819 167.251-137.669 167.251-273.923 0-174.106-46.07-392.831-65.879-478.791-1.96-8.502-9.444-14.443-18.201-14.443-10.306 0-18.691 8.386-18.691 18.69v395.757c0 41.995-32.072 76.962-73.016 79.614-21.535 1.39-42.889-6.252-58.586-20.965-15.703-14.724-24.71-35.509-24.71-57.026v-390.325c0-14.195-11.548-25.746-25.744-25.746-14.195 0-25.743 11.551-25.743 25.746v388.696c0 41.987-32.07 76.959-73.009 79.614-21.523 1.408-42.885-6.241-58.586-20.954-15.708-14.724-24.717-35.509-24.717-57.034v-397.378c0-10.304-8.385-18.69-18.69-18.69-8.758 0-16.242 5.941-18.203 14.443-19.808 85.96-65.878 304.685-65.878 478.791 0 136.254 104.788 230.104 167.251 273.923.112.075.224.154.333.237l1.088.766c.257.176.513.361.764.544 11.207 8.25 47.773 39.637 47.773 97.23 0 .161-.001.323-.003.484zm217.356-993.358h.039z"/></svg></div>
     <div class="lc-text"><div class="lc-title">Rocky Top Dining Hall</div><div class="lc-sub">Meals</div></div>
@@ -522,6 +539,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
       'Art + Architecture Building': {lat:35.9524186, lng:-83.929707},
       'Magnolia Hall': {lat:35.9501845, lng:-83.9363021},
       'Tennessee Rec Center': {lat:35.948889, lng:-83.9343242},
+      'Student Union': {lat:35.9567119, lng:-83.9291522},
       'Rocky Top Dining Hall': {lat:35.9518149, lng:-83.9340743}
     };
 
@@ -981,30 +999,33 @@ function switchTab(name){
   document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.toggle('active', p.id==='panel-'+name);});
   requestAnimationFrame(updateFacScrollbar);
 }
+function updateInlineScrollbar(scrollEl, trackEl, thumbEl, isVisible){
+  if(!scrollEl||!trackEl||!thumbEl||!isVisible){
+    if(trackEl)trackEl.style.opacity='0';
+    return;
+  }
+  var trackH=trackEl.clientHeight;
+  var viewH=scrollEl.clientHeight;
+  var contentH=scrollEl.scrollHeight;
+  if(contentH<=viewH+1){
+    trackEl.style.opacity='0';
+    return;
+  }
+  trackEl.style.opacity='1';
+  var thumbH=Math.max(30,(viewH/contentH)*trackH);
+  var maxScroll=contentH-viewH;
+  var maxThumbTop=trackH-thumbH;
+  var ratio=maxScroll>0?scrollEl.scrollTop/maxScroll:0;
+  thumbEl.style.height=thumbH+'px';
+  thumbEl.style.top=(maxThumbTop*ratio)+'px';
+}
 function updateFacScrollbar(){
   const wrap=document.getElementById('facPanelWrap');
   const track=document.getElementById('facScrollTrack');
   const thumb=document.getElementById('facScrollThumb');
-  if(!wrap||!track||!thumb)return;
   const tasPanel=document.getElementById('panel-tas');
-  if(!tasPanel||!tasPanel.classList.contains('active')){
-    track.style.opacity='0';
-    return;
-  }
-  const trackH=track.clientHeight;
-  const viewH=wrap.clientHeight;
-  const contentH=wrap.scrollHeight;
-  if(contentH<=viewH+1){
-    track.style.opacity='0';
-    return;
-  }
-  track.style.opacity='1';
-  const thumbH=Math.max(30,(viewH/contentH)*trackH);
-  const maxScroll=contentH-viewH;
-  const maxThumbTop=trackH-thumbH;
-  const ratio=maxScroll>0 ? wrap.scrollTop/maxScroll : 0;
-  thumb.style.height=thumbH+'px';
-  thumb.style.top=(maxThumbTop*ratio)+'px';
+  const show=tasPanel&&tasPanel.classList.contains('active');
+  updateInlineScrollbar(wrap,track,thumb,show);
 }
 function personHTML(p,hasDetail){
   const detail=(hasDetail&&p[2])?'<div class="person-detail">'+p[2]+'</div>':'';
@@ -1067,24 +1088,8 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 
   function updateBriefsScrollbar(){
     if(!briefsMenu||!briefsScrollTrack||!briefsScrollThumb||!briefsWrap)return;
-    if(!briefsWrap.classList.contains('is-open')||briefsWrap.classList.contains('is-unset')){
-      briefsScrollTrack.style.opacity='0';
-      return;
-    }
-    var trackH=briefsScrollTrack.clientHeight;
-    var viewH=briefsMenu.clientHeight;
-    var contentH=briefsMenu.scrollHeight;
-    if(contentH<=viewH+1){
-      briefsScrollTrack.style.opacity='0';
-      return;
-    }
-    briefsScrollTrack.style.opacity='1';
-    var thumbH=Math.max(30,(viewH/contentH)*trackH);
-    var maxScroll=contentH-viewH;
-    var maxThumbTop=trackH-thumbH;
-    var ratio=maxScroll>0?briefsMenu.scrollTop/maxScroll:0;
-    briefsScrollThumb.style.height=thumbH+'px';
-    briefsScrollThumb.style.top=(maxThumbTop*ratio)+'px';
+    var show=briefsWrap.classList.contains('is-open')&&!briefsWrap.classList.contains('is-unset');
+    updateInlineScrollbar(briefsMenu,briefsScrollTrack,briefsScrollThumb,show);
   }
 
   function briefsAvailable(){
