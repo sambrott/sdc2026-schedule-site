@@ -9,16 +9,31 @@ if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
 window.addEventListener('load', function(){ window.scrollTo(0,0); });
 (function(){
   var MOBILE_MAX = 768;
+  var PHONE_PREVIEW_WIDTH = 390;
   var lockedHeight = window.innerHeight;
   var initialDpr = window.devicePixelRatio || 1;
 
+  function isMobilePreview(){
+    return document.documentElement.classList.contains('mobile-preview');
+  }
+
   function isMobile(){
-    return window.innerWidth <= MOBILE_MAX;
+    return isMobilePreview() || window.innerWidth <= MOBILE_MAX;
+  }
+
+  function getPreviewPhoneHeight(){
+    return Math.min(844, Math.max(640, window.innerHeight - 48));
   }
 
   function applyAppHeight(){
-    document.documentElement.style.setProperty('--app-height', lockedHeight + 'px');
+    var height=isMobilePreview()?getPreviewPhoneHeight():lockedHeight;
+    document.documentElement.style.setProperty('--app-height', height + 'px');
+    document.documentElement.style.setProperty('--phone-preview-width', PHONE_PREVIEW_WIDTH + 'px');
   }
+
+  window.__isMobileView = isMobile;
+  window.__applyAppHeight = applyAppHeight;
+  window.__getPreviewPhoneHeight = getPreviewPhoneHeight;
 
   function syncVisualViewport(){
     var vv = window.visualViewport;
@@ -404,9 +419,158 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 }
 
 /* Breathing room between Faculty and Forms on mobile snap scroll */
+
+/* ===== DESKTOP MOBILE PREVIEW (iPhone frame) ===== */
+.mobile-preview-toggle{
+  display:none;
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  z-index:1200;
+  align-items:center;
+  gap:8px;
+  padding:12px 16px;
+  border:1.5px solid var(--teal);
+  border-radius:var(--pill);
+  background:var(--white);
+  color:var(--teal);
+  font-family:var(--body);
+  font-weight:600;
+  font-size:13px;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+  transition:background .15s,color .15s,border-color .15s,transform .1s;
+}
+.mobile-preview-toggle:hover{background:var(--teal);color:var(--white);}
+.mobile-preview-toggle:active{transform:scale(.98);}
+.mobile-preview-toggle svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+.mobile-preview-toggle[aria-pressed=true]{background:var(--teal);color:var(--white);}
+.iphone-frame-overlay{
+  position:fixed;
+  z-index:250;
+  pointer-events:none;
+  border-radius:44px;
+  box-shadow:
+    0 0 0 11px #1d1d1f,
+    0 0 0 13px #3a3a3c,
+    0 28px 72px rgba(0,0,0,.45);
+}
+.iphone-frame-overlay::before{
+  content:'';
+  position:absolute;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:126px;
+  height:32px;
+  background:#1d1d1f;
+  border-radius:18px;
+  z-index:2;
+}
+@media(min-width:769px){
+  .mobile-preview-toggle{display:inline-flex;}
+  html.mobile-preview{background:#101014;}
+  html.mobile-preview body{
+    max-width:var(--phone-preview-width,390px);
+    margin:24px auto;
+    border-radius:44px;
+    overflow-x:hidden;
+    box-shadow:none;
+  }
+  html.mobile-preview,html.mobile-preview body{
+    height:var(--app-height);
+    min-height:var(--app-height);
+    scroll-snap-type:y mandatory;
+    overscroll-behavior-y:none;
+  }
+  html.mobile-preview .snap-section{
+    height:var(--app-height);
+    min-height:var(--app-height);
+    max-height:var(--app-height);
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    overflow:hidden;
+  }
+  html.mobile-preview #section-schedule.snap-section{scroll-snap-stop:normal;}
+  html.mobile-preview .sched.snap-section{display:flex;flex-direction:column;}
+  html.mobile-preview .img-overlay-wrap{min-height:0;}
+  html.mobile-preview .forms-panel-wrap{padding-bottom:12px;}
+  html.mobile-preview .sched-panel-wrap{padding-bottom:20px;}
+  html.mobile-preview .tab-panel-wrap{padding-bottom:14px;}
+  html.mobile-preview #section-schedule .sched{padding:14px 0 10px;}
+  html.mobile-preview #section-schedule .sched-head{margin-bottom:8px;}
+  html.mobile-preview #section-schedule .day-tabs-row{margin-bottom:6px;}
+  html.mobile-preview #section-schedule .day-tab-btn{padding:7px 2px;font-size:13px;}
+  html.mobile-preview #section-schedule .day-info{padding:0 20px 6px;}
+  html.mobile-preview #section-schedule .day-info-name{font-size:19px;}
+  html.mobile-preview #section-schedule .sched-panel-wrap{overflow:hidden;padding-bottom:8px;}
+  html.mobile-preview #section-schedule .sched-panel.active{display:flex;flex-direction:column;height:100%;min-height:0;}
+  html.mobile-preview #section-schedule .timeline{--schedule-max-rows:10;flex:1;min-height:0;display:flex;flex-direction:column;gap:2px;}
+  html.mobile-preview #section-schedule .tl-row{flex:0 0 calc((100% - 18px)/var(--schedule-max-rows));min-height:0;align-items:stretch;grid-template-columns:56px 1fr;gap:6px;transition:flex-basis .35s cubic-bezier(.4,0,.2,1),min-height .35s cubic-bezier(.4,0,.2,1);}
+  html.mobile-preview #section-schedule .tl-tc{padding-top:4px;height:100%;justify-content:flex-start;}
+  html.mobile-preview #section-schedule .tl-line{display:block;flex:1;margin-top:4px;min-height:4px;}
+  html.mobile-preview #section-schedule .tl-time{font-size:11px;line-height:1.15;}
+  html.mobile-preview #section-schedule .tl-ev{margin-bottom:0;padding:7px 10px 9px;align-self:stretch;display:flex;flex-direction:column;justify-content:flex-start;min-height:0;overflow:visible;}
+  html.mobile-preview #section-schedule .tl-ev-text{overflow:visible;min-width:0;}
+  html.mobile-preview #section-schedule .tl-name{font-size:13px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding-bottom:3px;}
+  html.mobile-preview #section-schedule .tl-loc{font-size:11px;line-height:1.35;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  html.mobile-preview #section-schedule .tl-choice-sub{display:none;}
+  html.mobile-preview #section-schedule .tl-chev{width:18px;height:18px;margin-top:0;align-self:center;}
+  html.mobile-preview #section-schedule .tl-row:not(.open) .tl-ev-row{flex:1;min-height:0;align-items:flex-start;}
+  html.mobile-preview #section-schedule .tl-ev-row{min-width:0;flex-wrap:nowrap;}
+  html.mobile-preview #section-schedule .tl-ev-row .tl-vote-btn,html.mobile-preview #section-schedule .tl-ev-row .tl-brief-btn,html.mobile-preview #section-schedule .tl-ev-row .tl-brief-btns{align-self:center;margin-top:0;padding:4px 8px;font-size:10px;flex-shrink:0;}
+  html.mobile-preview #section-schedule .tl-ev-row .tl-brief-btns{padding:0;}
+  html.mobile-preview #section-schedule .tl-ev-row .tl-brief-btns .tl-brief-btn{padding:4px 8px;font-size:10px;}
+  html.mobile-preview #section-schedule .tl-detail-inner{padding-top:6px;}
+  html.mobile-preview #section-schedule .tl-detail-body{font-size:13px;line-height:1.45;}
+  html.mobile-preview #section-schedule .tl-option-row{display:flex;align-items:center;gap:8px;margin-bottom:3px;}
+  html.mobile-preview #section-schedule .tl-option-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  html.mobile-preview #section-schedule .tl-option-text{font-size:12px;line-height:1.35;}
+  html.mobile-preview #section-schedule .tl-slabel{font-size:11px;margin:6px 0 4px;}
+  html.mobile-preview #section-schedule .mat-row{padding:5px 8px;margin-bottom:3px;}
+  html.mobile-preview #section-schedule .mat-text{font-size:13px;line-height:1.35;}
+  html.mobile-preview #section-schedule .sched-panel-wrap.has-open-event{overflow-y:auto;-webkit-overflow-scrolling:touch;overflow-anchor:none;}
+  html.mobile-preview #section-schedule .sched-panel-wrap.has-open-event .timeline{height:auto;flex:none;}
+  html.mobile-preview #section-schedule .sched-panel-wrap.has-open-event .tl-row:not(.open):not([data-collapsing="1"]){flex:0 0 var(--schedule-row-h,calc((100% - 18px)/var(--schedule-max-rows)));min-height:0;transition:none;}
+  html.mobile-preview #section-schedule .sched-panel-wrap.has-open-event .tl-row.open,html.mobile-preview #section-schedule .sched-panel-wrap.has-open-event .tl-row[data-collapsing="1"]{flex:none;min-height:auto;}
+  html.mobile-preview .page-rail{
+    display:flex!important;
+    position:fixed;
+    left:max(var(--page-rail-edge,4px),calc((100vw - var(--phone-preview-width,390px))/2 + var(--page-rail-edge,4px)));
+    top:var(--page-rail-center,50%);
+    z-index:190;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    padding:14px 12px;
+    transform:translate(-12px,-50%) scale(var(--page-rail-scale,1));
+    transform-origin:center center;
+    pointer-events:auto;
+    touch-action:none;
+    cursor:ns-resize;
+  }
+  html.mobile-preview .nav-float{
+    right:max(var(--section-pad-x),calc((100vw - var(--phone-preview-width,390px))/2 + var(--section-pad-x)));
+  }
+  html.mobile-preview .img-overlay-wrap{min-height:0;}
+  html.mobile-preview .sched-panel-wrap-outer{flex:1;min-height:0;max-height:none;}
+  html.mobile-preview .break-band{padding-bottom:48px;}
+  html.mobile-preview .swipe-cue{display:block;}
+  html.mobile-preview .forms-shell{min-height:0;}
+  html.mobile-preview #section-forms .section{padding-bottom:0;}
+  html.mobile-preview .forms-panel-wrap-outer{flex:1;min-height:0;}
+  html.mobile-preview .forms-panel-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;padding-bottom:12px;}
+  html.mobile-preview .people-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
+
+<button type="button" class="mobile-preview-toggle" id="mobilePreviewToggle" aria-pressed="false" aria-label="Show mobile preview">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+  <span class="mobile-preview-toggle-label">Mobile view</span>
+</button>
+<div class="iphone-frame-overlay" id="iphoneFrameOverlay" hidden></div>
 
 <nav class="nav-float" id="navFloat" aria-label="Section navigation">
   <div class="nav-float-inner">
@@ -1029,7 +1193,7 @@ const LEADERSHIP=[["Julie Beckman", "Summer Design Camp Director", "Director of 
   var SECTION_MARKER=0.28;
 
   function isMobile(){
-    return window.innerWidth<=MOBILE_MAX;
+    return window.__isMobileView?window.__isMobileView():window.innerWidth<=MOBILE_MAX;
   }
 
   function getSnapSections(){
@@ -1630,16 +1794,29 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
     });
   });
   function isMobileNav(){
-    return window.innerWidth<=768;
+    return window.__isMobileView?window.__isMobileView():window.innerWidth<=768;
   }
 
-  if(pageRail&&isMobileNav()){
-    pageRail.addEventListener('pointerdown',startRailDrag);
-    pageRail.addEventListener('pointermove',moveRailDrag);
-    pageRail.addEventListener('pointerup',endRailDrag);
-    pageRail.addEventListener('pointercancel',endRailDrag);
+  if(pageRail){
+    pageRail.addEventListener('pointerdown',function(e){
+      if(!isMobileNav())return;
+      startRailDrag(e);
+    });
+    pageRail.addEventListener('pointermove',function(e){
+      if(!isMobileNav())return;
+      moveRailDrag(e);
+    });
+    pageRail.addEventListener('pointerup',function(e){
+      if(!isMobileNav())return;
+      endRailDrag(e);
+    });
+    pageRail.addEventListener('pointercancel',function(e){
+      if(!isMobileNav())return;
+      endRailDrag(e);
+    });
     pageRail.querySelectorAll('.page-dot').forEach(function(dot){
       dot.addEventListener('click',function(e){
+        if(!isMobileNav())return;
         if(e.detail!==0)return;
         goToSection(dot.getAttribute('data-section'),e);
         railCurrent=null;
@@ -1675,7 +1852,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
   var running=false;
 
   function isMobile(){
-    return window.innerWidth<=768;
+    return window.__isMobileView?window.__isMobileView():window.innerWidth<=768;
   }
 
   function prefersReducedMotion(){
@@ -1782,6 +1959,87 @@ verifyBriefAssets(function(){
   buildDayTabs();
   if(window.__initBriefs)window.__initBriefs();
 });
+
+// Desktop mobile preview toggle (iPhone frame)
+(function(){
+  var toggle=document.getElementById('mobilePreviewToggle');
+  var frame=document.getElementById('iphoneFrameOverlay');
+  var label=toggle?toggle.querySelector('.mobile-preview-toggle-label'):null;
+  var DESKTOP_MIN=769;
+  var STORAGE_KEY='sdc-mobile-preview';
+
+  function isDesktop(){
+    return window.innerWidth>=DESKTOP_MIN;
+  }
+
+  function syncPhoneFrame(){
+    if(!frame||!document.documentElement.classList.contains('mobile-preview')||!isDesktop()){
+      if(frame)frame.hidden=true;
+      return;
+    }
+    var rect=document.body.getBoundingClientRect();
+    frame.style.top=rect.top+'px';
+    frame.style.left=rect.left+'px';
+    frame.style.width=rect.width+'px';
+    frame.style.height=rect.height+'px';
+    frame.hidden=false;
+  }
+
+  function setPreviewActive(active){
+    if(!toggle||!isDesktop())return;
+    document.documentElement.classList.toggle('mobile-preview',!!active);
+    toggle.setAttribute('aria-pressed',active?'true':'false');
+    toggle.setAttribute('aria-label',active?'Exit mobile preview':'Show mobile preview');
+    if(label)label.textContent=active?'Desktop view':'Mobile view';
+    if(window.__applyAppHeight)window.__applyAppHeight();
+    if(window.__syncViewport)window.__syncViewport();
+    if(active){
+      window.scrollTo(0,0);
+      if(window.__snapToNearestSection)window.__snapToNearestSection();
+    }
+    syncPhoneFrame();
+    try{
+      if(active)localStorage.setItem(STORAGE_KEY,'1');
+      else localStorage.removeItem(STORAGE_KEY);
+    }catch(err){}
+  }
+
+  function restoreDesktop(){
+    if(document.documentElement.classList.contains('mobile-preview')){
+      setPreviewActive(false);
+    }
+    if(frame)frame.hidden=true;
+    if(window.__applyAppHeight)window.__applyAppHeight();
+    if(window.__syncViewport)window.__syncViewport();
+  }
+
+  if(toggle){
+    toggle.addEventListener('click',function(){
+      if(!isDesktop())return;
+      setPreviewActive(!document.documentElement.classList.contains('mobile-preview'));
+    });
+  }
+
+  window.addEventListener('resize',function(){
+    if(!isDesktop()){
+      restoreDesktop();
+      return;
+    }
+    if(document.documentElement.classList.contains('mobile-preview')){
+      if(window.__applyAppHeight)window.__applyAppHeight();
+      if(window.__syncViewport)window.__syncViewport();
+      syncPhoneFrame();
+    }
+  });
+  window.addEventListener('scroll',syncPhoneFrame,{passive:true});
+
+  if(isDesktop()){
+    try{
+      if(localStorage.getItem(STORAGE_KEY)==='1')setPreviewActive(true);
+    }catch(err){}
+    syncPhoneFrame();
+  }
+})();
 </script>
 </body>
 </html>
