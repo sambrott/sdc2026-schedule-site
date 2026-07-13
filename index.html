@@ -1058,6 +1058,7 @@ function toggleEvent(day,i){
 }
 
 const DAY_ABBR={Sunday:'Sun',Monday:'Mon',Tuesday:'Tue',Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Sat'};
+const WEEKDAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 function updateDayInfo(day){
   const t=DAY_TRACK[day];
@@ -1098,13 +1099,19 @@ function switchDay(day){
 }
 
 function getTodayDay(){
-  const today=new Date();
-  const todayMonth=today.getMonth()===6?'Jul':today.getMonth()===7?'Aug':'';
-  const todayDate=todayMonth+(today.getDate()<10?'0':'')+today.getDate();
-  for(var i=0;i<DAYS.length;i++){
-    if(SCHEDULE[DAYS[i]].date.toLowerCase().replace(/\s/g,'')===todayDate.toLowerCase())return DAYS[i];
-  }
+  const day=WEEKDAY_NAMES[(new Date()).getDay()];
+  if(SCHEDULE[day])return day;
   return DAYS[0];
+}
+
+function scheduleTodayDayRefresh(){
+  var now=new Date();
+  var nextMidnight=new Date(now);
+  nextMidnight.setHours(24,0,1,0);
+  setTimeout(function(){
+    switchDay(getTodayDay());
+    scheduleTodayDayRefresh();
+  },nextMidnight.getTime()-now.getTime());
 }
 
 function buildDayTabs(){
@@ -1884,6 +1891,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 // Init
 verifyBriefAssets(function(){
   buildDayTabs();
+  scheduleTodayDayRefresh();
   if(window.__initBriefs)window.__initBriefs();
 });
 
