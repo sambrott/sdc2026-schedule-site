@@ -728,6 +728,7 @@ function eveningVoteBtn(day){
 }
 
 var BRIEF_DAY_PREFIX={Monday:'1',Tuesday:'2',Wednesday:'3',Thursday:'4'};
+var BRIEF_ALWAYS_AVAILABLE={'101 Brief':true,'102 Brief':true,'103 Brief':true,'104 Brief':true};
 
 function getCampTodayKey(){
   var today=new Date();
@@ -759,6 +760,7 @@ function getEveningFormUrl(day){
 }
 
 function isBriefUnlocked(label){
+  if(BRIEF_ALWAYS_AVAILABLE[label])return true;
   var campDay=getCampTodayKey();
   var prefix=BRIEF_DAY_PREFIX[campDay];
   if(!prefix)return false;
