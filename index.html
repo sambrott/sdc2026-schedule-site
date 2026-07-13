@@ -433,8 +433,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   position:fixed;
   inset:0;
   z-index:1150;
-  background:rgba(16,16,20,.82);
-  backdrop-filter:blur(6px);
+  background:rgba(16,16,20,.86);
   align-items:center;
   justify-content:center;
   padding:40px 20px;
@@ -458,39 +457,18 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 }
 .mobile-preview-close:hover{background:rgba(255,255,255,.22);}
 .mobile-preview-close svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;}
-.iphone-frame{
+.mobile-preview-panel{
   position:relative;
   width:390px;
   height:844px;
   max-height:calc(100vh - 80px);
-  padding:14px;
-  border-radius:56px;
-  background:linear-gradient(155deg,#3a3a3c,#1d1d1f 55%);
-  box-shadow:0 30px 80px rgba(0,0,0,.55),inset 0 0 0 2px rgba(255,255,255,.06);
-  flex-shrink:0;
-}
-.iphone-frame-screen{
-  position:relative;
-  width:100%;
-  height:100%;
-  border-radius:42px;
+  border-radius:16px;
   overflow:hidden;
   background:var(--paper);
-  box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.35);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+  flex-shrink:0;
 }
-.iphone-frame-notch{
-  position:absolute;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  width:118px;
-  height:30px;
-  background:#0a0a0c;
-  border-radius:18px;
-  z-index:3;
-  pointer-events:none;
-}
-.iphone-frame-screen iframe{
+.mobile-preview-panel iframe{
   position:absolute;
   top:0;
   left:0;
@@ -503,8 +481,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   .mobile-preview-toggle{display:inline-flex;}
 }
 @media(max-width:520px){
-  .iphone-frame{width:min(390px,calc(100vw - 40px));padding:10px;border-radius:44px;}
-  .iphone-frame-screen{border-radius:34px;}
+  .mobile-preview-panel{width:min(390px,calc(100vw - 40px));border-radius:12px;}
 }
 </style>
 </head>
@@ -518,11 +495,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   <button type="button" class="mobile-preview-close" id="mobilePreviewClose" aria-label="Close mobile preview">
     <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
   </button>
-  <div class="iphone-frame">
-    <div class="iphone-frame-screen">
-      <div class="iphone-frame-notch"></div>
-      <iframe id="mobilePreviewFrame" title="Mobile preview" loading="lazy"></iframe>
-    </div>
+  <div class="mobile-preview-panel">
+    <iframe id="mobilePreviewFrame" title="Mobile preview" loading="lazy"></iframe>
   </div>
 </div>
 
