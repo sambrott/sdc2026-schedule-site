@@ -788,8 +788,11 @@ function singleBriefBtn(label,text){
 
 function studioBriefBtn(day,ev){
   if(day==='Monday'){
-    if(ev.type==='field'&&ev.t==='morning'){
+    if(ev.type==='studio'&&ev.title==='Intro to Studio'){
       return singleBriefBtn('101 Brief');
+    }
+    if(ev.type==='field'&&ev.title==='Field Trip / Studio'){
+      return singleBriefBtn('102 Brief');
     }
     if(ev.type==='studio'&&ev.title==='Design Studio'&&ev.t==='2:00–3:00pm'){
       return '<div class="tl-brief-btns">'+singleBriefBtn('103 Brief','103')+singleBriefBtn('104 Brief','104')+'</div>';
