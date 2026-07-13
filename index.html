@@ -1096,13 +1096,8 @@ function switchDay(day){
 }
 
 function getTodayDay(){
-  const today=new Date();
-  const todayMonth=today.getMonth()===6?'Jul':today.getMonth()===7?'Aug':'';
-  const todayDate=todayMonth+(today.getDate()<10?'0':'')+today.getDate();
-  for(var i=0;i<DAYS.length;i++){
-    if(SCHEDULE[DAYS[i]].date.toLowerCase().replace(/\s/g,'')===todayDate.toLowerCase())return DAYS[i];
-  }
-  return DAYS[0];
+  const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  return dayNames[new Date().getDay()];
 }
 
 function buildDayTabs(){
