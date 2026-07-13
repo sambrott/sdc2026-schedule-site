@@ -510,7 +510,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </head>
 <body>
 
-<button type="button" class="mobile-preview-toggle" id="mobilePreviewToggle" aria-haspopup="dialog" aria-controls="mobilePreviewBackdrop" aria-label="Show mobile preview">
+<button type="button" class="mobile-preview-toggle" id="mobilePreviewToggle" aria-haspopup="dialog" aria-controls="mobilePreviewBackdrop" aria-expanded="false" aria-label="Show mobile preview">
   <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
   <span>Mobile view</span>
 </button>
@@ -1912,6 +1912,15 @@ verifyBriefAssets(function(){
 
   var frameLoaded=false;
 
+  var label=toggle.querySelector('span');
+
+  function setPreviewOpen(open){
+    toggle.setAttribute('aria-expanded',open?'true':'false');
+    toggle.setAttribute('aria-label',open?'Show desktop view':'Show mobile preview');
+    if(label)label.textContent=open?'Desktop view':'Mobile view';
+    toggle.classList.toggle('is-active',open);
+  }
+
   function openPreview(){
     if(!frameLoaded){
       var url=window.location.href.split('#')[0];
@@ -1920,16 +1929,21 @@ verifyBriefAssets(function(){
     }
     backdrop.classList.add('is-open');
     document.body.style.overflow='hidden';
+    setPreviewOpen(true);
     closeBtn.focus();
   }
 
   function closePreview(){
     backdrop.classList.remove('is-open');
     document.body.style.overflow='';
+    setPreviewOpen(false);
     toggle.focus();
   }
 
-  toggle.addEventListener('click',openPreview);
+  toggle.addEventListener('click',function(){
+    if(backdrop.classList.contains('is-open'))closePreview();
+    else openPreview();
+  });
   closeBtn.addEventListener('click',closePreview);
   backdrop.addEventListener('click',function(e){
     if(e.target===backdrop)closePreview();
