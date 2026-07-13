@@ -135,7 +135,9 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   #section-schedule .tl-chev{width:18px;height:18px;margin-top:0;align-self:center;}
   #section-schedule .tl-row:not(.open) .tl-ev-row{flex:1;min-height:0;align-items:flex-start;}
   #section-schedule .tl-ev-row{min-width:0;flex-wrap:nowrap;}
-  #section-schedule .tl-ev-row .tl-vote-btn,#section-schedule .tl-ev-row .tl-brief-btn{align-self:center;margin-top:0;padding:4px 8px;font-size:10px;flex-shrink:0;}
+  #section-schedule .tl-ev-row .tl-vote-btn,#section-schedule .tl-ev-row .tl-brief-btn,#section-schedule .tl-ev-row .tl-brief-btns{align-self:center;margin-top:0;padding:4px 8px;font-size:10px;flex-shrink:0;}
+  #section-schedule .tl-ev-row .tl-brief-btns{padding:0;}
+  #section-schedule .tl-ev-row .tl-brief-btns .tl-brief-btn{padding:4px 8px;font-size:10px;}
   #section-schedule .tl-detail-inner{padding-top:6px;}
   #section-schedule .tl-detail-body{font-size:13px;line-height:1.45;}
   #section-schedule .tl-option-row{display:flex;align-items:center;gap:8px;margin-bottom:3px;}
@@ -264,8 +266,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .tl-ev-row.has-action{gap:6px;}
 .tl-ev-row.has-action .tl-ev-text{flex:1;}
 .tl-ev-row.has-action .tl-chev{margin-left:0;}
-.tl-ev-row .tl-vote-btn,.tl-ev-row .tl-brief-btn,.tl-ev-row .tl-chev{align-self:center;margin-top:0;flex-shrink:0;}
-.tl-ev-row .tl-vote-btn,.tl-ev-row .tl-brief-btn{margin-left:auto;cursor:pointer;}
+.tl-ev-row .tl-vote-btn,.tl-ev-row .tl-brief-btn,.tl-ev-row .tl-brief-btns,.tl-ev-row .tl-chev{align-self:center;margin-top:0;flex-shrink:0;}
+.tl-ev-row .tl-vote-btn,.tl-ev-row .tl-brief-btn,.tl-ev-row .tl-brief-btns{margin-left:auto;cursor:pointer;}
+.tl-brief-btns{display:flex;flex-direction:row;align-items:center;gap:6px;flex-shrink:0;}
+.tl-brief-btns .tl-brief-btn{margin-left:0;}
 .tl-ev-text{min-width:0;flex:1;}
 .tl-type{display:inline-block;font-family:var(--body);font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--tc);background:var(--tp);padding:2px 7px;border-radius:2px;margin-bottom:5px;}
 .tl-name{font-family:var(--din);font-weight:600;font-size:16.5px;line-height:1.3;color:var(--ink);letter-spacing:.01em;}
@@ -768,30 +772,41 @@ function isBriefUnlocked(label){
   return !!(match&&match[1]===prefix);
 }
 
-function studioBriefBtn(day,ev){
-  var briefLabels={
-    Monday:'101 Brief',
-    Tuesday:'201 Brief',
-    Wednesday:'301 Brief',
-    Thursday:'401 Brief'
-  };
-  var label=briefLabels[day];
-  if(!label)return '';
-  if(day==='Monday'){
-    if(ev.type!=='field'||ev.t!=='morning')return '';
-  }else if(ev.type!=='studio'||ev.title.indexOf('Kickoff')===-1){
-    return '';
-  }
+function singleBriefBtn(label,text){
+  text=text||'Brief';
   var brief=BRIEFS.find(function(item){return item.label===label;});
   var url=brief&&brief.url;
   var unlocked=isBriefUnlocked(label);
   var arrow='<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
   var stopClick=' onclick="event.stopPropagation()"';
   if(url&&unlocked){
-    return '<a class="lc-directions tl-brief-btn" href="'+url+'" target="_blank" rel="noopener"'+stopClick+'>Brief'+arrow+'</a>';
+    return '<a class="lc-directions tl-brief-btn" href="'+url+'" target="_blank" rel="noopener"'+stopClick+'>'+text+arrow+'</a>';
   }
   var lockTitle=unlocked?'Brief unavailable':'Brief locked until today';
-  return '<span class="lc-directions tl-brief-btn is-unset" aria-disabled="true" title="'+lockTitle+'"'+stopClick+'>Brief'+arrow+'</span>';
+  return '<span class="lc-directions tl-brief-btn is-unset" aria-disabled="true" title="'+lockTitle+'"'+stopClick+'>'+text+arrow+'</span>';
+}
+
+function studioBriefBtn(day,ev){
+  if(day==='Monday'){
+    if(ev.type==='field'&&ev.t==='morning'){
+      return singleBriefBtn('101 Brief');
+    }
+    if(ev.type==='studio'&&ev.title==='Design Studio'&&ev.t==='2:00–3:00pm'){
+      return '<div class="tl-brief-btns">'+singleBriefBtn('103 Brief','103')+singleBriefBtn('104 Brief','104')+'</div>';
+    }
+    return '';
+  }
+  var briefLabels={
+    Tuesday:'201 Brief',
+    Wednesday:'301 Brief',
+    Thursday:'401 Brief'
+  };
+  var label=briefLabels[day];
+  if(!label)return '';
+  if(ev.type!=='studio'||ev.title.indexOf('Kickoff')===-1){
+    return '';
+  }
+  return singleBriefBtn(label);
 }
 
 // Timeline event row (expands in place to reveal detail + materials)
