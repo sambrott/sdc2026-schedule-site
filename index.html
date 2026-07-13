@@ -625,7 +625,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   <div class="sched-title">Forms</div>
   <div class="forms-panel-wrap-outer">
     <div class="forms-panel-wrap" id="formsPanelWrap">
-  <div class="link-card" id="eveningFormLink">
+  <div class="link-card is-unset" id="eveningFormLink" aria-disabled="true">
     <div class="lc-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
     <div class="lc-text"><div class="lc-title">Evening Activity Sign-Up</div><div class="lc-sub">Pick what you're doing tonight</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
@@ -656,9 +656,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 </div>
 
 <script>
-const EVENING_FORM_URLS={
-  Sunday:"https://docs.google.com/forms/d/e/1FAIpQLSeuWN8ykXqfqP3M2Wxs2IImb5U72YY0YzKwNDT2xc07YwU0Cg/viewform"
-};
+const EVENING_FORM_URLS={};
 const PHOTO_FORM_URL="";
 const BRIEF_SOURCES=[
   {label:"101 Brief",urls:["101.pdf"]},
