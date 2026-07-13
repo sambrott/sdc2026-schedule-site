@@ -773,7 +773,10 @@ function isBriefUnlocked(label){
 }
 
 function singleBriefBtn(label,text){
-  text=text||'Brief';
+  if(!text){
+    var match=label.match(/^(\d+)/);
+    text=match?'Brief '+match[1]:'Brief';
+  }
   var brief=BRIEFS.find(function(item){return item.label===label;});
   var url=brief&&brief.url;
   var unlocked=isBriefUnlocked(label);
@@ -795,7 +798,7 @@ function studioBriefBtn(day,ev){
       return singleBriefBtn('102 Brief');
     }
     if(ev.type==='studio'&&ev.title==='Design Studio'&&ev.t==='2:00–3:00pm'){
-      return '<div class="tl-brief-btns">'+singleBriefBtn('103 Brief','103')+singleBriefBtn('104 Brief','104')+'</div>';
+      return '<div class="tl-brief-btns">'+singleBriefBtn('103 Brief')+singleBriefBtn('104 Brief')+'</div>';
     }
     return '';
   }
