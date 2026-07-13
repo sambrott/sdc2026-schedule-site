@@ -634,10 +634,15 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
     <div class="lc-text"><div class="lc-title">Evening Activity Sign-Up</div><div class="lc-sub">Pick what you're doing tonight</div></div>
     <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
   </div>
+  <div class="link-card is-unset" id="upload101FormLink" aria-disabled="true">
+    <div class="lc-icon orange"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+    <div class="lc-text"><div class="lc-title">Upload your work (101)</div><div class="lc-sub">Share photos from the week</div></div>
+    <svg class="lc-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+  </div>
   <div class="upload-wrap" id="uploadWrap">
     <div class="link-card upload-card" id="uploadToggle" role="button" tabindex="0" aria-expanded="false" aria-controls="uploadMenu">
       <div class="lc-icon orange"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
-      <div class="lc-text"><div class="lc-title">Upload Your Work</div><div class="lc-sub">Share photos from the week</div></div>
+      <div class="lc-text"><div class="lc-title">Upload your work (102)</div><div class="lc-sub">Share photos from the week</div></div>
       <svg class="lc-arrow upload-marker" viewBox="0 0 24 24" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </div>
     <div class="upload-menu-wrap" id="uploadMenuWrap"><div class="upload-menu-outer"><div class="upload-menu" id="uploadMenu"></div><div class="upload-scrollbar-track" id="uploadScrollTrack"><div class="upload-scrollbar-thumb" id="uploadScrollThumb"></div></div></div></div>
@@ -664,6 +669,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 <script>
 const EVENING_FORM_URLS={};
+const UPLOAD_101_FORM_URL="";
 const PHOTO_CIRCLE_SOURCES=[
   {name:"Alondra",urls:[]},
   {name:"Sam",urls:[]},
@@ -1140,6 +1146,7 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 // Forms
 (function(){
   var eveningLink=document.getElementById('eveningFormLink');
+  var upload101Link=document.getElementById('upload101FormLink');
   var formEmbed=document.getElementById('formEmbed');
 
   function setFormLink(el,url,onActivate){
@@ -1160,6 +1167,9 @@ document.getElementById('floatersBlock').innerHTML=ASSISTANTS.map(function(p){re
 
   var eveningFormUrl=getEveningFormUrl();
   setFormLink(eveningLink,eveningFormUrl,function(url){
+    window.open(url,'_blank','noopener');
+  });
+  setFormLink(upload101Link,UPLOAD_101_FORM_URL,function(url){
     window.open(url,'_blank','noopener');
   });
 
