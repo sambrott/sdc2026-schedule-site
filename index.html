@@ -245,6 +245,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 #section-schedule .tl-slabel{font-size:11px;margin:6px 0 4px;}
 #section-schedule .mat-row{padding:5px 8px;margin-bottom:3px;}
 #section-schedule .mat-text{font-size:13px;line-height:1.35;}
+.tl-upload-row{margin-top:10px;}
+.tl-upload-row .tl-upload-btn{display:inline-flex;}
 .sched{background:var(--paper);padding:24px 0 22px;flex:1;min-height:0;}
 .sched-head{padding:0 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:flex-start;gap:12px;flex-shrink:0;flex-wrap:wrap;}
 .sched-head .sched-title{margin-bottom:0;}
@@ -858,7 +860,7 @@ function eveningVoteBtn(day){
 }
 
 var BRIEF_DAY_PREFIX={Monday:'1',Tuesday:'2',Wednesday:'3',Thursday:'4'};
-var BRIEF_ALWAYS_AVAILABLE={'101 Brief':true,'102 Brief':true,'103 Brief':true,'104 Brief':true};
+var BRIEF_ALWAYS_AVAILABLE={'101 Brief':true,'102 Brief':true,'103 Brief':true,'104 Brief':true,'201 Brief':true,'202 Brief':true};
 
 function getCampTodayKey(){
   var today=new Date();
@@ -915,6 +917,13 @@ function singleBriefBtn(label,text){
   return '<span class="lc-directions tl-brief-btn is-unset" aria-disabled="true" title="'+lockTitle+'"'+stopClick+'>'+text+arrow+'</span>';
 }
 
+function upload101DetailLink(day,ev){
+  if(day!=='Monday'||ev.type!=='field'||ev.title!=='Field Trip / Studio')return '';
+  var arrow='<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
+  var stopClick=' onclick="event.stopPropagation()"';
+  return '<div class="tl-upload-row"><a class="lc-directions tl-upload-btn" href="'+UPLOAD_101_FORM_URL+'" target="_blank" rel="noopener"'+stopClick+'>Upload your work (101)'+arrow+'</a></div>';
+}
+
 function studioBriefBtn(day,ev){
   if(day==='Monday'){
     if(ev.type==='studio'&&ev.title==='Intro to Studio'){
@@ -928,8 +937,16 @@ function studioBriefBtn(day,ev){
     }
     return '';
   }
+  if(day==='Tuesday'){
+    if(ev.type==='studio'&&ev.title.indexOf('Kickoff')!==-1){
+      return singleBriefBtn('201 Brief');
+    }
+    if(ev.type==='studio'&&ev.title==='Design Studio'&&ev.t==='2:00pm'){
+      return singleBriefBtn('202 Brief');
+    }
+    return '';
+  }
   var briefLabels={
-    Tuesday:'201 Brief',
     Wednesday:'301 Brief',
     Thursday:'401 Brief'
   };
@@ -955,6 +972,8 @@ function tlRow(ev,day,i,total){
   const rid=day+'-'+i;
   let detailInner='';
   if(ev.detail){detailInner+='<div class="tl-detail-body">'+ev.detail+'</div>';}
+  var uploadHtml=upload101DetailLink(day,ev);
+  if(uploadHtml){detailInner+=uploadHtml;}
   if(ev.options && ev.options.length){
     for(var o=0;o<ev.options.length;o++){detailInner+='<div class="tl-option-row"><div class="tl-option-dot" style="background:'+c[0]+';"></div><div class="tl-option-text">'+ev.options[o]+'</div></div>';}
   }
