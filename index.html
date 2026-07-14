@@ -843,6 +843,10 @@ const SCHEDULE = {"Sunday":{"date":"Jul 13","label":"Arrival","events":[{"t":"2:
 const TYPE_COLORS = {"meal": ["#7468A3", "rgba(116,104,163,0.10)"], "studio": ["#007179", "rgba(0,113,121,0.10)"], "field": ["#FF8200", "rgba(255,130,0,0.08)"], "jam": ["#FF8200", "rgba(255,130,0,0.10)"], "evening": ["#007179", "rgba(0,113,121,0.06)"], "check": ["#8a8a8a", "rgba(0,0,0,0.05)"], "welcome": ["#FF8200", "rgba(255,130,0,0.08)"], "photo": ["#7468A3", "rgba(116,104,163,0.10)"], "exhibit": ["#7468A3", "rgba(116,104,163,0.12)"], "depart": ["#8a8a8a", "rgba(0,0,0,0.05)"]};
 const TYPE_LABELS = {"meal": "Meal", "studio": "Studio", "field": "Field Trip", "jam": "Jam Session", "evening": "Evening", "check": "Dorm", "welcome": "Welcome", "photo": "Photo", "exhibit": "Exhibit", "depart": "Departure"};
 const DAYS = Object.keys(SCHEDULE);
+const CAMP_DATES_2026={Sunday:"Jul 12",Monday:"Jul 13",Tuesday:"Jul 14",Wednesday:"Jul 15",Thursday:"Jul 16",Friday:"Jul 17",Saturday:"Jul 18"};
+DAYS.forEach(function(day){
+  if(SCHEDULE[day]&&CAMP_DATES_2026[day])SCHEDULE[day].date=CAMP_DATES_2026[day];
+});
 const DAY_TRACK = {Sunday:"#7468A3",Monday:"#FF8200",Tuesday:"#007179",Wednesday:"#7468A3",Thursday:"#007179",Friday:"#FF8200",Saturday:"#007179"};
 
 function tc(type){return (TYPE_COLORS[type]||["#007179","rgba(0,113,121,.1)"]);}
@@ -928,8 +932,16 @@ function studioBriefBtn(day,ev){
     }
     return '';
   }
+  if(day==='Tuesday'){
+    if(ev.type==='studio'&&ev.title.indexOf('Kickoff')!==-1){
+      return singleBriefBtn('201 Brief');
+    }
+    if(ev.type==='studio'&&ev.title==='Design Studio'&&ev.t==='2:00pm'){
+      return singleBriefBtn('202 Brief');
+    }
+    return '';
+  }
   var briefLabels={
-    Tuesday:'201 Brief',
     Wednesday:'301 Brief',
     Thursday:'401 Brief'
   };
