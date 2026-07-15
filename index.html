@@ -947,8 +947,16 @@ function studioBriefBtn(day,ev){
     }
     return '';
   }
+  if(day==='Wednesday'){
+    if(ev.type==='studio'&&ev.title.indexOf('Kickoff')!==-1){
+      return singleBriefBtn('301 Brief');
+    }
+    if(ev.type==='studio'&&ev.title==='Design Studio'&&ev.t==='2:00pm'){
+      return '<div class="tl-brief-btns">'+singleBriefBtn('302 Brief')+singleBriefBtn('303 Brief')+'</div>';
+    }
+    return '';
+  }
   var briefLabels={
-    Wednesday:'301 Brief',
     Thursday:'401 Brief'
   };
   var label=briefLabels[day];
