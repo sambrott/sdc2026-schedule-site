@@ -773,9 +773,6 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 <script>
 const EVENING_FORM_URLS={
-  Monday:"https://docs.google.com/forms/d/e/1FAIpQLSdVjasLxM2frBoxq9dT58Ogf7UNUHEjkSy95kOIyRvbjQiVOg/viewform",
-  Tuesday:"https://docs.google.com/forms/d/e/1FAIpQLSeu2z1wzE4YAbCUVnB2UaI2RRSG7mOeMVifF2Z7SQsnd1hiYg/viewform",
-  Wednesday:"https://docs.google.com/forms/d/e/1FAIpQLSfepRPJTxe3U6HjlXJ0WfqVxb8tCdnDQv82qgWljYLQSf4vFg/viewform"
 };
 const UPLOAD_101_FORM_URL="https://forms.gle/n6UWH7Jp7K9BNX516";
 const PHOTO_CIRCLE_SOURCES=[
@@ -852,6 +849,7 @@ const DAY_TRACK = {Sunday:"#7468A3",Monday:"#FF8200",Tuesday:"#007179",Wednesday
 function tc(type){return (TYPE_COLORS[type]||["#007179","rgba(0,113,121,.1)"]);}
 
 function eveningVoteBtn(day){
+  if(day!=='Thursday')return '';
   var arrow='<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
   var stopClick=' onclick="event.stopPropagation()"';
   var url=EVENING_FORM_URLS[day]||'';
@@ -862,7 +860,7 @@ function eveningVoteBtn(day){
 }
 
 var BRIEF_DAY_PREFIX={Monday:'1',Tuesday:'2',Wednesday:'3',Thursday:'4'};
-var BRIEF_ALWAYS_AVAILABLE={'101 Brief':true,'102 Brief':true,'103 Brief':true,'104 Brief':true,'201 Brief':true,'202 Brief':true};
+var BRIEF_ALWAYS_AVAILABLE={'101 Brief':true,'102 Brief':true,'103 Brief':true,'104 Brief':true,'201 Brief':true,'202 Brief':true,'401 Brief':true,'402 Brief':true,'403 Brief':true};
 
 function getCampTodayKey(){
   var today=new Date();
@@ -877,20 +875,11 @@ function getCampTodayKey(){
 }
 
 function getEveningFormUrl(day){
+  if(day&&day!=='Thursday')return '';
   if(day&&EVENING_FORM_URLS[day])return EVENING_FORM_URLS[day];
   var campDay=getCampTodayKey();
-  if(campDay&&EVENING_FORM_URLS[campDay])return EVENING_FORM_URLS[campDay];
-  var today=new Date();
-  today.setHours(0,0,0,0);
-  for(var i=0;i<DAYS.length;i++){
-    if(!EVENING_FORM_URLS[DAYS[i]])continue;
-    var parts=SCHEDULE[DAYS[i]].date.split(' ');
-    if(parts.length!==2)continue;
-    var campDate=new Date(parts[0]+' '+parts[1]+', '+today.getFullYear());
-    campDate.setHours(0,0,0,0);
-    if(campDate>=today)return EVENING_FORM_URLS[DAYS[i]];
-  }
-  return '';
+  if(campDay!=='Thursday')return '';
+  return EVENING_FORM_URLS.Thursday||'';
 }
 
 function isBriefUnlocked(label){
@@ -957,15 +946,16 @@ function studioBriefBtn(day,ev){
     }
     return '';
   }
-  var briefLabels={
-    Thursday:'401 Brief'
-  };
-  var label=briefLabels[day];
-  if(!label)return '';
-  if(ev.type!=='studio'||ev.title.indexOf('Kickoff')===-1){
+  if(day==='Thursday'){
+    if(ev.type==='studio'&&ev.title.indexOf('Kickoff')!==-1){
+      return singleBriefBtn('401 Brief');
+    }
+    if(ev.type==='studio'&&ev.title==='Design Studio'&&ev.t==='2:00pm'){
+      return '<div class="tl-brief-btns">'+singleBriefBtn('402 Brief')+singleBriefBtn('403 Brief')+'</div>';
+    }
     return '';
   }
-  return singleBriefBtn(label);
+  return '';
 }
 
 // Timeline event row (expands in place to reveal detail + materials)
