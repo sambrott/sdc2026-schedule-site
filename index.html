@@ -773,7 +773,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 <script>
 const EVENING_FORM_URLS={
-  Thursday:"https://docs.google.com/forms/d/e/1FAIpQLSe5fXHcpNWxNjRkkXut7NlWcJ-G7LANZL2zH6GKLw93qFnMmg/viewform"
+  Thursday:"https://docs.google.com/forms/d/e/1FAIpQLSe5fXHcpNWxNjRkkXut7NlWcJ-G7LANZL2zH6GKLw93qFnMmg/viewform",
+  Friday:"https://docs.google.com/forms/d/e/1FAIpQLScK0FjxOk8snR-t0HLNxFfQYX0QXW2WUC82HTZvaIhWqJYggA/viewform"
 };
 const UPLOAD_101_FORM_URL="https://forms.gle/n6UWH7Jp7K9BNX516";
 const PHOTO_CIRCLE_SOURCES=[
@@ -850,14 +851,11 @@ const DAY_TRACK = {Sunday:"#7468A3",Monday:"#FF8200",Tuesday:"#007179",Wednesday
 function tc(type){return (TYPE_COLORS[type]||["#007179","rgba(0,113,121,.1)"]);}
 
 function eveningVoteBtn(day){
-  if(day!=='Thursday')return '';
+  var url=EVENING_FORM_URLS[day]||'';
+  if(!url)return '';
   var arrow='<svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
   var stopClick=' onclick="event.stopPropagation()"';
-  var url=EVENING_FORM_URLS[day]||'';
-  if(url){
-    return '<a class="lc-directions tl-vote-btn" href="'+url+'" target="_blank" rel="noopener"'+stopClick+'>Vote'+arrow+'</a>';
-  }
-  return '<span class="lc-directions tl-vote-btn is-unset" aria-disabled="true" title="Voting unavailable"'+stopClick+'>Vote'+arrow+'</span>';
+  return '<a class="lc-directions tl-vote-btn" href="'+url+'" target="_blank" rel="noopener"'+stopClick+'>Vote'+arrow+'</a>';
 }
 
 var BRIEF_DAY_PREFIX={Monday:'1',Tuesday:'2',Wednesday:'3',Thursday:'4'};
@@ -876,11 +874,10 @@ function getCampTodayKey(){
 }
 
 function getEveningFormUrl(day){
-  if(day&&day!=='Thursday')return '';
-  if(day&&EVENING_FORM_URLS[day])return EVENING_FORM_URLS[day];
+  if(day)return EVENING_FORM_URLS[day]||'';
   var campDay=getCampTodayKey();
-  if(campDay!=='Thursday')return '';
-  return EVENING_FORM_URLS.Thursday||'';
+  if(campDay&&EVENING_FORM_URLS[campDay])return EVENING_FORM_URLS[campDay];
+  return '';
 }
 
 function isBriefUnlocked(label){
